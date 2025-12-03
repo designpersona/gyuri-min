@@ -517,8 +517,10 @@
               class="font-semibold tracking-tight toplink text-[30px] leading-tight text-neutral-900 lg:text-base"></a>
           </div>
           <div class="flex items-center gap-4 md:gap-5">
-            <a href="#/about"
-              class="toplink text-[30px] leading-tight text-neutral-900 hover:opacity-70 lg:text-sm -mt-1.5 lg:mt-0 font-medium">
+            <a
+              href="#/about"
+              class="toplink text-[30px] leading-tight text-neutral-900 hover:opacity-70 lg:text-sm lg:mt-0 font-medium"
+            >
               ABOUT
             </a>
             <nav class="hidden sm:flex items-center gap-5 text-sm text-neutral-900">
@@ -544,41 +546,26 @@
     </header>
 
 
-    <main class="grid grid-cols-1 gap-8 lg:grid-cols-[1fr,300px] lg:h-screen lg:overflow-hidden">
-  <!-- 왼쪽: 콘텐츠 / 갤러리 -->
-  <section
-    id="pane"
-    class="pb-24 pt-24 lg:h-full lg:overflow-y-auto"
-    aria-live="polite">
-  </section>
+    <main class="grid grid-cols-1 gap-8 lg:grid-cols-[1fr,300px] h-screen overflow-hidden">
+      <!-- 왼쪽: 콘텐츠 / 갤러리 -->
+      <section id="pane" class="h-full overflow-y-auto pb-24 pt-24" aria-live="polite">
+      </section>
 
-  <!-- 오른쪽: 데스크톱 메뉴 리스트 -->
-  <aside
-    class="hidden lg:block pb-24 pt-24 lg:h-full lg:overflow-y-auto">
-    <div class="flex h-full flex-col">
-      <nav id="projectListDesktop" class="flex-1 pb-24"></nav>
-    </div>
-  </aside>
-</main>
-
+      <!-- 오른쪽: 데스크톱 메뉴 리스트 -->
+      <aside class="hidden lg:block h-full overflow-y-auto pb-24 pt-24">
+        <div class="flex h-full flex-col">
+          <nav id="projectListDesktop" class="flex-1 pb-24"></nav>
+        </div>
+      </aside>
+    </main>
   </div>
 
   <!-- Mobile Footer -->
   <footer
-    class="sm:hidden fixed bottom-0 left-0 right-0 z-30 bg-white/95 backdrop-blur px-5 py-3 border-t border-neutral-200">
+    class="sm:hidden fixed bottom-0 left-0 right-0 z-30 bg-white/95 backdrop-blur px-5 py-3 border-t border-neutral-200"
+  >
     <div class="mx-auto max-w-screen-sm">
-      <div class="flex items-center justify-center gap-5 text-sm text-neutral-600">
-        <a id="mLinkedIn" class="toplink hover:text-neutral-900" target="_blank" rel="noopener">
-          <img src="assets/icons/LinkedIn.png" alt="LinkedIn" width="20" height="20" />
-        </a>
-        <a id="mX" class="toplink hover:text-neutral-900" target="_blank" rel="noopener">
-          <img src="assets/icons/x.png" alt="X" width="20" height="20" />
-        </a>
-        <a id="mBehance" class="toplink hover:text-neutral-900" target="_blank" rel="noopener">
-          <img src="assets/icons/Behance.png" alt="Behance" width="20" height="20" />
-        </a>
-      </div>
-      <div class="mt-2 text-center text-[12px] text-neutral-500" id="mobileCopyright"></div>
+      <div class="text-center text-[12px] text-neutral-500" id="mobileCopyright"></div>
     </div>
   </footer>
 
@@ -589,20 +576,27 @@
     </div>
   </footer>
 
-  <!-- Scroll to Top Button -->
-  <button id="scrollTopBtn" aria-label="Scroll to top">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-      stroke-linecap="round" stroke-linejoin="round">
-      <polyline points="18 15 12 9 6 15"></polyline>
-    </svg>
-  </button>
-
+  <!-- Mobile Menu Drawer -->
   <div id="mobileMenu" class="fixed inset-0 z-50 hidden">
     <button id="menuBackdrop" class="absolute inset-0 bg-black/40" aria-label="Close menu"></button>
     <div id="drawerPanel" class="absolute right-0 top-0 h-full w-[85%] max-w-sm bg-white p-5 overflow-y-auto drawer">
-      <div class="mb-4 flex items-center justify-end">
+      <div class="mb-4 flex items-center justify-between">
+        <!-- 모바일 메뉴 상단 SNS 아이콘 -->
+        <div class="flex items-center gap-4 text-sm text-neutral-900">
+          <a id="mLinkedIn" class="toplink hover:text-neutral-900" target="_blank" rel="noopener">
+            <img src="assets/icons/LinkedIn.png" alt="LinkedIn" width="20" height="20" />
+          </a>
+          <a id="mX" class="toplink hover:text-neutral-900" target="_blank" rel="noopener">
+            <img src="assets/icons/x.png" alt="X" width="20" height="20" />
+          </a>
+          <a id="mBehance" class="toplink hover:text-neutral-900" target="_blank" rel="noopener">
+            <img src="assets/icons/Behance.png" alt="Behance" width="20" height="20" />
+          </a>
+        </div>
+  
+        <!-- X 버튼 (조금 크게) -->
         <button id="menuClose" class="inline-flex items-center justify-center p-2" aria-label="Close">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M6 6l12 12M18 6l-12 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
           </svg>
         </button>
@@ -610,7 +604,6 @@
       <nav id="mobileProjectList"></nav>
     </div>
   </div>
-
   <!-- Lock Modal -->
   <div id="lockModal">
     <div class="w-full max-w-xs p-6 text-center bg-white border border-neutral-200 rounded-lg shadow-sm relative">
