@@ -546,13 +546,18 @@
     </header>
 
 
-    <main class="grid grid-cols-1 gap-8 lg:grid-cols-[1fr,300px] h-screen overflow-hidden">
+    <main class="grid grid-cols-1 gap-8 lg:grid-cols-[1fr,300px] lg:h-screen lg:overflow-hidden">
       <!-- 왼쪽: 콘텐츠 / 갤러리 -->
-      <section id="pane" class="h-full overflow-y-auto pb-24 pt-24" aria-live="polite">
-      </section>
+      <section
+        id="pane"
+        class="pb-24 pt-24 lg:h-full lg:overflow-y-auto"
+        aria-live="polite"
+      ></section>
 
       <!-- 오른쪽: 데스크톱 메뉴 리스트 -->
-      <aside class="hidden lg:block h-full overflow-y-auto pb-24 pt-24">
+      <aside
+        class="hidden lg:block pb-24 pt-24 lg:h-full lg:overflow-y-auto"
+      >
         <div class="flex h-full flex-col">
           <nav id="projectListDesktop" class="flex-1 pb-24"></nav>
         </div>
@@ -584,19 +589,19 @@
         <!-- 모바일 메뉴 상단 SNS 아이콘 -->
         <div class="flex items-center gap-4 text-sm text-neutral-900">
           <a id="mLinkedIn" class="toplink hover:text-neutral-900" target="_blank" rel="noopener">
-            <img src="assets/icons/LinkedIn.png" alt="LinkedIn" width="20" height="20" />
+            <img src="assets/icons/LinkedIn.png" alt="LinkedIn" width="28" height="28" />
           </a>
           <a id="mX" class="toplink hover:text-neutral-900" target="_blank" rel="noopener">
-            <img src="assets/icons/x.png" alt="X" width="20" height="20" />
+            <img src="assets/icons/x.png" alt="X" width="30" height="30" />
           </a>
           <a id="mBehance" class="toplink hover:text-neutral-900" target="_blank" rel="noopener">
-            <img src="assets/icons/Behance.png" alt="Behance" width="20" height="20" />
+            <img src="assets/icons/Behance.png" alt="Behance" width="30" height="30" />
           </a>
         </div>
   
         <!-- X 버튼 (조금 크게) -->
         <button id="menuClose" class="inline-flex items-center justify-center p-2" aria-label="Close">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <svg width="40" height="40" viewBox="0 0 30 30" fill="none" aria-hidden="true">
             <path d="M6 6l12 12M18 6l-12 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
           </svg>
         </button>
