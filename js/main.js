@@ -1,169 +1,193 @@
 // ===== 설정 =====
-    const LOCK_PASSWORD = '1234'; // ✅ 여기서만 비밀번호 바꾸면 됨
+const LOCK_PASSWORD = '1234'; // ✅ 여기서만 비밀번호 바꾸면 됨
 
-    // Parse embedded JSON data
-    const jsonEl = document.getElementById('projectsData');
-    const DATA = JSON.parse(jsonEl.textContent);
-    const state = { site: DATA.site, projects: DATA.projects };
-    let pendingSlug = null;
+// Parse embedded JSON data
+const jsonEl = document.getElementById('projectsData');
+const DATA = JSON.parse(jsonEl.textContent);
+const state = { site: DATA.site, projects: DATA.projects };
+let pendingSlug = null;
 
-    const esc = (s = '') => (s ?? '').toString();
+const esc = (s = '') => (s ?? '').toString();
 
-    const listHTML = (items, activeSlug = null) =>
-      `<ul class="menu-list text-[30px] leading-[1.2] font-medium">` +
-      items
-        .map(
-          (p) => `
+const listHTML = (items, activeSlug = null) =>
+  `<ul class="menu-list text-[30px] leading-[1.2] font-medium">` +
+  items
+    .map(
+      (p) => `
         <li class="py-2 ${p.slug === activeSlug ? 'active' : ''}">
           <a class="block w-fit pb-1 hover-accent" style="text-decoration:none" href="#/${p.slug}">
             ${esc(p.title)}
           </a>
         </li>`
-        )
-        .join('') +
-      `</ul>`;
+    )
+    .join('') +
+  `</ul>`;
 
-    const gridHTML = (items) =>
-      `<div class="grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">` +
-      items
-        .map(
-          (p) => `
+const gridHTML = (items) =>
+  `<div class="grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">` +
+  items
+    .map(
+      (p) => `
         <article class="relative group">
           <a href="#/${p.slug}" class="block overflow-hidden relative" style="text-decoration:none">
-            <img class="aspect-square w-full object-cover transition-transform duration-500 group-hover:scale-105" src="${esc(p.cover)}" alt="${esc(
-            p.title
-          )} thumbnail" />
-            ${p.locked ? `<div class="absolute top-0 right-0 bg-black/10 text-white text-[10px] px-3 py-1 uppercase tracking-wider font-medium">Restricted</div>` : ''}
+            <img class="aspect-square w-full object-cover transition-transform duration-500 group-hover:scale-105" src="${esc(
+              p.cover
+            )}" alt="${esc(p.title)} thumbnail" />
+            ${
+              p.locked
+                ? `<div class="absolute top-0 right-0 bg-black/10 text-white text-[10px] px-3 py-1 uppercase tracking-wider font-medium">Restricted</div>`
+                : ''
+            }
           </a>
           <div class="mt-3">
             <h3 class="text-[15px] font-medium">${esc(p.title)}</h3>
             <p class="text-[13px] text-neutral-500">${esc(p.caption)}</p>
           </div>
         </article>`
-        )
-        .join('') +
-      `</div>`;
+    )
+    .join('') +
+  `</div>`;
 
-    function detailHTML(p) {
-      const gallery = (p.gallery || [])
-        .map((g) => {
-          const src = esc(g.src);
-          let media;
+function detailHTML(p) {
+  const gallery = (p.gallery || [])
+    .map((g) => {
+      const src = esc(g.src);
+      let media;
 
-          // YouTube detection
-          const ytMatch = src.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
+      // YouTube detection
+      const ytMatch = src.match(
+        /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/
+      );
 
-          if (ytMatch) {
-            media = `<div class="relative w-full aspect-video">
+      if (ytMatch) {
+        media = `<div class="relative w-full aspect-video">
               <iframe class="absolute inset-0 w-full h-full" src="https://www.youtube.com/embed/${ytMatch[1]}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>`;
-          }
-          // MP4 / WebM detection
-          else if (/\.(mp4|webm)$/i.test(src)) {
-            media = `<video class="w-full" controls playsinline preload="metadata">
+      }
+      // MP4 / WebM detection
+      else if (/\.(mp4|webm)$/i.test(src)) {
+        media = `<video class="w-full" controls playsinline preload="metadata">
               <source src="${src}" type="video/mp4">
             </video>`;
-          }
-          // Default to Image
-          else {
-            media = `<img class="w-full" src="${src}" alt="${esc(p.title)} image" />`;
-          }
+      }
+      // Default to Image
+      else {
+        media = `<img class="w-full" src="${src}" alt="${esc(p.title)} image" />`;
+      }
 
-          return `
+      return `
         <figure>
           ${media}
           ${g.caption ? `<figcaption>${esc(g.caption)}</figcaption>` : ``}
         </figure>`;
-        })
-        .join('');
+    })
+    .join('');
 
-      const hasLinks = p.links && Array.isArray(p.links) && p.links.length > 0;
-      const hasLeftContent = p.year || p.client || p.role || p.Tools;
-      const hasRightContent = p.description || hasLinks;
+  const hasLinks = p.links && Array.isArray(p.links) && p.links.length > 0;
+  const hasLeftContent = p.year || p.client || p.role || p.Tools;
+  const hasRightContent = p.description || hasLinks;
 
-      let infoSection = '';
-      if (hasLeftContent || hasRightContent) {
-        const gridCols = hasLeftContent && hasRightContent ? 'grid-cols-1 md:grid-cols-[200px_1fr]' : 'grid-cols-1';
-        infoSection = `
+  let infoSection = '';
+  if (hasLeftContent || hasRightContent) {
+    const gridCols =
+      hasLeftContent && hasRightContent ? 'grid-cols-1 md:grid-cols-[200px_1fr]' : 'grid-cols-1';
+    infoSection = `
           <section class="mt-12 pt-8 pb-8 border-t border-neutral-200">
             <div class="grid ${gridCols} gap-8 md:gap-12">
-              ${hasLeftContent
-            ? `<div>
+              ${
+                hasLeftContent
+                  ? `<div>
                 <div class="flex flex-col gap-y-4">
-                  ${p.year
-              ? `<div>
+                  ${
+                    p.year
+                      ? `<div>
                       <span class="text-[13px] text-neutral-500">Year</span>
                       <div class="text-[15px] mt-1">${esc(p.year)}</div>
                     </div>`
-              : ''
-            }
-                  ${p.client
-              ? `<div>
+                      : ''
+                  }
+                  ${
+                    p.client
+                      ? `<div>
                       <span class="text-[13px] text-neutral-500">Client</span>
                       <div class="text-[15px] mt-1">${esc(p.client)}</div>
                     </div>`
-              : ''
-            }
-                  ${p.role
-              ? `<div>
+                      : ''
+                  }
+                  ${
+                    p.role
+                      ? `<div>
                       <span class="text-[13px] text-neutral-500">Role</span>
                       <div class="text-[15px] mt-1">${esc(p.role)}</div>
                     </div>`
-              : ''
-            }
-                  ${p.Tools
-              ? `<div>
+                      : ''
+                  }
+                  ${
+                    p.Tools
+                      ? `<div>
                       <span class="text-[13px] text-neutral-500">Tools</span>
                       <div class="text-[15px] mt-1">${esc(p.Tools)}</div>
                     </div>`
-              : ''
-            }
-                  ${p.country || p.flagImage
-              ? `<div>
+                      : ''
+                  }
+                  ${
+                    p.country || p.flagImage
+                      ? `<div>
                       <div class="text-[15px] mt-1">
-                        ${p.flagImage
-                ? `<img src="${esc(p.flagImage)}" class="w-[24px] h-[24px] object-contain" alt="flag">`
-                : p.country === 'India' ? '🇮🇳'
-                  : p.country === 'Malaysia' ? '🇲🇾'
-                    : ''
-              }
+                        ${
+                          p.flagImage
+                            ? `<img src="${esc(
+                                p.flagImage
+                              )}" class="w-[24px] h-[24px] object-contain" alt="flag">`
+                            : p.country === 'India'
+                              ? '🇮🇳'
+                              : p.country === 'Malaysia'
+                                ? '🇲🇾'
+                                : ''
+                        }
                       </div>
                     </div>`
-              : ''
-            }
+                      : ''
+                  }
                 </div>
               </div>`
-            : ''
-          }
-              ${hasRightContent
-            ? `<div class="${hasLeftContent ? '' : 'w-full'}">
-                ${p.description
-              ? `<div class="text-[15px] leading-[1.7] text-neutral-700 mb-0">${Array.isArray(p.description) ? p.description.join('<br>') : esc(p.description)
-              }</div>`
-              : ''
-            }
-                ${hasLinks
-              ? `<div class="${p.description ? 'mt-4' : ''} space-y-2">
+                  : ''
+              }
+              ${
+                hasRightContent
+                  ? `<div class="${hasLeftContent ? '' : 'w-full'}">
+                ${
+                  p.description
+                    ? `<div class="text-[15px] leading-[1.7] text-neutral-700 mb-0">${
+                        Array.isArray(p.description) ? p.description.join('<br>') : esc(p.description)
+                      }</div>`
+                    : ''
+                }
+                ${
+                  hasLinks
+                    ? `<div class="${p.description ? 'mt-4' : ''} space-y-2">
                   ${p.links
-                .map(
-                  (link) =>
-                    `<a href="${esc(link.url)}" target="_blank" rel="noopener" class="text-[14px] text-neutral-600 hover:text-neutral-900" style="text-decoration:underline">${esc(
-                      link.label || link.url
-                    )}</a>`
-                )
-                .join('<br>')}
+                    .map(
+                      (link) =>
+                        `<a href="${esc(
+                          link.url
+                        )}" target="_blank" rel="noopener" class="text-[14px] text-neutral-600 hover:text-neutral-900" style="text-decoration:underline">${esc(
+                          link.label || link.url
+                        )}</a>`
+                    )
+                    .join('<br>')}
                 </div>`
-              : ''
-            }
+                    : ''
+                }
               </div>`
-            : ''
-          }
+                  : ''
+              }
             </div>
           </section>
         `;
-      }
+  }
 
-      return `
+  return `
         <div class="flex items-center justify-between">
           <a href="#/" class="text-[14px] text-neutral-600 hover:text-neutral-900" style="text-decoration:none">
             ← Back to Archive
@@ -172,7 +196,11 @@
         </div>
         <article class="mt-3">
           <h1 class="text-[30px] md:text-[40px] font-semibold tracking-tight">${esc(p.title)}</h1>
-          ${p.summary ? `<p class="mt-2 text-[16px] leading-[1.7] text-neutral-700">${esc(p.summary)}</p>` : ``}
+          ${
+            p.summary
+              ? `<p class="mt-2 text-[16px] leading-[1.7] text-neutral-700">${esc(p.summary)}</p>`
+              : ``
+          }
         </article>
         <section class="mt-6 space-y-6">
           <figure>
@@ -183,200 +211,217 @@
         </section>
         ${infoSection}
       `;
-    }
+}
 
-    const pane = document.getElementById('pane');
-    const desktopList = document.getElementById('projectListDesktop');
-    const menuBtn = document.getElementById('menuBtn');
-    const menuEl = document.getElementById('mobileMenu');
-    const drawerPanel = document.getElementById('drawerPanel');
-    const menuBackdrop = document.getElementById('menuBackdrop');
-    const menuClose = document.getElementById('menuClose');
-    const mobileProjectList = document.getElementById('mobileProjectList');
+const pane = document.getElementById('pane');
+const desktopList = document.getElementById('projectListDesktop');
+const menuBtn = document.getElementById('menuBtn');
+const menuEl = document.getElementById('mobileMenu');
+const drawerPanel = document.getElementById('drawerPanel');
+const menuBackdrop = document.getElementById('menuBackdrop');
+const menuClose = document.getElementById('menuClose');
+const mobileProjectList = document.getElementById('mobileProjectList');
 
-    function toggleMobileHamburger(show) {
-      if (!menuBtn) return;
-      if (show) menuBtn.classList.remove('hidden');
-      else menuBtn.classList.add('hidden');
-    }
+function toggleMobileHamburger(show) {
+  if (!menuBtn) return;
+  if (show) menuBtn.classList.remove('hidden');
+  else menuBtn.classList.add('hidden');
+}
 
-    function openMenu() {
-      if (mobileProjectList) mobileProjectList.innerHTML = listHTML(state.projects);
-      menuEl.classList.remove('hidden');
-      drawerPanel.classList.add('open');
-      menuBtn?.setAttribute('aria-expanded', 'true');
-    }
+function openMenu() {
+  if (mobileProjectList) mobileProjectList.innerHTML = listHTML(state.projects);
+  menuEl.classList.remove('hidden');
+  drawerPanel.classList.add('open');
+  menuBtn?.setAttribute('aria-expanded', 'true');
+}
 
-    function closeMenu() {
-      drawerPanel.classList.remove('open');
-      menuBtn?.setAttribute('aria-expanded', 'false');
-      setTimeout(() => menuEl.classList.add('hidden'), 250);
-    }
+function closeMenu() {
+  drawerPanel.classList.remove('open');
+  menuBtn?.setAttribute('aria-expanded', 'false');
+  setTimeout(() => menuEl.classList.add('hidden'), 250);
+}
 
-    function renderHome() {
-      const items = state.projects;
-      pane.innerHTML = `
+function renderHome() {
+  const items = state.projects;
+  pane.innerHTML = `
         ${gridHTML(items)}
       `;
-      desktopList.innerHTML = listHTML(items);
-      if (mobileProjectList) mobileProjectList.innerHTML = listHTML(items);
-      toggleMobileHamburger(true);
-      window.scrollTo(0, 0);
+  desktopList.innerHTML = listHTML(items);
+  if (mobileProjectList) mobileProjectList.innerHTML = listHTML(items);
+  toggleMobileHamburger(true);
+  window.scrollTo(0, 0);
+}
+
+function renderAbout() {
+  const tpl = document.getElementById('infoTpl');
+  if (tpl) {
+    pane.innerHTML = tpl.innerHTML;
+  } else {
+    pane.innerHTML = '<p>About</p>';
+  }
+  desktopList.innerHTML = listHTML(state.projects);
+  if (mobileProjectList) mobileProjectList.innerHTML = listHTML(state.projects);
+  toggleMobileHamburger(true);
+  pane.scrollTo({ top: 0, behavior: 'instant' });
+}
+
+function renderDetail(slug) {
+  const p = state.projects.find((x) => x.slug === slug);
+  pane.innerHTML = p
+    ? detailHTML(p)
+    : '<p class="text-sm text-neutral-500">Not found.</p>';
+  desktopList.innerHTML = listHTML(state.projects, slug);
+  if (mobileProjectList) mobileProjectList.innerHTML = listHTML(state.projects, slug);
+  toggleMobileHamburger(true);
+  pane.scrollTo({ top: 0, behavior: 'instant' });
+}
+
+function router() {
+  const raw = location.hash || '#/';
+  const m = raw.match(/^#\/(.*)$/);
+  const slug = m ? m[1] : '';
+  if (!slug) {
+    renderHome();
+    closeMenu();
+    return;
+  }
+  if (slug === 'about') {
+    renderAbout();
+    closeMenu();
+    return;
+  }
+
+  const p = state.projects.find((x) => x.slug === slug);
+  if (p && p.locked) {
+    pendingSlug = slug;
+    showLockModal();
+    closeMenu();
+    return;
+  }
+
+  renderDetail(slug);
+  closeMenu();
+}
+
+// Lock Modal Logic
+const lockModal = document.getElementById('lockModal');
+const lockForm = document.getElementById('lockForm');
+const lockInput = document.getElementById('lockInput');
+const lockError = document.getElementById('lockError');
+const lockCancel = document.getElementById('lockCancel');
+const lockCloseX = document.getElementById('lockCloseX');
+
+function showLockModal() {
+  lockModal.classList.add('active');
+  lockInput.value = '';
+  lockError.classList.add('hidden');
+  lockInput.classList.remove('border-red-500');
+  setTimeout(() => lockInput.focus(), 50);
+}
+
+function hideLockModal() {
+  lockModal.classList.remove('active');
+  pendingSlug = null;
+}
+
+lockForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const pwd = lockInput.value;
+  if (pwd === LOCK_PASSWORD) {
+    if (pendingSlug) {
+      renderDetail(pendingSlug);
     }
+    hideLockModal();
+  } else {
+    lockError.classList.remove('hidden');
+    lockInput.classList.add('border-red-500');
+  }
+});
 
-    function renderAbout() {
-      const tpl = document.getElementById('infoTpl');
-      if (tpl) {
-        pane.innerHTML = tpl.innerHTML;
-      } else {
-        pane.innerHTML = '<p>About</p>';
-      }
-      desktopList.innerHTML = listHTML(state.projects);
-      if (mobileProjectList) mobileProjectList.innerHTML = listHTML(state.projects);
-      toggleMobileHamburger(true);
-      pane.scrollTo({ top: 0, behavior: 'instant' });
-    }
+lockInput.addEventListener('input', () => {
+  lockError.classList.add('hidden');
+  lockInput.classList.remove('border-red-500');
+});
 
-    function renderDetail(slug) {
-      const p = state.projects.find((x) => x.slug === slug);
-      pane.innerHTML = p
-        ? detailHTML(p)
-        : '<p class="text-sm text-neutral-500">Not found.</p>';
-      desktopList.innerHTML = listHTML(state.projects, slug);
-      if (mobileProjectList) mobileProjectList.innerHTML = listHTML(state.projects, slug);
-      toggleMobileHamburger(true);
-      pane.scrollTo({ top: 0, behavior: 'instant' });
-    }
+function cancelLock() {
+  hideLockModal();
+  // 홈으로 돌려보내기
+  location.hash = '#/';
+}
 
-    function router() {
-      const raw = location.hash || '#/';
-      const m = raw.match(/^#\/(.*)$/);
-      const slug = m ? m[1] : '';
-      if (!slug) {
-        renderHome();
-        closeMenu();
-        return;
-      }
-      if (slug === 'about') {
-        renderAbout();
-        closeMenu();
-        return;
-      }
+lockCancel.addEventListener('click', cancelLock);
+lockCloseX.addEventListener('click', cancelLock);
 
-      const p = state.projects.find((x) => x.slug === slug);
-      if (p && p.locked) {
-        pendingSlug = slug;
-        showLockModal();
-        closeMenu();
-        return;
-      }
+// 모달 바깥 클릭 시 닫기
+lockModal.addEventListener('click', (e) => {
+  if (e.target === lockModal) {
+    cancelLock();
+  }
+});
 
-      renderDetail(slug);
-      closeMenu();
-    }
+// ESC로 닫기
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && lockModal.classList.contains('active')) {
+    cancelLock();
+  }
+});
 
-    // Lock Modal Logic
-    const lockModal = document.getElementById('lockModal');
-    const lockForm = document.getElementById('lockForm');
-    const lockInput = document.getElementById('lockInput');
-    const lockError = document.getElementById('lockError');
-    const lockCancel = document.getElementById('lockCancel');
-    const lockCloseX = document.getElementById('lockCloseX');
+// init
+const brandLink = document.getElementById('brandLink');
+brandLink.innerHTML =
+  '<img src="assets/icons/1.png" alt="" class="w-[30px] h-[30px] lg:w-4 lg:h-4 inline-block mr-1.5 align-middle -mt-[12px] lg:mt-[-6px]" />Claire Min';
 
-    function showLockModal() {
-      lockModal.classList.add('active');
-      lockInput.value = '';
-      lockError.classList.add('hidden');
-      lockInput.classList.remove('border-red-500');
-      setTimeout(() => lockInput.focus(), 50);
-    }
-
-    function hideLockModal() {
-      lockModal.classList.remove('active');
-      pendingSlug = null;
-    }
-
-    lockForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const pwd = lockInput.value;
-      if (pwd === LOCK_PASSWORD) {
-        if (pendingSlug) {
-          renderDetail(pendingSlug);
-        }
-        hideLockModal();
-      } else {
-        lockError.classList.remove('hidden');
-        lockInput.classList.add('border-red-500');
-      }
-    });
-
-    lockInput.addEventListener('input', () => {
-      lockError.classList.add('hidden');
-      lockInput.classList.remove('border-red-500');
-    });
-
-    function cancelLock() {
-      hideLockModal();
-      // 홈으로 돌려보내기
-      location.hash = '#/';
-    }
-
-    lockCancel.addEventListener('click', cancelLock);
-    lockCloseX.addEventListener('click', cancelLock);
-
-    // 모달 바깥 클릭 시 닫기
-    lockModal.addEventListener('click', (e) => {
-      if (e.target === lockModal) {
-        cancelLock();
-      }
-    });
-
-    // ESC로 닫기
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && lockModal.classList.contains('active')) {
-        cancelLock();
-      }
-    });
-
-    // init
-    const brandLink = document.getElementById('brandLink');
-    brandLink.innerHTML = '<img src="assets/icons/1.png" alt="" class="w-[30px] h-[30px] lg:w-4 lg:h-4 inline-block mr-1.5 align-middle -mt-[12px] lg:mt-[-6px]" />Claire Min';
-    const s = state.site.social || {};
-    (document.getElementById('snsLinkedIn') || {}).href = s.linkedin || '#';
-    (document.getElementById('snsX') || {}).href = s.x || '#';
-    (document.getElementById('snsBehance') || {}).href = s.behance || '#';
-    (document.getElementById('mLinkedIn') || {}).href = s.linkedin || '#';
-    (document.getElementById('mX') || {}).href = s.x || '#';
-    (document.getElementById('mBehance') || {}).href = s.behance || '#';
-    (document.getElementById('desktopCopyright') || {}).textContent = state.site.copyright || '';
-    (document.getElementById('mobileCopyright') || {}).textContent = state.site.copyright || '';
-    if (desktopList) desktopList.innerHTML = listHTML(state.projects);
-    if (mobileProjectList) mobileProjectList.innerHTML = listHTML(state.projects);
-
-    menuBtn?.addEventListener('click', openMenu);
-    menuBackdrop?.addEventListener('click', closeMenu);
-    menuClose?.addEventListener('click', closeMenu);
-
-    window.addEventListener('hashchange', router);
-    window.addEventListener('resize', () => {
-      if ((location.hash || '#/') === '#/') router();
-    });
+// 브랜드 로고 클릭 시 항상 메인으로
+brandLink.addEventListener('click', (e) => {
+  e.preventDefault();
+  if (location.hash !== '#/') {
+    location.hash = '#/';
+  } else {
+    // 이미 메인일 때도 강제로 한 번 리렌더
     router();
+  }
+});
 
-    // Scroll to Top Button (Mobile only)
-    const scrollTopBtn = document.getElementById('scrollTopBtn');
+const s = state.site.social || {};
+(document.getElementById('snsLinkedIn') || {}).href = s.linkedin || '#';
+(document.getElementById('snsX') || {}).href = s.x || '#';
+(document.getElementById('snsBehance') || {}).href = s.behance || '#';
+(document.getElementById('mLinkedIn') || {}).href = s.linkedin || '#';
+(document.getElementById('mX') || {}).href = s.x || '#';
+(document.getElementById('mBehance') || {}).href = s.behance || '#';
+(document.getElementById('desktopCopyright') || {}).textContent =
+  state.site.copyright || '';
+(document.getElementById('mobileCopyright') || {}).textContent =
+  state.site.copyright || '';
 
-    function checkScroll() {
-      const scrolled = window.scrollY > 300;
-      if (scrolled) {
-        scrollTopBtn.classList.add('visible');
-      } else {
-        scrollTopBtn.classList.remove('visible');
-      }
-    }
+if (desktopList) desktopList.innerHTML = listHTML(state.projects);
+if (mobileProjectList) mobileProjectList.innerHTML = listHTML(state.projects);
 
-    window.addEventListener('scroll', checkScroll);
+menuBtn?.addEventListener('click', openMenu);
+menuBackdrop?.addEventListener('click', closeMenu);
+menuClose?.addEventListener('click', closeMenu);
 
-    scrollTopBtn.addEventListener('click', () => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
+window.addEventListener('hashchange', router);
+window.addEventListener('resize', () => {
+  if ((location.hash || '#/') === '#/') router();
+});
+router();
+
+
+// Scroll to Top Button (Mobile only)
+const scrollTopBtn = document.getElementById('scrollTopBtn');
+
+function checkScroll() {
+  const scrolled = window.scrollY > 300;
+  if (scrolled) {
+    scrollTopBtn.classList.add('visible');
+  } else {
+    scrollTopBtn.classList.remove('visible');
+  }
+}
+
+window.addEventListener('scroll', checkScroll);
+
+scrollTopBtn.addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
