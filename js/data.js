@@ -128,7 +128,7 @@ window.PROJECT_DATA = {
         {
             "slug": "Farmsplan-Swine-Feed",
             "country": "India",
-            "flagImage": "assets/icons/india-flag.png",
+            "flagImage": "assets/icons/india.png",
             "title": "Farmsplan Swine Feed",
             "caption": "Package Design",
             "summary": "Strategic Packaging Design Series Visualizing Growth Stages",
@@ -225,7 +225,7 @@ window.PROJECT_DATA = {
         {
             "slug": "Farmsplan-Cattle-Feed",
             "country": "India",
-            "flagImage": "assets/icons/india-flag.png",
+            "flagImage": "assets/icons/india.png",
             "title": "Farmsplan Cattle Feed & Additive",
             "caption": "Packaging Branding",
             "summary": "Integrated Packaging and Kit Design for Indian Market Entry",
@@ -256,7 +256,7 @@ window.PROJECT_DATA = {
         {
             "slug": "Farmsplan-Chicken",
             "country": "Malaysia",
-            "flagImage": "assets/icons/malaysia-flag.png",
+            "flagImage": "assets/icons/malaysia.png",
             "title": "Farmsplan Chicken in Malaysia",
             "caption": "Global Market Launch",
             "summary": "Global Market Launch (Design & Brand Strategy)",
