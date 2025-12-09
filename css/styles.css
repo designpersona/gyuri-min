@@ -5,6 +5,8 @@
 html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior-y: auto !important;
+  /* Force native bounce */
 }
 
 .hover-accent:hover {
@@ -180,8 +182,13 @@ body.mobile-mode #pane {
   height: auto !important;
   overflow: visible !important;
   padding-bottom: 0 !important;
-  min-height: 100vh;
   /* Ensure full height */
+}
+
+/* Ensure global scroll on mobile for P2R */
+html,
+body {
+  overscroll-behavior-y: auto !important;
 }
 
 /* Ensure Main has padding bottom on mobile to avoid footer overlap and give breathing room */
