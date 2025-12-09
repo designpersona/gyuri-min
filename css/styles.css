@@ -5,8 +5,6 @@
 html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overscroll-behavior-y: none;
-  /* Prevent bounce on mobile */
 }
 
 .hover-accent:hover {
