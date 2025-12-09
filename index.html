@@ -560,9 +560,13 @@
   </div>
 
   <!-- Mobile Footer -->
-  <footer class="sm:hidden w-full bg-white/95 backdrop-blur px-5 pt-8 pb-safe border-t border-neutral-200">
-    <div class="mx-auto max-w-screen-sm pb-safe">
-      <div class="flex justify-center gap-6 mb-4">
+  <footer class="lg:hidden w-full bg-white/95 backdrop-blur px-5 pt-8 pb-safe border-t border-neutral-200">
+    <div class="mx-auto max-w-screen-sm pb-safe flex flex-col gap-4">
+      <!-- 1) Copyright First -->
+      <div class="text-center text-[12px] text-neutral-500" id="mobileCopyright"></div>
+
+      <!-- 2) SNS Links Last -->
+      <div class="flex justify-center gap-6">
         <a id="fLinkedIn" class="opacity-50 hover:opacity-100 transition-opacity" target="_blank" rel="noopener">
           <img src="assets/icons/LinkedIn.png" alt="LinkedIn" width="24" height="24" />
         </a>
@@ -573,7 +577,6 @@
           <img src="assets/icons/Behance.png" alt="Behance" width="24" height="24" />
         </a>
       </div>
-      <div class="text-center text-[12px] text-neutral-500" id="mobileCopyright"></div>
     </div>
   </footer>
 
@@ -587,17 +590,21 @@
   <!-- Mobile Menu Drawer -->
   <div id="mobileMenu" class="fixed inset-0 z-50 hidden">
     <button id="menuBackdrop" class="absolute inset-0 bg-black/40" aria-label="Close menu"></button>
-    <div id="drawerPanel" class="absolute right-0 top-0 h-full w-[85%] max-w-sm bg-white p-5 overflow-y-auto drawer">
-      <div class="mb-4 flex items-center justify-end h-[42px] box-border">
-        <!-- Height matched to header button container approximation or adjusted -->
-        <!-- X 버튼 위치 조정: 햄버거 버튼과 위치 동기화 노력 -->
-        <button id="menuClose" class="inline-flex items-center justify-center p-2 text-black" aria-label="Close">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M6 6l12 12M18 6l-12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-          </svg>
-        </button>
+    <div id="drawerPanel"
+      class="absolute right-0 top-0 h-full w-[85%] max-w-sm bg-white p-5 overflow-y-auto drawer shadow-xl">
+      <!-- X 버튼: 절대 위치 (top-4 right-4) -->
+      <button id="menuClose"
+        class="absolute top-4 right-4 inline-flex items-center justify-center p-2 text-black hover:bg-neutral-100 rounded-full transition-colors"
+        aria-label="Close">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M6 6l12 12M18 6l-12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </svg>
+      </button>
+
+      <!-- 상단 여백 확보 후 메뉴 리스트 -->
+      <div class="mt-12">
+        <nav id="mobileProjectList"></nav>
       </div>
-      <nav id="mobileProjectList"></nav>
     </div>
   </div>
   <!-- Lock Modal -->
