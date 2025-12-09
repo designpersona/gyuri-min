@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Work - Claire</title>
   <link rel="icon" href="./assets/icons/favicon.png" sizes="any" />
   <script src="https://cdn.tailwindcss.com"></script>
@@ -509,21 +509,20 @@
 
 <body class="bg-white text-neutral-900">
   <div class="mx-auto max-w-screen-2xl px-4 md:px-6 lg:px-8">
-    <header class="fixed left-0 right-0 top-0 z-40 bg-[var(--accent-orange)]">
+    <header id="mainHeader"
+      class="fixed left-0 right-0 top-0 z-40 bg-[var(--accent-orange)] transition-transform duration-300 pt-[env(safe-area-inset-top)]">
       <div class="mx-auto max-w-screen-2xl px-4 md:px-6 lg:px-8">
-        <div class="flex items-center justify-between py-3 md:py-4">
+        <div class="flex items-center justify-between py-2 md:py-4">
           <div class="flex items-center gap-4">
             <a href="#/" id="brandLink"
               class="font-semibold tracking-tight toplink text-[30px] leading-tight text-neutral-900 lg:text-base"></a>
           </div>
           <div class="flex items-center gap-4 md:gap-5">
-            <a
-              href="#/about"
-              class="toplink text-[30px] leading-tight text-neutral-900 hover:opacity-70 lg:text-sm lg:mt-0 font-medium"
-            >
+            <a href="#/about"
+              class="hidden md:block toplink text-[30px] leading-tight text-neutral-900 hover:opacity-70 lg:text-sm lg:mt-0 font-medium">
               ABOUT
             </a>
-            <nav class="hidden sm:flex items-center gap-5 text-sm text-neutral-900">
+            <nav class="hidden md:flex items-center gap-5 text-sm text-neutral-900">
               <a id="snsLinkedIn" class="toplink hover:opacity-70" target="_blank" rel="noopener">
                 <img src="assets/icons/LinkedIn.png" alt="LinkedIn" width="20" height="20" />
               </a>
@@ -546,18 +545,13 @@
     </header>
 
 
-    <main class="grid grid-cols-1 gap-8 lg:grid-cols-[1fr,300px] lg:h-screen lg:overflow-hidden">
+    <main
+      class="grid grid-cols-1 gap-8 md:grid-cols-[1fr,240px] lg:grid-cols-[1fr,300px] lg:h-screen lg:overflow-hidden">
       <!-- 왼쪽: 콘텐츠 / 갤러리 -->
-      <section
-        id="pane"
-        class="pb-24 pt-24 lg:h-full lg:overflow-y-auto"
-        aria-live="polite"
-      ></section>
+      <section id="pane" class="pb-24 pt-24 lg:h-full lg:overflow-y-auto" aria-live="polite"></section>
 
       <!-- 오른쪽: 데스크톱 메뉴 리스트 -->
-      <aside
-        class="hidden lg:block pb-24 pt-24 lg:h-full lg:overflow-y-auto"
-      >
+      <aside class="hidden md:block pb-24 pt-24 lg:h-full lg:overflow-y-auto">
         <div class="flex h-full flex-col">
           <nav id="projectListDesktop" class="flex-1 pb-24"></nav>
         </div>
@@ -566,10 +560,19 @@
   </div>
 
   <!-- Mobile Footer -->
-  <footer
-    class="sm:hidden fixed bottom-0 left-0 right-0 z-30 bg-white/95 backdrop-blur px-5 py-3 border-t border-neutral-200"
-  >
+  <footer class="sm:hidden w-full bg-white/95 backdrop-blur px-5 py-8 border-t border-neutral-200">
     <div class="mx-auto max-w-screen-sm">
+      <div class="flex justify-center gap-6 mb-4">
+        <a id="fLinkedIn" class="opacity-50 hover:opacity-100 transition-opacity" target="_blank" rel="noopener">
+          <img src="assets/icons/LinkedIn.png" alt="LinkedIn" width="24" height="24" />
+        </a>
+        <a id="fX" class="opacity-50 hover:opacity-100 transition-opacity" target="_blank" rel="noopener">
+          <img src="assets/icons/x.png" alt="X" width="24" height="24" />
+        </a>
+        <a id="fBehance" class="opacity-50 hover:opacity-100 transition-opacity" target="_blank" rel="noopener">
+          <img src="assets/icons/Behance.png" alt="Behance" width="24" height="24" />
+        </a>
+      </div>
       <div class="text-center text-[12px] text-neutral-500" id="mobileCopyright"></div>
     </div>
   </footer>
@@ -585,20 +588,9 @@
   <div id="mobileMenu" class="fixed inset-0 z-50 hidden">
     <button id="menuBackdrop" class="absolute inset-0 bg-black/40" aria-label="Close menu"></button>
     <div id="drawerPanel" class="absolute right-0 top-0 h-full w-[85%] max-w-sm bg-white p-5 overflow-y-auto drawer">
-      <div class="mb-4 flex items-center justify-between">
-        <!-- 모바일 메뉴 상단 SNS 아이콘 -->
-        <div class="flex items-center gap-4 text-sm text-neutral-900">
-          <a id="mLinkedIn" class="toplink hover:text-neutral-900" target="_blank" rel="noopener">
-            <img src="assets/icons/LinkedIn.png" alt="LinkedIn" width="28" height="28" />
-          </a>
-          <a id="mX" class="toplink hover:text-neutral-900" target="_blank" rel="noopener">
-            <img src="assets/icons/x.png" alt="X" width="30" height="30" />
-          </a>
-          <a id="mBehance" class="toplink hover:text-neutral-900" target="_blank" rel="noopener">
-            <img src="assets/icons/Behance.png" alt="Behance" width="30" height="30" />
-          </a>
-        </div>
-  
+      <div class="mb-4 flex items-center justify-end">
+
+
         <!-- X 버튼 (조금 크게) -->
         <button id="menuClose" class="inline-flex items-center justify-center p-2" aria-label="Close">
           <svg width="40" height="40" viewBox="0 0 30 30" fill="none" aria-hidden="true">
