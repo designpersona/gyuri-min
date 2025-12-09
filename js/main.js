@@ -2,8 +2,7 @@
 const LOCK_PASSWORD = '1234'; // ✅ 여기서만 비밀번호 바꾸면 됨
 
 // Parse embedded JSON data
-const jsonEl = document.getElementById('projectsData');
-const DATA = JSON.parse(jsonEl.textContent);
+const DATA = window.PROJECT_DATA;
 const state = { site: DATA.site, projects: DATA.projects };
 let pendingSlug = null;
 
@@ -196,16 +195,9 @@ const mobileProjectList = document.getElementById('mobileProjectList');
 
 // Mobile Mode Logic
 function updateLayoutMode() {
-  // Use 1024px (lg) as the split-view threshold.
-  // iPad (768px) is tablet but not split-view, so it falls into 'mobile/single column' logic for main pane?
-  // User asked for iPad menu visibility. That is CSS (hidden md:block).
-  // Here we just toggle the "mobile-mode" for scroll behavior purposes.
-  // If we want iPad to behave like desktop (split scroll), this should be < 1024.
-  // If we want iPad to behave like mobile (window scroll), it stays < 1024.
-  // Requirement 4 said "Mobile (main or pane) ... internal scroll disabled".
-  // Let's keep 1024 as the break point for "Split View".
-  // iPad Portrait (768-1023) should be treated as "Desktop-like" (Split View) per user request.
-  // So we lower the mobile-mode threshold to 768px.
+  // Update layout mode based on window width
+  // < 768px: Mobile mode behaviors
+  // >= 768px: Desktop/Split-view behaviors (including iPad Portrait)
   if (window.innerWidth < 768) {
     document.body.classList.add('mobile-mode');
   } else {
@@ -243,17 +235,9 @@ function renderHome() {
   if (mobileProjectList) mobileProjectList.innerHTML = listHTML(items);
   toggleMobileHamburger(true);
 
-  if (mobileProjectList) mobileProjectList.innerHTML = listHTML(items);
-  toggleMobileHamburger(true);
 
-  // Scroll Reset (Smooth for Home per user request "Claire Min logic")
-  // But initial load should be instant? 
-  // User said "Home move -> scrollTo smooth".
-  // Let's check window.isBrandClick or just default smooth for home?
-  // "Router load -> Scroll smooth" might be annoying if it's initial load.
-  // But strict requirement says "Claire Min click -> smooth".
-  // If we just navigated, let's allow browser default or verify.
-  // User logic suggestion: "router -> renderHome -> window.scrollTo({top:0, behavior:'smooth'})"
+
+  // Reset scroll to top with smooth animation when rendering home
   window.scrollTo({ top: 0, behavior: "smooth" });
   pane.scrollTo({ top: 0, behavior: "auto" }); // Pane reset instant
 
@@ -287,8 +271,7 @@ function renderDetail(slug) {
   if (mobileProjectList) mobileProjectList.innerHTML = listHTML(state.projects, slug);
   toggleMobileHamburger(true);
 
-  if (mobileProjectList) mobileProjectList.innerHTML = listHTML(state.projects, slug);
-  toggleMobileHamburger(true);
+
 
   // Scroll Reset
   pane.scrollTo({ top: 0, behavior: "auto" });
@@ -390,7 +373,6 @@ const brandLink = document.getElementById('brandLink');
 brandLink.innerHTML = '<img src="assets/icons/1.png" alt="" class="w-[30px] h-[30px] lg:w-4 lg:h-4 inline-block mr-1.5 align-middle -mt-[12px] lg:mt-[-6px]" />Claire Min';
 
 // Brand Link Smooth Scroll
-// Brand Link Smooth Scroll
 brandLink.addEventListener('click', (e) => {
   e.preventDefault();
 
@@ -461,8 +443,6 @@ let ticking = false;
 
 function updateHeader() {
   const currentY = window.scrollY;
-  // const mainHeader = document.getElementById('mainHeader'); // Global
-
   if (mainHeader) {
     // Logic: Hide on Down, Show on Up (Immediate)
     if (currentY > lastY && currentY > 10) {
@@ -494,7 +474,7 @@ window.addEventListener("scroll", () => {
 }, { passive: true });
 
 // Add scroll listener
-// checkScroll replaced by inline listener above
+
 
 scrollTopBtn.addEventListener('click', () => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
