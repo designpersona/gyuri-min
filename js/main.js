@@ -393,12 +393,16 @@ brandLink.innerHTML = '<img src="assets/icons/1.png" alt="" class="w-[30px] h-[3
 // Brand Link Smooth Scroll
 brandLink.addEventListener('click', (e) => {
   e.preventDefault();
-  // Always smooth scroll to top
-  window.scrollTo({ top: 0, behavior: "smooth" });
 
+  // Navigate if needed
   if (location.hash !== '#/' && location.hash !== '') {
-    location.hash = '#/';
+    window.location.hash = '#/';
   }
+
+  // Force scroll after logic (User requested setTimeout for stability)
+  setTimeout(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, 30);
 });
 const s = state.site.social || {};
 (document.getElementById('snsLinkedIn') || {}).href = s.linkedin || '#';
