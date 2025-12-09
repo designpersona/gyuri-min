@@ -433,33 +433,34 @@ const mainHeader = document.getElementById('mainHeader');
 
 function checkScroll() {
   const currentScrollY = window.scrollY;
-  const scrolled = currentScrollY > 300;
+  const width = window.innerWidth;
 
-  if (scrolled) {
+  // Scroll Top Button Logic
+  if (currentScrollY > 300) {
     scrollTopBtn.classList.add('visible');
   } else {
     scrollTopBtn.classList.remove('visible');
   }
 
-  // Header Slide Logic (Mobile Only)
-  // "Hide on scroll down, show on scroll up" - Only if width < 1024
-  if (window.innerWidth < 1024 && currentScrollY > 50) {
-    if (currentScrollY > lastScrollY) {
+  // Header Slide Logic (Mobile/iPad Portrait Only)
+  if (width < 1024) {
+    if (currentScrollY > 50 && currentScrollY > lastScrollY) {
       // Scroll Down -> Hide
-      mainHeader?.classList.add('header-hidden');
+      if (mainHeader) mainHeader.style.transform = 'translateY(-100%)';
     } else {
       // Scroll Up -> Show
-      mainHeader?.classList.remove('header-hidden');
+      if (mainHeader) mainHeader.style.transform = 'translateY(0)';
     }
   } else {
-    // Desktop or Top of page -> Always Show
-    mainHeader?.classList.remove('header-hidden');
+    // Desktop: Always Show
+    if (mainHeader) mainHeader.style.transform = 'translateY(0)';
   }
 
   lastScrollY = currentScrollY;
 }
 
-window.addEventListener('scroll', checkScroll);
+// Add scroll listener with passive: true for performance
+window.addEventListener('scroll', checkScroll, { passive: true });
 
 scrollTopBtn.addEventListener('click', () => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
