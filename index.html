@@ -506,6 +506,64 @@
     ]
   }
   </script>
+  <style>
+    /* iPad Portrait: Two-column layout (thumbnails + sidebar) */
+    @media (min-width: 768px) and (max-width: 1023px) and (orientation: portrait) {
+      main {
+        display: grid !important;
+        grid-template-columns: 2fr 1fr !important;
+        /* Left wider / Right narrower */
+        gap: 24px;
+        height: 100vh !important;
+        overflow: hidden !important;
+        padding-bottom: 0 !important;
+      }
+
+      #pane {
+        overflow-y: auto !important;
+        height: 100% !important;
+        padding-bottom: 80px !important;
+        /* Space for content */
+      }
+
+      aside {
+        display: block !important;
+        position: sticky;
+        top: 0;
+        height: 100vh !important;
+        overflow-y: auto;
+        padding-top: env(safe-area-inset-top);
+        padding-bottom: 24px;
+        background: white;
+        z-index: 10;
+      }
+
+      /* Hide mobile footer */
+      footer.lg\:hidden {
+        display: none !important;
+      }
+
+      /* Reset mobile changes on body */
+      body.mobile-mode {
+        overflow: hidden !important;
+        /* Back to app-like scroll */
+      }
+
+      /* Hide Hamburger Menu & Mobile Menu Overlay */
+      #menuBtn {
+        display: none !important;
+      }
+
+      #mobileMenu {
+        display: none !important;
+      }
+
+      /* Force 2-Column Grid for Thumbnails */
+      #pane .grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+    }
+  </style>
 </head>
 
 <body class="bg-white text-neutral-900">
