@@ -196,7 +196,14 @@ const mobileProjectList = document.getElementById('mobileProjectList');
 
 // Mobile Mode Logic
 function updateLayoutMode() {
-  // 1024px matches Tailwind 'lg' breakpoint
+  // Use 1024px (lg) as the split-view threshold.
+  // iPad (768px) is tablet but not split-view, so it falls into 'mobile/single column' logic for main pane?
+  // User asked for iPad menu visibility. That is CSS (hidden md:block).
+  // Here we just toggle the "mobile-mode" for scroll behavior purposes.
+  // If we want iPad to behave like desktop (split scroll), this should be < 1024.
+  // If we want iPad to behave like mobile (window scroll), it stays < 1024.
+  // Requirement 4 said "Mobile (main or pane) ... internal scroll disabled".
+  // Let's keep 1024 as the break point for "Split View".
   if (window.innerWidth < 1024) {
     document.body.classList.add('mobile-mode');
   } else {
@@ -235,9 +242,9 @@ function renderHome() {
   toggleMobileHamburger(true);
 
   if (document.body.classList.contains('mobile-mode')) {
-    window.scrollTo(0, 0);
+    requestAnimationFrame(() => window.scrollTo(0, 0));
   } else {
-    pane.scrollTop = 0;
+    requestAnimationFrame(() => pane.scrollTop = 0);
   }
 }
 
@@ -253,9 +260,9 @@ function renderAbout() {
   toggleMobileHamburger(true);
 
   if (document.body.classList.contains('mobile-mode')) {
-    window.scrollTo(0, 0);
+    requestAnimationFrame(() => window.scrollTo(0, 0));
   } else {
-    pane.scrollTo({ top: 0, behavior: 'instant' });
+    requestAnimationFrame(() => pane.scrollTo({ top: 0, behavior: 'instant' }));
   }
 }
 
@@ -269,11 +276,11 @@ function renderDetail(slug) {
   toggleMobileHamburger(true);
 
   if (document.body.classList.contains('mobile-mode')) {
-    window.scrollTo(0, 0);
+    requestAnimationFrame(() => window.scrollTo(0, 0));
   } else {
     // pane.scrollTo({ top: 0, behavior: 'instant' });
     // Use scrollTop = 0 as requested for stability
-    pane.scrollTop = 0;
+    requestAnimationFrame(() => pane.scrollTop = 0);
   }
 }
 
@@ -428,11 +435,19 @@ function checkScroll() {
 
   // Header Slide Logic (Mobile/All)
   // "Hide on scroll down, show on scroll up"
-  if (currentScrollY > lastScrollY && currentScrollY > 50) {
-    mainHeader?.classList.add('header-hidden');
+  if (currentScrollY > 50) {
+    if (currentScrollY > lastScrollY) {
+      // Scroll Down -> Hide
+      mainHeader?.classList.add('header-hidden');
+    } else {
+      // Scroll Up -> Show
+      mainHeader?.classList.remove('header-hidden');
+    }
   } else {
+    // Top of page -> Show
     mainHeader?.classList.remove('header-hidden');
   }
+
   lastScrollY = currentScrollY;
 }
 
