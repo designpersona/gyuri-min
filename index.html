@@ -4,6 +4,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#ff6a00">
   <title>Work - Claire</title>
   <link rel="icon" href="./assets/icons/favicon.png" sizes="any" />
   <script src="https://cdn.tailwindcss.com"></script>
@@ -591,14 +592,19 @@
     <button id="menuBackdrop" class="absolute inset-0 bg-black/40" aria-label="Close menu"></button>
     <div id="drawerPanel"
       class="absolute right-0 top-0 h-full w-[85%] max-w-sm bg-white p-5 overflow-y-auto drawer shadow-xl">
-      <!-- X 버튼: 절대 위치 (top-4 right-4), Touch Area 48px -->
-      <button id="menuClose"
-        class="absolute top-4 right-4 inline-flex items-center justify-center w-12 h-12 text-black hover:bg-neutral-100 rounded-full transition-colors"
-        aria-label="Close">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M6 6l12 12M18 6l-12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-        </svg>
-      </button>
+      <div class="flex items-center justify-end px-2 pt-4 pb-2 gap-4">
+        <a href="#/about" id="mobileAboutLink" class="text-[20px] font-medium text-neutral-900 leading-none"
+          style="text-decoration:none">
+          ABOUT
+        </a>
+        <button id="menuClose"
+          class="inline-flex items-center justify-center w-12 h-12 text-black hover:bg-neutral-100 rounded-full transition-colors leading-none"
+          aria-label="Close">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M6 6l12 12M18 6l-12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+        </button>
+      </div>
 
       <!-- 상단 여백 확보 후 메뉴 리스트 -->
       <div class="mt-12">
