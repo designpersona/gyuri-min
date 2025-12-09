@@ -402,6 +402,8 @@ brandLink.addEventListener('click', (e) => {
   // Force scroll after logic (User requested setTimeout for stability)
   setTimeout(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
+    const pane = document.getElementById('pane');
+    if (pane) pane.scrollTo({ top: 0, behavior: "smooth" });
   }, 30);
 });
 const s = state.site.social || {};
