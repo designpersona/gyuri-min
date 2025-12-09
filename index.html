@@ -1254,7 +1254,9 @@
     menuClose?.addEventListener('click', closeMenu);
 
     window.addEventListener('hashchange', router);
-
+    window.addEventListener('resize', () => {
+      if ((location.hash || '#/') === '#/') router();
+    });
     router();
 
     // Scroll to Top Button (Mobile only)
