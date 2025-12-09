@@ -157,6 +157,11 @@ figcaption {
 /* --- Added for Mobile UX Improvements --- */
 
 /* Header Slide Up on Scroll */
+/* Header Slide Up on Scroll */
+header#mainHeader {
+  transition: transform 0.25s ease !important;
+}
+
 .header-hidden {
   transform: translateY(-100%) !important;
 }
