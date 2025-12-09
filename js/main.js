@@ -209,8 +209,6 @@ function updateLayoutMode() {
   } else {
     document.body.classList.remove('mobile-mode');
   }
-  // Router check on resize to handle layout shifts if needed
-  if ((location.hash || '#/') === '#/') router();
 }
 window.addEventListener('resize', updateLayoutMode);
 updateLayoutMode();
