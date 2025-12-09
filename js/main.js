@@ -26,19 +26,30 @@ const gridHTML = (items) =>
   `<div class="grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">` +
   items
     .map(
-      (p) => `
+      (p) => {
+        const thumb = esc(p.thumbnail);
+        const isVideo = /\.(mp4|webm|mov)$/i.test(thumb);
+
+        let mediaHtml;
+        if (isVideo) {
+          mediaHtml = `<video class="aspect-square w-full object-cover transition-transform duration-500 group-hover:scale-105" src="${thumb}" autoplay muted loop playsinline></video>`;
+        } else {
+          const isGif = thumb.toLowerCase().endsWith('.gif');
+          mediaHtml = `<img loading="lazy" decoding="async" ${isGif ? 'style="will-change: transform;"' : ''} class="aspect-square w-full object-cover transition-transform duration-500 group-hover:scale-105" src="${thumb}" alt="${esc(p.title)} thumbnail" />`;
+        }
+
+        return `
         <article class="relative group">
           <a href="#/${p.slug}" class="block overflow-hidden relative" style="text-decoration:none">
-            <img loading="lazy" decoding="async" ${esc(p.cover).toLowerCase().endsWith('.gif') ? 'style="will-change: transform;"' : ''} class="aspect-square w-full object-cover transition-transform duration-500 group-hover:scale-105" src="${esc(p.cover)}" alt="${esc(
-        p.title
-      )} thumbnail" />
+            ${mediaHtml}
             ${p.locked ? `<div class="absolute top-0 right-0 bg-black/10 text-white text-[10px] px-3 py-1 uppercase tracking-wider font-medium">Restricted</div>` : ''}
           </a>
           <div class="mt-3">
             <h3 class="text-[15px] font-medium">${esc(p.title)}</h3>
             <p class="text-[13px] text-neutral-500">${esc(p.caption)}</p>
           </div>
-        </article>`
+        </article>`;
+      }
     )
     .join('') +
   `</div>`;
@@ -57,8 +68,8 @@ function detailHTML(p) {
               <iframe class="absolute inset-0 w-full h-full" src="https://www.youtube.com/embed/${ytMatch[1]}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>`;
       }
-      // MP4 / WebM detection
-      else if (/\.(mp4|webm)$/i.test(src)) {
+      // MP4 / WebM / MOV detection
+      else if (/\.(mp4|webm|mov)$/i.test(src)) {
         media = `<video class="w-full" controls playsinline preload="metadata">
               <source src="${src}" type="video/mp4">
             </video>`;
@@ -162,6 +173,16 @@ function detailHTML(p) {
         `;
   }
 
+  // Hero Section Logic
+  const heroSrc = esc(p.cover);
+  const isHeroVideo = /\.(mp4|webm|mov)$/i.test(heroSrc);
+  let heroMedia;
+  if (isHeroVideo) {
+    heroMedia = `<video class="w-full" src="${heroSrc}" autoplay muted loop playsinline></video>`;
+  } else {
+    heroMedia = `<img class="w-full" src="${heroSrc}" alt="${esc(p.title)} hero" />`;
+  }
+
   return `
         <div class="flex items-center justify-between">
           <a href="#/" class="text-[14px] text-neutral-600 hover:text-neutral-900" style="text-decoration:none">
@@ -175,7 +196,7 @@ function detailHTML(p) {
         </article>
         <section class="mt-6 space-y-6">
           <figure>
-            <img class="w-full" src="${esc(p.cover)}" alt="${esc(p.title)} hero" />
+            ${heroMedia}
             <!-- 커버 아래에는 캡션 표시 안 함 -->
           </figure>
           ${gallery}
