@@ -417,9 +417,12 @@ if (mobileProjectList) mobileProjectList.innerHTML = listHTML(state.projects);
 
 updateLayoutMode(); // Ensure mode is set on init
 
+const mobileAboutLink = document.getElementById('mobileAboutLink');
+
 menuBtn?.addEventListener('click', openMenu);
 menuBackdrop?.addEventListener('click', closeMenu);
 menuClose?.addEventListener('click', closeMenu);
+mobileAboutLink?.addEventListener('click', closeMenu);
 
 window.addEventListener('hashchange', router);
 // Resize listener merged into updateLayoutMode
@@ -439,14 +442,14 @@ function checkScroll() {
   if (width < 1024) {
     if (current > lastScrollY && current > 50) {
       // Scroll Down -> Hide
-      if (mainHeader) mainHeader.style.transform = 'translateY(-100%)';
+      if (mainHeader) mainHeader.style.transform = 'translate3d(0, -100%, 0)';
     } else {
       // Scroll Up -> Show
-      if (mainHeader) mainHeader.style.transform = 'translateY(0)';
+      if (mainHeader) mainHeader.style.transform = 'translate3d(0, 0, 0)';
     }
   } else {
     // Desktop -> Always Show
-    if (mainHeader) mainHeader.style.transform = 'translateY(0)';
+    if (mainHeader) mainHeader.style.transform = 'translate3d(0, 0, 0)';
   }
 
   // Scroll Top Button (Show if > 300)
