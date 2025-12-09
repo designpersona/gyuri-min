@@ -5,6 +5,8 @@
 html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior-y: none;
+  /* Prevent bounce on mobile */
 }
 
 .hover-accent:hover {
@@ -159,6 +161,11 @@ figcaption {
   transform: translateY(-100%) !important;
 }
 
+/* Safe Area Utility */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 20px);
+}
+
 /* Mobile Scroll Mode Override */
 /* When body has .mobile-mode, we force default scrolling behavior */
 body.mobile-mode {
@@ -174,7 +181,15 @@ body.mobile-mode main {
 body.mobile-mode #pane {
   height: auto !important;
   overflow: visible !important;
-  padding-bottom: 0 !important; /* Adjust if needed */
+  padding-bottom: 0 !important;
+  min-height: 100vh;
+  /* Ensure full height */
+}
+
+/* Ensure Main has padding bottom on mobile to avoid footer overlap if not using static footer */
+body.mobile-mode main {
+  padding-bottom: 80px;
+  /* Adjust based on footer height */
 }
 
 body.mobile-mode aside {
