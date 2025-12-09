@@ -713,23 +713,7 @@
   </div>
 
   <!-- Mobile Footer -->
-  <footer
-    class="sm:hidden fixed bottom-0 left-0 right-0 z-30 bg-white/95 backdrop-blur px-5 py-3 border-t border-neutral-200">
-    <div class="mx-auto max-w-screen-sm">
-      <div class="flex items-center justify-center gap-5 text-sm text-neutral-600">
-        <a id="mLinkedIn" class="toplink hover:text-neutral-900" target="_blank" rel="noopener">
-          <img src="assets/icons/LinkedIn.png" alt="LinkedIn" width="20" height="20" />
-        </a>
-        <a id="mX" class="toplink hover:text-neutral-900" target="_blank" rel="noopener">
-          <img src="assets/icons/x.png" alt="X" width="20" height="20" />
-        </a>
-        <a id="mBehance" class="toplink hover:text-neutral-900" target="_blank" rel="noopener">
-          <img src="assets/icons/Behance.png" alt="Behance" width="20" height="20" />
-        </a>
-      </div>
-      <div class="mt-2 text-center text-[12px] text-neutral-500" id="mobileCopyright"></div>
-    </div>
-  </footer>
+
 
   <!-- Desktop Footer -->
   <footer class="hidden lg:block fixed bottom-0 left-0 right-0 z-20 bg-white border-t border-neutral-200 py-3 px-8">
@@ -756,7 +740,25 @@
           </svg>
         </button>
       </div>
-      <nav id="mobileProjectList"></nav>
+      <div class="flex flex-col gap-6 p-1">
+        <a href="#/about" class="text-[30px] font-medium leading-none" onclick="closeMenu()">ABOUT</a>
+
+        <div class="flex gap-5">
+          <a id="mLinkedIn" class="toplink hover:opacity-70" target="_blank" rel="noopener">
+            <img src="assets/icons/LinkedIn.png" alt="LinkedIn" width="24" height="24" />
+          </a>
+          <a id="mX" class="toplink hover:opacity-70" target="_blank" rel="noopener">
+            <img src="assets/icons/x.png" alt="X" width="24" height="24" />
+          </a>
+          <a id="mBehance" class="toplink hover:opacity-70" target="_blank" rel="noopener">
+            <img src="assets/icons/Behance.png" alt="Behance" width="24" height="24" />
+          </a>
+        </div>
+
+        <hr class="border-neutral-200" />
+
+        <nav id="mobileProjectList"></nav>
+      </div>
     </div>
   </div>
 
