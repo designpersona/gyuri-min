@@ -30,7 +30,7 @@ const gridHTML = (items) =>
       (p) => `
         <article class="relative group">
           <a href="#/${p.slug}" class="block overflow-hidden relative" style="text-decoration:none">
-            <img loading="lazy" class="aspect-square w-full object-cover transition-transform duration-500 group-hover:scale-105" src="${esc(p.cover)}" alt="${esc(
+            <img loading="lazy" decoding="async" ${esc(p.cover).toLowerCase().endsWith('.gif') ? 'style="will-change: transform;"' : ''} class="aspect-square w-full object-cover transition-transform duration-500 group-hover:scale-105" src="${esc(p.cover)}" alt="${esc(
         p.title
       )} thumbnail" />
             ${p.locked ? `<div class="absolute top-0 right-0 bg-black/10 text-white text-[10px] px-3 py-1 uppercase tracking-wider font-medium">Restricted</div>` : ''}
@@ -66,7 +66,7 @@ function detailHTML(p) {
       }
       // Default to Image
       else {
-        media = `<img loading="lazy" class="w-full" src="${src}" alt="${esc(p.title)} image" />`;
+        media = `<img loading="lazy" decoding="async" class="w-full" src="${src}" alt="${esc(p.title)} image" />`;
       }
 
       return `
@@ -241,13 +241,13 @@ function renderHome() {
   if (mobileProjectList) mobileProjectList.innerHTML = listHTML(items);
   toggleMobileHamburger(true);
 
-  if (document.body.classList.contains('mobile-mode')) {
-    const behavior = window.isBrandClick ? 'smooth' : 'auto';
-    requestAnimationFrame(() => window.scrollTo({ top: 0, behavior }));
-  } else {
-    const behavior = window.isBrandClick ? 'smooth' : 'auto';
-    requestAnimationFrame(() => pane.scrollTo({ top: 0, behavior }));
-  }
+  if (mobileProjectList) mobileProjectList.innerHTML = listHTML(items);
+  toggleMobileHamburger(true);
+
+  // Scroll Reset
+  pane.scrollTo({ top: 0, behavior: "auto" });
+  window.scrollTo({ top: 0, behavior: "smooth" });
+
   window.isBrandClick = false; // Reset flag
 }
 
@@ -278,13 +278,12 @@ function renderDetail(slug) {
   if (mobileProjectList) mobileProjectList.innerHTML = listHTML(state.projects, slug);
   toggleMobileHamburger(true);
 
-  if (document.body.classList.contains('mobile-mode')) {
-    requestAnimationFrame(() => window.scrollTo(0, 0));
-  } else {
-    // pane.scrollTo({ top: 0, behavior: 'instant' });
-    // Use scrollTop = 0 as requested for stability
-    requestAnimationFrame(() => pane.scrollTop = 0);
-  }
+  if (mobileProjectList) mobileProjectList.innerHTML = listHTML(state.projects, slug);
+  toggleMobileHamburger(true);
+
+  // Scroll Reset
+  pane.scrollTo({ top: 0, behavior: "auto" });
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 function router() {
@@ -385,16 +384,10 @@ brandLink.innerHTML = '<img src="assets/icons/1.png" alt="" class="w-[30px] h-[3
 // Brand Link Smooth Scroll
 brandLink.addEventListener('click', (e) => {
   e.preventDefault();
-  if (location.hash === '#/' || location.hash === '') {
-    // Already home, simple scroll
-    if (document.body.classList.contains('mobile-mode')) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else {
-      pane.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  } else {
-    // Navigate to home, then scroll smooth
-    window.isBrandClick = true;
+  window.scrollTo({ top: 0, behavior: "smooth" });
+
+  // Also navigate if not home?
+  if (location.hash !== '#/' && location.hash !== '') {
     location.hash = '#/';
   }
 });
@@ -434,37 +427,31 @@ const scrollTopBtn = document.getElementById('scrollTopBtn');
 let lastScrollY = window.scrollY;
 const mainHeader = document.getElementById('mainHeader');
 
-function checkScroll() {
-  const current = window.pageYOffset || document.documentElement.scrollTop;
-  const width = window.innerWidth;
+let lastY = window.scrollY;
+window.addEventListener("scroll", () => {
+  const currentY = window.scrollY;
+  // const header = document.getElementById("mainHeader"); // already const mainHeader
 
-  // Header Slide (Mobile/iPad Portrait)
-  if (width < 1024) {
-    if (current > lastScrollY && current > 50) {
-      // Scroll Down -> Hide
-      if (mainHeader) mainHeader.style.transform = 'translate3d(0, -100%, 0)';
+  if (mainHeader) {
+    if (currentY > lastY + 5) {
+      mainHeader.style.transform = "translateY(-100%)";
     } else {
-      // Scroll Up -> Show
-      if (mainHeader) mainHeader.style.transform = 'translate3d(0, 0, 0)';
+      mainHeader.style.transform = "translateY(0)";
     }
-  } else {
-    // Desktop -> Always Show
-    if (mainHeader) mainHeader.style.transform = 'translate3d(0, 0, 0)';
   }
 
-  // Scroll Top Button (Show if > 300)
-  if (current > 300) {
-    scrollTopBtn.classList.add('visible');
+  // Scroll Top Button logic (keep existing if needed, or remove? User didn't ask to remove, but provided specific handler code. I'll merge minimal Logic)
+  if (currentY > 300) {
+    if (scrollTopBtn) scrollTopBtn.classList.add('visible');
   } else {
-    scrollTopBtn.classList.remove('visible');
+    if (scrollTopBtn) scrollTopBtn.classList.remove('visible');
   }
 
-  // Update last scroll, prevent negative
-  lastScrollY = current <= 0 ? 0 : current;
-}
+  lastY = currentY;
+}, { passive: true }); // Keep passive: true as it is better.
 
 // Add scroll listener
-window.addEventListener('scroll', checkScroll, { passive: true });
+// checkScroll replaced by inline listener above
 
 scrollTopBtn.addEventListener('click', () => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
