@@ -186,10 +186,10 @@ body.mobile-mode #pane {
   /* Ensure full height */
 }
 
-/* Ensure Main has padding bottom on mobile to avoid footer overlap if not using static footer */
+/* Ensure Main has padding bottom on mobile to avoid footer overlap and give breathing room */
 body.mobile-mode main {
-  padding-bottom: 80px;
-  /* Adjust based on footer height */
+  padding-bottom: 32px !important;
+  /* Requested 32px padding */
 }
 
 body.mobile-mode aside {
