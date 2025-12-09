@@ -1,0 +1,493 @@
+window.PROJECT_DATA = {
+    "site": {
+        "name": "CL",
+        "social": {
+            "linkedin": "https://www.linkedin.com/",
+            "x": "https://x.com/",
+            "behance": "https://www.behance.net/"
+        },
+        "copyright": "SITE CONTENT © Claire 2013-2025. ALL RIGHTS RESERVED."
+    },
+    "projects": [
+        {
+            "slug": "a-ling",
+            "locked": true,
+            "title": "A-Link Project",
+            "caption": "Coming soon...",
+            "summary": "AI Agent-powered career platform designed to facilitate second-career planning",
+            "cover": "assets/projects/A-Ling/cover.jpg",
+            "year": "2025",
+            "client": "Personal Project",
+            "role": "Project Lead",
+            "Tools": "Adobe, Figma",
+            "description": [
+                "<b>The Challenge</b>",
+                "Addressing the critical employment challenges faced by the senior and middle-aged demographic, we aimed to create a recruitment ecosystem that leverages their experience and data to establish a renewed, virtuous cycle.",
+                "<b>My Role & Execution</b>",
+                "As the Project Lead, I managed the entire startup lifecycle, from end-to-end. This included initiating the concept, designing the overall business structure, defining the brand strategy, and successfully delivering the final pitch deck. I collaborated closely with the team to validate core ideas and concretize the platform's vision.",
+                "<b>The Solution</b>",
+                "The result was A-Link, an AI Agent-powered career platform designed to facilitate second-career planning. The platform, driven by the A-Ling AI Agent technology, was intentionally established as a tech brand to bridge the generational gap and connect valuable professional experience.",
+                "<b>Impact</b>",
+                "By ensuring a consistent design across the brand, user experience (UX), and visual communication, A-Link transcended being a mere platform and was successfully positioned as a 'Career Rebranding Partner,' a powerful tool for career transformation."
+            ],
+            "links": [],
+            "gallery": []
+        },
+        {
+            "slug": "park171",
+            "locked": true,
+            "title": "Park171",
+            "caption": "Spatial Branding",
+            "summary": "Transforming 171 parking spaces into a memorable spatial brand identity",
+            "cover": "assets/projects/Park171/cover.jpg",
+            "year": "2025",
+            "client": "Park171",
+            "role": "Brand Designer",
+            "Tools": "Illustrator, Photoshop",
+            "description": [
+                "<b>The Challenge</b>",
+                "The Park171 building branding project transformed the building’s core asset '171 indoor parking spaces' into a memorable visual identity. The focus was on implementing the building's spatial and functional strengths through a logo-centric visual system.",
+                "<b>The Solution</b>",
+                "The logo, inspired by the Park171 name, geometrically interprets images from the automotive environment (Parking, Arrow, Road). Each letter symbolizes parking structure and directionality, while the number 171 conveys 'scale' and 'trust,' clearly defining the brand's identity.",
+                "The primary logo combines a structural form suggestive of a parking space with a road-like design, creating a simple yet distinct impression. The Black and Stone Gray urban palette is accented with Red, Green, and Blue points to enhance signage visibility.",
+                "<b>Impact</b>",
+                "Ultimately, this logo-centric design successfully positioned Park171 beyond just 'a building with good parking,' transforming it into a recognizable spatial brand with strong symbolism."
+            ],
+            "gallery": [
+                { "src": "assets/projects/Park171/1.jpg", "caption": "Logo Design" }
+            ]
+        },
+        {
+            "slug": "farmsplan-deli-cafe",
+            "title": "Farmsplan Deli Café",
+            "caption": "Café Branding",
+            "summary": "Translating Tech Identity into a Tangible Retail Experience",
+            "cover": "assets/projects/FP-Deil/cover.jpg",
+            "year": "2025",
+            "client": "Petit-ours(Collaboration)",
+            "role": "Space & Brand Designer",
+            "Tools": "Illustrator, Photoshop, ChatGPT",
+            "description": [
+                "The Farmsplan Deli Cafe Branding project involved collaborating with an external partner to successfully transplant Farmsplan’s brand identity into a physical space, thereby strengthening trust and brand awareness while preserving the existing store's unique atmosphere.",
+                "We comprehensively designed key touchpoints—including the exterior façade, interior flow (circulation), paper cups, and stickers—creating an environment where visitors could naturally experience the Farmsplan brand.",
+                "The design maintains the existing cafe’s cozy ivory tone while harmoniously incorporating green (symbolizing the freshness and simplicity of Farmsplan Meat) and blue (conveying weight and reliability). This color palette establishes a stable and cohesive brand image.",
+                "The menu concept and product characteristics were instantly recognizable through concise composition and intuitive graphics. Through this process, the livestock technology brand successfully expanded into a brand experience space—a deli café—connecting consumers' daily lives with the brand's core values at this new point of contact."
+            ],
+            "links": [],
+            "gallery": [
+                { "src": "assets/projects/FP-Deil/1.jpg", "caption": " " },
+                { "src": "assets/projects/FP-Deil/2.jpg", "caption": " " }
+            ]
+        },
+        {
+            "slug": "openfarm",
+            "title": "Openfarm : Community Day",
+            "caption": "Event Branding",
+            "summary": "Brand event and seminar for pig farm owners to experience Farmsplan’s technology",
+            "cover": "assets/projects/openfarm/cover.jpg",
+            "year": "2024",
+            "client": "AID",
+            "role": "Event Designer",
+            "Tools": "Illustrator, Photoshop",
+            "description": [
+                "<b>Open Farm Seminar Event</b>",
+                "The ‘Farmsplan Open Farm’ was a brand event held for pig farm owners in the Pocheon region, organized as a seminar and experience zone. It aimed to highlight the importance of establishing healthy breeding environments and allow attendees to directly experience Farmsplan’s technology.",
+                "The event served as a platform to bridge the information gap and activate the community between the first and second generations of farm owners. By showcasing real-world application cases of Farmsplan's services, we strengthened customer trust and expanded the technical value of the brand through a practical, field-friendly experience.",
+                "<b>Open Farm Banner Assets</b>",
+                "For the event, we created a unified design for all visual elements—including on-site booth graphics, banners, and information panels—based on logo typography and 3D graphics. These assets featured motifs inspired by the daily life of pig farmers, farm helpers, the farm environment, and the pigs themselves. This approach successfully conveyed both the professionalism of the technology and a sense of everyday familiarity."
+            ],
+            "links": [],
+            "gallery": [
+                { "src": "assets/projects/openfarm/1.jpg", "caption": "Openfarm Poster" },
+                { "src": "assets/projects/openfarm/2.jpg", "caption": "Openfarm Banner Assets" },
+                { "src": "assets/projects/openfarm/3.jpg", "caption": "Seminar Venue Snapshot" }
+            ]
+        },
+        {
+            "slug": "27-red-brick",
+            "locked": true,
+            "title": "27 Red Brick",
+            "caption": "Café Branding",
+            "summary": "Café Rebranding",
+            "cover": "assets/projects/27RedBrick/cover.gif",
+            "year": "2024",
+            "client": "27 Red Brick",
+            "role": "Art Director",
+            "Tools": "Illustrator, Photoshop, Sora",
+            "description": [
+                "The 27 Red Brick café rebranding project focused on creating a distinctive visual identity that reflects the café's unique character and architectural heritage.",
+                "As Art Director, I led the comprehensive brand identity development, including logo design, color palette selection, and visual system establishment. The design concept draws inspiration from the café's signature red brick architecture, translating the warm, tactile quality of brick into a modern brand language.",
+                "The resulting identity successfully captures the balance between the café's traditional charm and contemporary café culture, creating a memorable brand experience that resonates with customers."
+            ],
+            "links": [],
+            "gallery": [
+                { "src": "assets/projects/27RedBrick/1.jpg", "caption": " " },
+                { "src": "assets/projects/27RedBrick/2.jpg", "caption": " " }
+            ]
+        },
+        {
+            "slug": "Farmsplan-Swine-Feed",
+            "country": "India",
+            "flagImage": "assets/icons/india-flag.png",
+            "title": "Farmsplan Swine Feed",
+            "caption": "Package Design",
+            "summary": "Strategic Packaging Design Series Visualizing Growth Stages",
+            "cover": "assets/projects/FP-SwineFeed/cover.jpg",
+            "year": "2024",
+            "client": "AID India",
+            "role": "Package Designer",
+            "Tools": "Illustrator, Photoshop",
+            "description": [
+                "Following the success of the Cattle Feed and Additive line, we developed the packaging design for the new Hog Feed product series.",
+                "<b>Visual Strategy</b>",
+                "We utilized vibrant, stylized cartoon illustrations depicting the different growth stages of pigs. This approach was chosen to instantly generate interest and significantly improve customer recognition of the specific product within the line.",
+                "<b>Brand Integration & Stability</b>",
+                "To convey stability and brand continuity, the background design subtly features geometric shapes reminiscent of the core Farmsplan symbol. This strategic use of pattern anchors the lively graphics, blending the product's playful appeal with the brand's established professionalism.",
+                "<b>Outcome</b>",
+                "The design successfully balances engaging visual storytelling with clear product identity, ensuring that the Hog Feed range maintains the strong, professional presence required for global market expansion."
+            ],
+            "links": [],
+            "gallery": [
+                { "src": "assets/projects/FP-SwineFeed/1.jpg", "caption": " " },
+                { "src": "assets/projects/FP-SwineFeed/2.jpg", "caption": " " }
+            ]
+        },
+        {
+            "slug": "aid-rebranding",
+            "title": "AID Brand Refresh",
+            "caption": "Corporate Branding",
+            "summary": "Redefining brand identity for sustainable livestock farming based on AI and data technology",
+            "cover": "assets/projects/AID/cover.jpg",
+            "year": "2023",
+            "client": "AID",
+            "role": "Brand Designer(Lead)",
+            "Tools": "Illustrator, Photoshop",
+            "description": [
+                "This project was initiated to redefine the brand identity and global expansion strategy of Korea Livestock Data in a rapidly changing industrial environment. We designed the AID Brand Identity to concretize the vision of 'sustainable livestock farming based on AI and data technology.'",
+                "The design inherited the essence of the existing logo while structurally strengthening its link with the service brand, 'Farmsplan.' We maximized brand recognition by incorporating the symbol's ribbon structure and subtle angle design to signify the connection between technology, livestock, and humanity."
+            ],
+            "links": [],
+            "gallery": [
+                { "src": "assets/projects/AID/1.jpg", "caption": " " },
+                { "src": "assets/projects/AID/2.jpg", "caption": " " },
+                { "src": "assets/projects/AID/3.jpg", "caption": " " },
+                { "src": "assets/projects/AID/4.jpg", "caption": " " }
+            ]
+        },
+        {
+            "slug": "cafe-terrabite",
+            "title": "Terrabite Brand Refresh",
+            "caption": "Cafe Branding",
+            "summary": "Visual Identity Update for Café Brand",
+            "cover": "assets/projects/Terrabite/cover.gif",
+            "year": "2023",
+            "client": "Café Terrabite",
+            "role": "Art Direction & Brand Designer",
+            "Tools": "Illustrator, Photoshop, Sora",
+            "description": [
+                "The Terrabite Rebranding project involved overhauling the visual language so that the brand's mood and story could be naturally felt throughout the store. Based on the brand's meaning—derived from 'Terra' (Earth/Land) and 'Bite' (a single mouthful)—the goal was to sensuously convey the image of fresh ingredients and healthy food and beverages.",
+                "The design centered on the 'Trendy Programmer' concept, which combines 2D illustration with a programming sensibility. The process of creating coffee and food was interpreted as an 'Input–Output' structure, visualizing recipes and cooking procedures as a seamless system.",
+                "Menu boards and posters were newly designed using a Pixel motif and a graphic structure reminiscent of a developer's screen. The contrasting black and mint color palette creates an atmosphere that is both intuitive and highly individualistic."
+            ],
+            "links": [],
+            "gallery": [
+                { "src": "assets/projects/Terrabite/1.jpg", "caption": "Menu Board" },
+                { "src": "assets/projects/Terrabite/2.jpg", "caption": "Promotion Poster" },
+                { "src": "assets/projects/Terrabite/3.jpg", "caption": "Snapshot" }
+            ]
+        },
+        {
+            "slug": "record-of-sea-salt",
+            "title": "Record of Sea : Salt",
+            "caption": "Narrative Packaging Design",
+            "summary": "Elevating Regional Goods through Sensory Narrative and Design",
+            "cover": "assets/projects/ROS/cover.jpg",
+            "year": "2023",
+            "client": "Shinan-gun",
+            "role": "Brand & Package Designer",
+            "Tools": "Illustrator, Photoshop",
+            "description": [
+                "This branding project, \"Record of Sea: Shinan Salt,\" tells the story of Shinan salt's journey from the sea to the table, emphasizing its value as a crystallization of time and nature.",
+                "The brand narrative is inspired by a traveler visiting Shinan's four iconic islands (Hydrangea, Purple, Cockscomb, and Daffodil). Each island's distinct color, scent, and taste are bottled, proposing an experience of 'recording a moment of travel' through the salt.",
+                "<b>Package Design</b>",
+                "The design uses a four-color palette inspired by these islands. Each color reinterprets the island's landscape and organically aligns with the product's flavor and ingredients, strengthening regional identity and sensory experience.",
+                "The packaging adopts a 'Record' format, featuring a clean, organized layout of ingredients, numbering, and text. The minimalist glass bottle allows the salt's natural texture and color to show through, offering a daily reminder of Shinan's purity and its sea."
+            ],
+            "links": [
+                { "label": ">Click here to view article..", "url": "https://www.fntoday.co.kr/news/articleView.html?idxno=308841" }
+            ],
+            "gallery": [
+                { "src": "assets/projects/ROS/1.jpg", "caption": "Leaflet" },
+                { "src": "assets/projects/ROS/2.jpg", "caption": "A complete gift set" },
+                { "src": "assets/projects/ROS/3.jpg", "caption": " " }
+            ]
+        },
+        {
+            "slug": "Farmsplan-Cattle-Feed",
+            "country": "India",
+            "flagImage": "assets/icons/india-flag.png",
+            "title": "Farmsplan Cattle Feed & Additive",
+            "caption": "Packaging Branding",
+            "summary": "Integrated Packaging and Kit Design for Indian Market Entry",
+            "cover": "assets/projects/FP-CattleFeed/cover.jpg",
+            "year": "2023",
+            "client": "AID India",
+            "role": "Package Designer",
+            "Tools": "Illustrator, Photoshop",
+            "description": [
+                "This project utilized 3D modeling elements within the 'Farmsplan Cattle Feed' product line to communicate Farmsplan's technological identity. Visualizing the growth cycle of cattle enhanced product recognition and understanding. By merging Korean technology with an AI-driven design style, we established a distinctive brand experience in the Indian market, creating a strategic basis for expanding into pig and poultry feed lines.",
+                "<br/>",
+                "<b>UNIFIED BRAND KIT FOR THE INDIAN MARKET</b>",
+                "To support global business, we created a consistent brand kit (booths, brochures, packaging). Targeting the Indian market, we combined 3D elements, illustrations, and photography to integrate Farmsplan's technology with Korean design sensibility.",
+                "<b>Exhibitions:</b> Delivered a modern feel and visual immersion, differentiating the brand.",
+                "<b>Brochures:</b> Optimized for clear information and readability.",
+                "<b>Packaging:</b> Actively using the 3D character boosted product trust and brand scalability.",
+                "This kit provides a consistent global brand experience and facilitates integrated asset management."
+            ],
+            "links": [
+                { "label": ">View in BuyKorea", "url": "http://buykorea.org/sh/BvJjyZT" },
+                { "label": ">Click here to view article..", "url": "https://www.pointdaily.co.kr/news/articleView.html?idxno=204648" }
+            ],
+            "gallery": [
+                { "src": "assets/projects/FP-CattleFeed/1.jpg", "caption": "Feed Packaging" },
+                { "src": "assets/projects/FP-CattleFeed/2.jpg", "caption": "Booth Design" }
+            ]
+        },
+        {
+            "slug": "Farmsplan-Chicken",
+            "country": "Malaysia",
+            "flagImage": "assets/icons/malaysia-flag.png",
+            "title": "Farmsplan Chicken in Malaysia",
+            "caption": "Global Market Launch",
+            "summary": "Global Market Launch (Design & Brand Strategy)",
+            "cover": "assets/projects/FP-Chicken/cover.jpg",
+            "year": "2023",
+            "client": "AID Malaysia",
+            "role": "Brand Communication Designer",
+            "Tools": "Illustrator, Photoshop",
+            "description": [
+                "This project was a global launch branding initiative designed to intuitively communicate the distinct nature, quality, and technology-driven differentiation of Farmsplan Chicken in the Malaysian market.",
+                " ",
+                "<b>Farmsplan Chicken (Food Packaging)</b>",
+                "The Farmsplan Chicken product series for the Malaysian market was designed with a focus on comprehensive consistency across the packaging.",
+                "The core black packaging provides a sleek background, while real-life images of Kimchi and Ginseng were applied to the label band to intuitively showcase the product's key selling points. We used contrast between the chicken image and the label colors to effectively attract consumer attention.",
+                " ",
+                "<b>Jaya Grocer & Grab Mart (Store Environment)</b>",
+                "We applied the Tech-based brand mood carried by the Farmsplan 3D character to visually express the connection between technology, solution, and feed quality. The design communicates a virtuous cycle, linking Korean livestock technology and feed ingredients (like Kimchi and Ginseng) to human health. This approach sensuously visualizes the 'healthy flow of nutrition' the brand intends to convey.",
+                " ",
+                "<b>2023 Food and Drink Malaysia by SIAL Exhibition(Marketing)</b>",
+                "We designed the exhibition booth to guide customer understanding by following the brand message flow: Service → Certification → Product → Efficacy → Food.",
+                "<b>Design:</b> We enhanced visibility using the brand's core colors (Green, White, and Black).",
+                "<b>Imagery:</b> Model photography emphasized the clean, healthy image characteristic of the Korean Wave (Hallyu).",
+                "<b>Product Clarity:</b> We utilized the chicken character to clearly distinguish product types, making the otherwise simple food images more engaging and familiar."
+            ],
+            "links": [
+                { "label": ">View in Jayagrocer", "url": "https://klec.jayagrocer.com/products/farmsplan-frozen-chicken-wing-450g?variant=41731762716734" }
+            ],
+            "gallery": [
+                { "src": "assets/projects/FP-Chicken/1.jpg", "caption": "farmsplan® Enzyme" },
+                { "src": "assets/projects/FP-Chicken/2.jpg", "caption": "Booth Design" },
+                { "src": "assets/projects/FP-Chicken/3.jpg", "caption": "" }
+            ]
+        },
+        {
+            "slug": "fp-brand-film",
+            "title": "Farmsplan Promotional Video",
+            "caption": "Brand Film",
+            "summary": "Promotional Video Content for YouTube",
+            "cover": "assets/projects/FP-Film/cover.gif",
+            "year": "2022",
+            "client": "AID",
+            "role": "Illustrator",
+            "Tools": "Illustrator, Photoshop",
+            "description": [
+                "<b>The Solution</b>",
+                "Farmsplan® is a livestock healthcare service utilizing AI-driven monitoring. This promotional video visualizes how the technology tracks livestock health 24/7, reducing labor costs and antibiotic use.",
+                "<b>Role: Illustration & Art Direction</b>",
+                "I was responsible for the entire visual development, transforming the motion designer's rough storyboard sketches into polished, brand-aligned illustrations. I defined the character styles, color palettes, and scene compositions to ensure the video maintained a consistent and premium look.",
+                "<b>Motion Research & Planning</b>",
+                "To bridge the gap between static design and animation, I researched and proposed specific motion styles suitable for the narrative. I provided detailed references and direction on the 'look and feel' for each scene, guiding the motion designer to achieve the desired visual impact."
+            ],
+            "links": [],
+            "gallery": [
+                { "src": "assets/projects/FP-Film/1.jpg", "caption": " " },
+                { "src": "assets/projects/FP-Film/film.mp4", "caption": "Promotional Video" }
+            ]
+        },
+        {
+            "slug": "fp-brand-identity",
+            "title": "Farmsplan Brand Identity",
+            "caption": "Visual System & Guideline",
+            "summary": "Visualizing AI Technology Value for Global Brand Consistency",
+            "cover": "assets/projects/FP-BI/cover.jpg",
+            "year": "2022",
+            "client": "AID",
+            "role": "Brand Designer",
+            "Tools": "Illustrator, Photoshop",
+            "description": [
+                "This Brand Guideline was developed to consolidate Farmsplan’s vision, \"Caring for Livestock with Technology,\" into a unified image, ensuring efficient utilization of brand assets across the organization.",
+                "The design visually manifests the invisible value created by AI convergence technology. The brand palette, featuring nature-symbolizing green, paired with clear typography, establishes a foundation of clarity and trust, conveying fresh vitality.",
+                "The guideline meticulously defines core elements—including color, typography, icon systems, and layout principles—to ensure consistent expression. The system is structured to maintain uniformity across all diverse applications, such as packaging, web interfaces, and stationery.",
+                "The Brand Icons were systematically designed to enable simple and clear recognition of the complex information inherent in the livestock industry. Icons across various sectors operate harmoniously under a unified tone and manner, and their consistent forms enhance the brand’s trustworthiness and usability, offering an intuitive and efficient user experience.",
+                "Through this cohesive identity, Farmsplan moves beyond traditional livestock services. By leveraging technology, the company reinforces its commitment to 'One Health' and sustainable economic viability, firmly establishing its unique identity in the global market."
+            ],
+            "links": [],
+            "gallery": [
+                { "src": "assets/projects/FP-BI/1.jpg", "caption": " " },
+                { "src": "assets/projects/FP-BI/5.webp", "caption": " " },
+                { "src": "assets/projects/FP-BI/9.webp", "caption": " " },
+                { "src": "assets/projects/FP-BI/3D.mp4", "caption": " " },
+                { "src": "assets/projects/FP-BI/7.webp", "caption": " " }
+            ]
+        },
+        {
+            "slug": "gullyjumper-universe",
+            "title": "Gullyjumper Universe",
+            "caption": "Character Branding",
+            "summary": "Visualizing Brand Values for Consumer Trust and Producer Pride",
+            "cover": "assets/projects/Gullyjumper/cover.jpg",
+            "year": "2022",
+            "client": "AID",
+            "role": "Character Designer",
+            "Tools": "Illustrator, Photoshop",
+            "description": [
+                "The online meat market Gullyjumper seeks to refresh the outdated image of the livestock industry by correcting information asymmetry and fostering a virtuous industry cycle.",
+                "The character was created to embody this mission, representing the new generation of young, pioneering farmers innovating in the sector.",
+                "Gullyjumper symbolizes the spirit of challenge and the industry's modern face. The design conveys an authentic, proud farmer who is down-to-earth yet deeply mission-driven.",
+                "Visually, the character uses a strong silhouette and dynamic curves to project persistence, vitality, and forward momentum. The red and green color contrast signifies the necessary balance between freshness (production) and trust (quality).",
+                "Ultimately, the character is more than just a brand element; it serves as the key icon driving a positive industry cycle, building trust with consumers and instilling pride among producers."
+            ],
+            "links": [],
+            "gallery": [
+                { "src": "assets/projects/Gullyjumper/1.jpg", "caption": " " },
+                { "src": "assets/projects/Gullyjumper/2.jpg", "caption": " " }
+            ]
+        },
+        {
+            "slug": "deep-dive-campaign",
+            "title": "Deep Dive Campaign",
+            "caption": "Graphic Design",
+            "summary": "Immersion Organizational Culture Branding",
+            "cover": "assets/projects/DeepDive/mov.gif",
+            "year": "2021",
+            "client": "AID",
+            "role": "Graphic Designer",
+            "Tools": "Illustrator, Photoshop, Sora",
+            "description": [
+                "We designed an organizational culture poster that reinterprets the meaning of 'Immersion' to establish a healthy work culture and foster the creative energy of our team members.",
+                "Instead of viewing immersion merely as a concept of 'concentration,' we structured it into a 'Three-Stage Model of Immersion,' designing it as a clear experiential journey.",
+                "<br/>",
+                "The campaign slogan's three words—Work → Think → Dive—were matched with the corresponding stages of immersion:",
+                "<b>Work</b> represents the 'Moment of Action', engaging the audience through an eye-exam-style visual.",
+                "<b>Think</b> represents the 'Moment of Time', conveying deep contemplation through the visual of a melting clock.",
+                "<b>Dive</b> represents the 'Moment of Experience', visualizing the idea that 'the working moment becomes art' through light illuminating an object."
+            ],
+            "links": [],
+            "gallery": [
+                { "src": "assets/projects/DeepDive/1.jpg", "caption": " " }
+            ]
+        },
+        {
+            "slug": "fresh-chungnam",
+            "title": "Fresh Chungnam E-Catalog",
+            "caption": "Web Design",
+            "summary": "Responsive IA Design for Global Export",
+            "cover": "assets/projects/FreshChungnam/cover.jpg",
+            "year": "2020",
+            "client": "NongHyup(Chungnam)",
+            "role": "Web Designer",
+            "Tools": "Dreamweaver(Html/CSS), Photoshop, Illustrator",
+            "description": [
+                "This website was strategically planned and designed at the request of the National Agricultural Cooperative Federation (NongHyup), Chungcheongnam-do Headquarters, to support local farmers.",
+                "The design streamlined key information such as product features, optimal export periods, and usage recipes—making the content easily digestible for international trade partners.",
+                "I developed a layout and visual system optimized for various devices, ensuring seamless and convenient access to company and product information across desktops, tablets, and mobile phones."
+            ],
+            "links": [],
+            "gallery": [
+                { "src": "assets/projects/FreshChungnam/1.jpg", "caption": " " }
+            ]
+        },
+        {
+            "slug": "siso-fair-2020",
+            "title": "SISO Fair 2020",
+            "caption": "Event Branding",
+            "summary": "Integrated Visual System for Event Experience",
+            "cover": "assets/projects/SISO/cover.jpg",
+            "year": "2019",
+            "client": "Korea Stationery Industry Cooperative",
+            "role": "Brand Experience Designer",
+            "Tools": "Dreamweaver(Html/CSS), Photoshop, Illustrator",
+            "description": [
+                "The SISOFAIR brand identity uses bright sky blue and a character popping from a gift box to project a joyful, energetic event image.",
+                "The Logo utilizes Korean Hangul, ensuring easy recognition and conveying a dynamic feeling, rather than using an English logo. The Brand Icon is simple, intuitive, and designed to clarify the exhibition theme quickly, guiding a seamless user experience. All icons, regardless of their varied shapes, maintain a unified visual identity.",
+                "For Digital Application, the Homepage combines calm deep blue and bright sky blue to balance professionalism and friendliness. The cute character and icons reinforce the fun event atmosphere. Detailed information is available on bulletin board pages. The Mobile environment is fully optimized, offering users a seamless experience consistent with the desktop version."
+            ],
+            "links": [],
+            "gallery": [
+                { "src": "assets/projects/SISO/1.jpg", "caption": " " },
+                { "src": "assets/projects/SISO/2.jpg", "caption": " " },
+                { "src": "assets/projects/SISO/3.jpg", "caption": " " }
+            ]
+        },
+        {
+            "slug": "News-Letter",
+            "title": "News Letter",
+            "caption": "Integrated Digital & Content Design",
+            "summary": "High-Volume Digital Content Implementation",
+            "cover": "assets/projects/News-Letter/cover.jpg",
+            "year": "2018-2021",
+            "client": "KOTRA",
+            "role": "Content Designer",
+            "Tools": "Dreamweaver(Html/CSS), Photoshop, Illustrator",
+            "description": [
+                "This project involved the design and technical implementation of a promotional email campaign aimed at attracting participation for over 200 domestic and international exhibitions, consortia, and industry events.",
+                "<b>Industry-Specific Visual Adaptation:</b>",
+                "Designed targeted banner visuals to accurately reflect the distinct identity and theme of each specific industry or event being promoted.",
+                "<b>High-Volume Content Management:</b>",
+                "Effectively managed the design and production pipeline for a large volume of over 200 unique promotional assets while maintaining strict visual quality and brand standards."
+            ],
+            "links": [],
+            "gallery": [
+            ]
+        },
+        {
+            "slug": "Chabssal-tteogkki",
+            "title": "Chabssal-tteogkki",
+            "caption": "Handmade figure",
+            "summary": "The Sticky Rice Cake Bunny Figure",
+            "cover": "assets/projects/rabbit/cover.jpg",
+            "year": "2015",
+            "client": "Personal Project",
+            "role": "Toy Artist",
+            "Tools": "Sculpey, Acrylic Paint",
+            "description": [
+                "<b>The Chapssal-tteok Rabbit Figure</b>",
+                "Drawing inspiration from the perfectly round and plump form of the Korean glutinous rice cake, this figure is a charming fusion of the rice cake and a rabbit.",
+                "<b>The Story of the Living Rice Cake</b>",
+                "You brought home a rice cake, and it's animated! Due to its comically short legs relative to its body, it spends most of its time simply lying down and posing as an ordinary rice cake. It sometimes vanishes without a trace, and what it's thinking remains a complete mystery. Maybe it's a tiny extraterrestrial from the Sticky Rice Cake galaxy."
+            ],
+            "links": [],
+            "gallery": [
+                { "src": "assets/projects/rabbit/1.jpg", "caption": "Making Of" },
+                { "src": "assets/projects/rabbit/2.jpg", "caption": "Food styling for a character dessert product shot" }
+            ]
+        },
+        {
+            "slug": "ai-robots",
+            "title": "The Next Generation of AI Robots",
+            "caption": "3D Character Design",
+            "summary": "Personality-Driven Robotics",
+            "cover": "assets/projects/AI-Robots/cover.jpg",
+            "year": "2013",
+            "client": "Personal Project",
+            "role": "3D Artist",
+            "Tools": "3D Max, KeyShot, Photoshop",
+            "description": "In the future, the advancement of Artificial Intelligence will allow robots to develop distinct personalities and interact with people in unique ways. Influenced by the game 'Portal', this project involved creating 3D models of robots, each with a different personality, based on the foundation of the human eye.",
+            "links": [],
+            "gallery": [
+                { "src": "assets/projects/AI-Robots/1.jpg", "caption": "The Mechanic" },
+                { "src": "assets/projects/AI-Robots/2.jpg", "caption": "The Observer" }
+            ]
+        }
+    ]
+};
