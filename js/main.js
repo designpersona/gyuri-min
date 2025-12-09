@@ -30,7 +30,7 @@ const gridHTML = (items) =>
       (p) => `
         <article class="relative group">
           <a href="#/${p.slug}" class="block overflow-hidden relative" style="text-decoration:none">
-            <img class="aspect-square w-full object-cover transition-transform duration-500 group-hover:scale-105" src="${esc(p.cover)}" alt="${esc(
+            <img loading="lazy" class="aspect-square w-full object-cover transition-transform duration-500 group-hover:scale-105" src="${esc(p.cover)}" alt="${esc(
         p.title
       )} thumbnail" />
             ${p.locked ? `<div class="absolute top-0 right-0 bg-black/10 text-white text-[10px] px-3 py-1 uppercase tracking-wider font-medium">Restricted</div>` : ''}
@@ -66,7 +66,7 @@ function detailHTML(p) {
       }
       // Default to Image
       else {
-        media = `<img class="w-full" src="${src}" alt="${esc(p.title)} image" />`;
+        media = `<img loading="lazy" class="w-full" src="${src}" alt="${esc(p.title)} image" />`;
       }
 
       return `
@@ -209,6 +209,8 @@ function updateLayoutMode() {
   } else {
     document.body.classList.remove('mobile-mode');
   }
+  // Router check on resize to handle layout shifts if needed
+  if ((location.hash || '#/') === '#/') router();
 }
 window.addEventListener('resize', updateLayoutMode);
 updateLayoutMode();
@@ -242,10 +244,13 @@ function renderHome() {
   toggleMobileHamburger(true);
 
   if (document.body.classList.contains('mobile-mode')) {
-    requestAnimationFrame(() => window.scrollTo(0, 0));
+    const behavior = window.isBrandClick ? 'smooth' : 'auto';
+    requestAnimationFrame(() => window.scrollTo({ top: 0, behavior }));
   } else {
-    requestAnimationFrame(() => pane.scrollTop = 0);
+    const behavior = window.isBrandClick ? 'smooth' : 'auto';
+    requestAnimationFrame(() => pane.scrollTo({ top: 0, behavior }));
   }
+  window.isBrandClick = false; // Reset flag
 }
 
 function renderAbout() {
@@ -379,13 +384,20 @@ const brandLink = document.getElementById('brandLink');
 brandLink.innerHTML = '<img src="assets/icons/1.png" alt="" class="w-[30px] h-[30px] lg:w-4 lg:h-4 inline-block mr-1.5 align-middle -mt-[12px] lg:mt-[-6px]" />Claire Min';
 
 // Brand Link Smooth Scroll
+// Brand Link Smooth Scroll
 brandLink.addEventListener('click', (e) => {
   e.preventDefault();
-  location.hash = '#/';
-  if (document.body.classList.contains('mobile-mode')) {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (location.hash === '#/' || location.hash === '') {
+    // Already home, simple scroll
+    if (document.body.classList.contains('mobile-mode')) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      pane.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   } else {
-    pane.scrollTo({ top: 0, behavior: 'smooth' });
+    // Navigate to home, then scroll smooth
+    window.isBrandClick = true;
+    location.hash = '#/';
   }
 });
 const s = state.site.social || {};
@@ -412,9 +424,7 @@ menuBackdrop?.addEventListener('click', closeMenu);
 menuClose?.addEventListener('click', closeMenu);
 
 window.addEventListener('hashchange', router);
-window.addEventListener('resize', () => {
-  if ((location.hash || '#/') === '#/') router();
-});
+// Resize listener merged into updateLayoutMode
 router();
 
 // Scroll to Top Button (Mobile only)
