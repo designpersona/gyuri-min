@@ -204,7 +204,9 @@ function updateLayoutMode() {
   // If we want iPad to behave like mobile (window scroll), it stays < 1024.
   // Requirement 4 said "Mobile (main or pane) ... internal scroll disabled".
   // Let's keep 1024 as the break point for "Split View".
-  if (window.innerWidth < 1024) {
+  // iPad Portrait (768-1023) should be treated as "Desktop-like" (Split View) per user request.
+  // So we lower the mobile-mode threshold to 768px.
+  if (window.innerWidth < 768) {
     document.body.classList.add('mobile-mode');
   } else {
     document.body.classList.remove('mobile-mode');
