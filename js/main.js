@@ -427,28 +427,56 @@ const scrollTopBtn = document.getElementById('scrollTopBtn');
 let lastScrollY = window.scrollY;
 const mainHeader = document.getElementById('mainHeader');
 
+// 1. Force Scroll to Top on Load & Reload (Mobile P2R / bfcache support)
+window.onbeforeunload = function () {
+  window.scrollTo(0, 0);
+};
+
+window.addEventListener('pageshow', (event) => {
+  if (event.persisted) {
+    // bfcache restore
+    window.scrollTo(0, 0);
+    // Force reload if needed, but scrollTo(0,0) usually sufficient
+  }
+});
+
+// 2. Optimized Scroll Listener (rAF based for Safari 60fps)
 let lastY = window.scrollY;
-window.addEventListener("scroll", () => {
+let ticking = false;
+
+function updateHeader() {
   const currentY = window.scrollY;
-  // const header = document.getElementById("mainHeader"); // already const mainHeader
+  // const mainHeader = document.getElementById('mainHeader'); // Global
 
   if (mainHeader) {
-    if (currentY > lastY + 5) {
-      mainHeader.style.transform = "translateY(-100%)";
+    // Logic: Hide on Down, Show on Up (Immediate)
+    if (currentY > lastY && currentY > 10) {
+      // Scroll Down -> Hide
+      // Use translate3d for GPU
+      mainHeader.style.transform = "translate3d(0, -100%, 0)";
     } else {
-      mainHeader.style.transform = "translateY(0)";
+      // Scroll Up -> Show
+      mainHeader.style.transform = "translate3d(0, 0, 0)";
     }
   }
 
-  // Scroll Top Button logic (keep existing if needed, or remove? User didn't ask to remove, but provided specific handler code. I'll merge minimal Logic)
+  // Scroll Top Button Logic
   if (currentY > 300) {
     if (scrollTopBtn) scrollTopBtn.classList.add('visible');
   } else {
     if (scrollTopBtn) scrollTopBtn.classList.remove('visible');
   }
 
-  lastY = currentY;
-}, { passive: true }); // Keep passive: true as it is better.
+  lastY = currentY > 0 ? currentY : 0; // Prevent negative
+  ticking = false;
+}
+
+window.addEventListener("scroll", () => {
+  if (!ticking) {
+    window.requestAnimationFrame(updateHeader);
+    ticking = true;
+  }
+}, { passive: true });
 
 // Add scroll listener
 // checkScroll replaced by inline listener above
