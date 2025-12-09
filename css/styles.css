@@ -1,153 +1,184 @@
 :root {
-      --accent-orange: #ff6a00;
-    }
+  --accent-orange: #ff6a00;
+}
 
-    html {
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
-    .hover-accent:hover {
-      color: var(--accent-orange);
-    }
+.hover-accent:hover {
+  color: var(--accent-orange);
+}
 
-    .toplink {
-      text-decoration: none !important;
-      border-bottom: 0 !important;
-    }
+.toplink {
+  text-decoration: none !important;
+  border-bottom: 0 !important;
+}
 
-    .menu-list li {
-      border-top: 1px solid #000;
-      border-bottom: 1px solid #000;
-      margin-top: -1px;
-      padding-top: 0.5rem;
-      padding-bottom: 0.5rem;
-      transition: border-color 0.2s ease;
-      position: relative;
-    }
+.menu-list li {
+  border-top: 1px solid #000;
+  border-bottom: 1px solid #000;
+  margin-top: -1px;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  transition: border-color 0.2s ease;
+  position: relative;
+}
 
-    .menu-list li:first-child {
-      margin-top: 0;
-    }
+.menu-list li:first-child {
+  margin-top: 0;
+}
 
-    .menu-list li:hover {
-      border-top-color: var(--accent-orange);
-      border-bottom-color: var(--accent-orange);
-      z-index: 10;
-    }
+.menu-list li:hover {
+  border-top-color: var(--accent-orange);
+  border-bottom-color: var(--accent-orange);
+  z-index: 10;
+}
 
-    .menu-list li.active {
-      border-top-color: var(--accent-orange);
-      border-bottom-color: var(--accent-orange);
-      z-index: 10;
-    }
+.menu-list li.active {
+  border-top-color: var(--accent-orange);
+  border-bottom-color: var(--accent-orange);
+  z-index: 10;
+}
 
-    .menu-list li.active a {
-      color: var(--accent-orange);
-    }
+.menu-list li.active a {
+  color: var(--accent-orange);
+}
 
-    .drawer {
-      transform: translateX(100%);
-      transition: transform .25s ease;
-    }
+.drawer {
+  transform: translateX(100%);
+  transition: transform .25s ease;
+}
 
-    .drawer.open {
-      transform: translateX(0);
-    }
+.drawer.open {
+  transform: translateX(0);
+}
 
-    figure {
-      margin: 0;
-    }
+figure {
+  margin: 0;
+}
 
-    figcaption {
-      font-size: 12.5px;
-      color: #666;
-      margin-top: 6px;
-    }
+figcaption {
+  font-size: 12.5px;
+  color: #666;
+  margin-top: 6px;
+}
 
-    /* 스크롤바 숨김 (스크롤은 작동) */
-    *::-webkit-scrollbar {
-      display: none;
-    }
+/* 스크롤바 숨김 (스크롤은 작동) */
+*::-webkit-scrollbar {
+  display: none;
+}
 
-    * {
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-    }
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
 
-    /* Lock Modal */
-    #lockModal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      z-index: 100;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(5px);
-      align-items: center;
-      justify-content: center;
-    }
+/* Lock Modal */
+#lockModal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(5px);
+  align-items: center;
+  justify-content: center;
+}
 
-    #lockModal.active {
-      display: flex;
-    }
+#lockModal.active {
+  display: flex;
+}
 
-    /* Scroll to Top Button */
-    #scrollTopBtn {
-      position: fixed;
-      bottom: 80px;
-      right: 24px;
-      width: 48px;
-      height: 48px;
-      background: #e5e5e5;
-      color: #666;
-      border: none;
-      border-radius: 50%;
-      cursor: pointer;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.3s, visibility 0.3s, transform 0.2s;
-      z-index: 40;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
+/* Scroll to Top Button */
+#scrollTopBtn {
+  position: fixed;
+  bottom: 80px;
+  right: 24px;
+  width: 48px;
+  height: 48px;
+  background: #e5e5e5;
+  color: #666;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s, transform 0.2s;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
 
-    #scrollTopBtn.visible {
-      opacity: 1;
-      visibility: visible;
-    }
+#scrollTopBtn.visible {
+  opacity: 1;
+  visibility: visible;
+}
 
-    #scrollTopBtn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-    }
+#scrollTopBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
 
-    #scrollTopBtn:active {
-      transform: translateY(0);
-    }
+#scrollTopBtn:active {
+  transform: translateY(0);
+}
 
-    @media (min-width: 1024px) {
-      #scrollTopBtn {
-        display: none;
-      }
-    }
+@media (min-width: 1024px) {
+  #scrollTopBtn {
+    display: none;
+  }
+}
 
-    /* Blink Animation */
-    @keyframes blink {
+/* Blink Animation */
+@keyframes blink {
 
-      0%,
-      50%,
-      100% {
-        opacity: 1;
-      }
+  0%,
+  50%,
+  100% {
+    opacity: 1;
+  }
 
-      25%,
-      75% {
-        opacity: 0.3;
-      }
-    }
+  25%,
+  75% {
+    opacity: 0.3;
+  }
+}
 
-    .blink {
-      animation: blink 2s ease-in-out infinite;
-    }
+.blink {
+  animation: blink 2s ease-in-out infinite;
+}
+
+/* --- Added for Mobile UX Improvements --- */
+
+/* Header Slide Up on Scroll */
+.header-hidden {
+  transform: translateY(-100%) !important;
+}
+
+/* Mobile Scroll Mode Override */
+/* When body has .mobile-mode, we force default scrolling behavior */
+body.mobile-mode {
+  overflow-y: auto !important;
+  height: auto !important;
+}
+
+body.mobile-mode main {
+  height: auto !important;
+  overflow: visible !important;
+}
+
+body.mobile-mode #pane {
+  height: auto !important;
+  overflow: visible !important;
+  padding-bottom: 0 !important; /* Adjust if needed */
+}
+
+body.mobile-mode aside {
+  /* Handle aside if visible on mobile/iPad portrait */
+  height: auto !important;
+  overflow: visible !important;
+}
