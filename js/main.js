@@ -432,19 +432,12 @@ let lastScrollY = window.scrollY;
 const mainHeader = document.getElementById('mainHeader');
 
 function checkScroll() {
-  const currentScrollY = window.scrollY;
+  const current = window.pageYOffset || document.documentElement.scrollTop;
   const width = window.innerWidth;
 
-  // Scroll Top Button Logic
-  if (currentScrollY > 300) {
-    scrollTopBtn.classList.add('visible');
-  } else {
-    scrollTopBtn.classList.remove('visible');
-  }
-
-  // Header Slide Logic (Mobile/iPad Portrait Only)
+  // Header Slide (Mobile/iPad Portrait)
   if (width < 1024) {
-    if (currentScrollY > 50 && currentScrollY > lastScrollY) {
+    if (current > lastScrollY && current > 50) {
       // Scroll Down -> Hide
       if (mainHeader) mainHeader.style.transform = 'translateY(-100%)';
     } else {
@@ -452,14 +445,22 @@ function checkScroll() {
       if (mainHeader) mainHeader.style.transform = 'translateY(0)';
     }
   } else {
-    // Desktop: Always Show
+    // Desktop -> Always Show
     if (mainHeader) mainHeader.style.transform = 'translateY(0)';
   }
 
-  lastScrollY = currentScrollY;
+  // Scroll Top Button (Show if > 300)
+  if (current > 300) {
+    scrollTopBtn.classList.add('visible');
+  } else {
+    scrollTopBtn.classList.remove('visible');
+  }
+
+  // Update last scroll, prevent negative
+  lastScrollY = current <= 0 ? 0 : current;
 }
 
-// Add scroll listener with passive: true for performance
+// Add scroll listener
 window.addEventListener('scroll', checkScroll, { passive: true });
 
 scrollTopBtn.addEventListener('click', () => {
