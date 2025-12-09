@@ -433,9 +433,9 @@ function checkScroll() {
     scrollTopBtn.classList.remove('visible');
   }
 
-  // Header Slide Logic (Mobile/All)
-  // "Hide on scroll down, show on scroll up"
-  if (currentScrollY > 50) {
+  // Header Slide Logic (Mobile Only)
+  // "Hide on scroll down, show on scroll up" - Only if width < 1024
+  if (window.innerWidth < 1024 && currentScrollY > 50) {
     if (currentScrollY > lastScrollY) {
       // Scroll Down -> Hide
       mainHeader?.classList.add('header-hidden');
@@ -444,7 +444,7 @@ function checkScroll() {
       mainHeader?.classList.remove('header-hidden');
     }
   } else {
-    // Top of page -> Show
+    // Desktop or Top of page -> Always Show
     mainHeader?.classList.remove('header-hidden');
   }
 
