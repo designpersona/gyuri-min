@@ -7,6 +7,13 @@ html {
   -moz-osx-font-smoothing: grayscale;
   overscroll-behavior-y: auto !important;
   /* Force native bounce */
+  overflow-x: hidden !important;
+  /* Prevent horizontal scroll on iPad */
+}
+
+body {
+  overflow-x: hidden !important;
+  width: 100%;
 }
 
 .hover-accent:hover {
@@ -160,10 +167,16 @@ figcaption {
 /* Header Slide Up on Scroll */
 header#mainHeader {
   transition: transform 0.25s ease !important;
+  width: 100%;
+  left: 0;
+  right: 0;
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  /* Ensure no 100vw issues */
 }
 
 .header-hidden {
-  transform: translateY(-100%) !important;
+  transform: translate3d(0, -100%, 0) !important;
 }
 
 /* Safe Area Utility */
