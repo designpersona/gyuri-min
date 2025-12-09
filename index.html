@@ -519,10 +519,10 @@
           </div>
           <div class="flex items-center gap-4 md:gap-5">
             <a href="#/about"
-              class="hidden md:block toplink text-[30px] leading-tight text-neutral-900 hover:opacity-70 lg:text-sm lg:mt-0 font-medium">
+              class="hidden lg:block toplink text-[30px] leading-tight text-neutral-900 hover:opacity-70 lg:text-sm lg:mt-0 font-medium">
               ABOUT
             </a>
-            <nav class="hidden md:flex items-center gap-5 text-sm text-neutral-900">
+            <nav class="hidden lg:flex items-center gap-5 text-sm text-neutral-900">
               <a id="snsLinkedIn" class="toplink hover:opacity-70" target="_blank" rel="noopener">
                 <img src="assets/icons/LinkedIn.png" alt="LinkedIn" width="20" height="20" />
               </a>
@@ -533,7 +533,7 @@
                 <img src="assets/icons/Behance.png" alt="Behance" width="20" height="20" />
               </a>
             </nav>
-            <button id="menuBtn" class="sm:hidden hidden inline-flex items-center justify-center p-2 text-black"
+            <button id="menuBtn" class="lg:hidden inline-flex items-center justify-center w-12 h-12 text-black -mr-3"
               aria-label="Open menu" aria-controls="mobileMenu" aria-expanded="false">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
@@ -545,13 +545,12 @@
     </header>
 
 
-    <main
-      class="grid grid-cols-1 gap-8 md:grid-cols-[1fr,240px] lg:grid-cols-[1fr,300px] lg:h-screen lg:overflow-hidden">
+    <main class="grid grid-cols-1 gap-8 lg:grid-cols-[1fr,300px] lg:h-screen lg:overflow-hidden">
       <!-- 왼쪽: 콘텐츠 / 갤러리 -->
       <section id="pane" class="pb-24 pt-24 lg:h-full lg:overflow-y-auto" aria-live="polite"></section>
 
-      <!-- 오른쪽: 데스크톱 메뉴 리스트 -->
-      <aside class="hidden md:block pb-24 pt-24 lg:h-full lg:overflow-y-auto">
+      <!-- 오른쪽: 데스크톱 메뉴 리스트 (iPad Landscape 이상) -->
+      <aside class="hidden lg:block pb-24 pt-24 lg:h-full lg:overflow-y-auto">
         <div class="flex h-full flex-col">
           <nav id="projectListDesktop" class="flex-1 pb-24"></nav>
         </div>
@@ -592,9 +591,9 @@
     <button id="menuBackdrop" class="absolute inset-0 bg-black/40" aria-label="Close menu"></button>
     <div id="drawerPanel"
       class="absolute right-0 top-0 h-full w-[85%] max-w-sm bg-white p-5 overflow-y-auto drawer shadow-xl">
-      <!-- X 버튼: 절대 위치 (top-4 right-4) -->
+      <!-- X 버튼: 절대 위치 (top-4 right-4), Touch Area 48px -->
       <button id="menuClose"
-        class="absolute top-4 right-4 inline-flex items-center justify-center p-2 text-black hover:bg-neutral-100 rounded-full transition-colors"
+        class="absolute top-4 right-4 inline-flex items-center justify-center w-12 h-12 text-black hover:bg-neutral-100 rounded-full transition-colors"
         aria-label="Close">
         <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path d="M6 6l12 12M18 6l-12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
