@@ -30,14 +30,10 @@ const gridHTML = (items) =>
       (p) => `
         <article class="relative group">
           <a href="#/${p.slug}" class="block overflow-hidden relative" style="text-decoration:none">
-            <img class="aspect-square w-full object-cover transition-transform duration-500 group-hover:scale-105" src="${esc(
-              p.cover
-            )}" alt="${esc(p.title)} thumbnail" />
-            ${
-              p.locked
-                ? `<div class="absolute top-0 right-0 bg-black/10 text-white text-[10px] px-3 py-1 uppercase tracking-wider font-medium">Restricted</div>`
-                : ''
-            }
+            <img class="aspect-square w-full object-cover transition-transform duration-500 group-hover:scale-105" src="${esc(p.cover)}" alt="${esc(
+        p.title
+      )} thumbnail" />
+            ${p.locked ? `<div class="absolute top-0 right-0 bg-black/10 text-white text-[10px] px-3 py-1 uppercase tracking-wider font-medium">Restricted</div>` : ''}
           </a>
           <div class="mt-3">
             <h3 class="text-[15px] font-medium">${esc(p.title)}</h3>
@@ -55,9 +51,7 @@ function detailHTML(p) {
       let media;
 
       // YouTube detection
-      const ytMatch = src.match(
-        /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/
-      );
+      const ytMatch = src.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
 
       if (ytMatch) {
         media = `<div class="relative w-full aspect-video">
@@ -89,99 +83,81 @@ function detailHTML(p) {
 
   let infoSection = '';
   if (hasLeftContent || hasRightContent) {
-    const gridCols =
-      hasLeftContent && hasRightContent ? 'grid-cols-1 md:grid-cols-[200px_1fr]' : 'grid-cols-1';
+    const gridCols = hasLeftContent && hasRightContent ? 'grid-cols-1 md:grid-cols-[200px_1fr]' : 'grid-cols-1';
     infoSection = `
           <section class="mt-12 pt-8 pb-8 border-t border-neutral-200">
             <div class="grid ${gridCols} gap-8 md:gap-12">
-              ${
-                hasLeftContent
-                  ? `<div>
+              ${hasLeftContent
+        ? `<div>
                 <div class="flex flex-col gap-y-4">
-                  ${
-                    p.year
-                      ? `<div>
+                  ${p.year
+          ? `<div>
                       <span class="text-[13px] text-neutral-500">Year</span>
                       <div class="text-[15px] mt-1">${esc(p.year)}</div>
                     </div>`
-                      : ''
-                  }
-                  ${
-                    p.client
-                      ? `<div>
+          : ''
+        }
+                  ${p.client
+          ? `<div>
                       <span class="text-[13px] text-neutral-500">Client</span>
                       <div class="text-[15px] mt-1">${esc(p.client)}</div>
                     </div>`
-                      : ''
-                  }
-                  ${
-                    p.role
-                      ? `<div>
+          : ''
+        }
+                  ${p.role
+          ? `<div>
                       <span class="text-[13px] text-neutral-500">Role</span>
                       <div class="text-[15px] mt-1">${esc(p.role)}</div>
                     </div>`
-                      : ''
-                  }
-                  ${
-                    p.Tools
-                      ? `<div>
+          : ''
+        }
+                  ${p.Tools
+          ? `<div>
                       <span class="text-[13px] text-neutral-500">Tools</span>
                       <div class="text-[15px] mt-1">${esc(p.Tools)}</div>
                     </div>`
-                      : ''
-                  }
-                  ${
-                    p.country || p.flagImage
-                      ? `<div>
+          : ''
+        }
+                  ${p.country || p.flagImage
+          ? `<div>
                       <div class="text-[15px] mt-1">
-                        ${
-                          p.flagImage
-                            ? `<img src="${esc(
-                                p.flagImage
-                              )}" class="w-[24px] h-[24px] object-contain" alt="flag">`
-                            : p.country === 'India'
-                              ? '🇮🇳'
-                              : p.country === 'Malaysia'
-                                ? '🇲🇾'
-                                : ''
-                        }
+                        ${p.flagImage
+            ? `<img src="${esc(p.flagImage)}" class="w-[24px] h-[24px] object-contain" alt="flag">`
+            : p.country === 'India' ? '🇮🇳'
+              : p.country === 'Malaysia' ? '🇲🇾'
+                : ''
+          }
                       </div>
                     </div>`
-                      : ''
-                  }
+          : ''
+        }
                 </div>
               </div>`
-                  : ''
-              }
-              ${
-                hasRightContent
-                  ? `<div class="${hasLeftContent ? '' : 'w-full'}">
-                ${
-                  p.description
-                    ? `<div class="text-[15px] leading-[1.7] text-neutral-700 mb-0">${
-                        Array.isArray(p.description) ? p.description.join('<br>') : esc(p.description)
-                      }</div>`
-                    : ''
-                }
-                ${
-                  hasLinks
-                    ? `<div class="${p.description ? 'mt-4' : ''} space-y-2">
+        : ''
+      }
+              ${hasRightContent
+        ? `<div class="${hasLeftContent ? '' : 'w-full'}">
+                ${p.description
+          ? `<div class="text-[15px] leading-[1.7] text-neutral-700 mb-0">${Array.isArray(p.description) ? p.description.join('<br>') : esc(p.description)
+          }</div>`
+          : ''
+        }
+                ${hasLinks
+          ? `<div class="${p.description ? 'mt-4' : ''} space-y-2">
                   ${p.links
-                    .map(
-                      (link) =>
-                        `<a href="${esc(
-                          link.url
-                        )}" target="_blank" rel="noopener" class="text-[14px] text-neutral-600 hover:text-neutral-900" style="text-decoration:underline">${esc(
-                          link.label || link.url
-                        )}</a>`
-                    )
-                    .join('<br>')}
+            .map(
+              (link) =>
+                `<a href="${esc(link.url)}" target="_blank" rel="noopener" class="text-[14px] text-neutral-600 hover:text-neutral-900" style="text-decoration:underline">${esc(
+                  link.label || link.url
+                )}</a>`
+            )
+            .join('<br>')}
                 </div>`
-                    : ''
-                }
+          : ''
+        }
               </div>`
-                  : ''
-              }
+        : ''
+      }
             </div>
           </section>
         `;
@@ -196,11 +172,7 @@ function detailHTML(p) {
         </div>
         <article class="mt-3">
           <h1 class="text-[30px] md:text-[40px] font-semibold tracking-tight">${esc(p.title)}</h1>
-          ${
-            p.summary
-              ? `<p class="mt-2 text-[16px] leading-[1.7] text-neutral-700">${esc(p.summary)}</p>`
-              : ``
-          }
+          ${p.summary ? `<p class="mt-2 text-[16px] leading-[1.7] text-neutral-700">${esc(p.summary)}</p>` : ``}
         </article>
         <section class="mt-6 space-y-6">
           <figure>
@@ -221,6 +193,18 @@ const drawerPanel = document.getElementById('drawerPanel');
 const menuBackdrop = document.getElementById('menuBackdrop');
 const menuClose = document.getElementById('menuClose');
 const mobileProjectList = document.getElementById('mobileProjectList');
+
+// Mobile Mode Logic
+function updateLayoutMode() {
+  // 1024px matches Tailwind 'lg' breakpoint
+  if (window.innerWidth < 1024) {
+    document.body.classList.add('mobile-mode');
+  } else {
+    document.body.classList.remove('mobile-mode');
+  }
+}
+window.addEventListener('resize', updateLayoutMode);
+updateLayoutMode();
 
 function toggleMobileHamburger(show) {
   if (!menuBtn) return;
@@ -249,7 +233,12 @@ function renderHome() {
   desktopList.innerHTML = listHTML(items);
   if (mobileProjectList) mobileProjectList.innerHTML = listHTML(items);
   toggleMobileHamburger(true);
-  window.scrollTo(0, 0);
+
+  if (document.body.classList.contains('mobile-mode')) {
+    window.scrollTo(0, 0);
+  } else {
+    pane.scrollTop = 0;
+  }
 }
 
 function renderAbout() {
@@ -262,7 +251,12 @@ function renderAbout() {
   desktopList.innerHTML = listHTML(state.projects);
   if (mobileProjectList) mobileProjectList.innerHTML = listHTML(state.projects);
   toggleMobileHamburger(true);
-  pane.scrollTo({ top: 0, behavior: 'instant' });
+
+  if (document.body.classList.contains('mobile-mode')) {
+    window.scrollTo(0, 0);
+  } else {
+    pane.scrollTo({ top: 0, behavior: 'instant' });
+  }
 }
 
 function renderDetail(slug) {
@@ -273,7 +267,14 @@ function renderDetail(slug) {
   desktopList.innerHTML = listHTML(state.projects, slug);
   if (mobileProjectList) mobileProjectList.innerHTML = listHTML(state.projects, slug);
   toggleMobileHamburger(true);
-  pane.scrollTo({ top: 0, behavior: 'instant' });
+
+  if (document.body.classList.contains('mobile-mode')) {
+    window.scrollTo(0, 0);
+  } else {
+    // pane.scrollTo({ top: 0, behavior: 'instant' });
+    // Use scrollTop = 0 as requested for stability
+    pane.scrollTop = 0;
+  }
 }
 
 function router() {
@@ -368,20 +369,18 @@ window.addEventListener('keydown', (e) => {
 
 // init
 const brandLink = document.getElementById('brandLink');
-brandLink.innerHTML =
-  '<img src="assets/icons/1.png" alt="" class="w-[30px] h-[30px] lg:w-4 lg:h-4 inline-block mr-1.5 align-middle -mt-[12px] lg:mt-[-6px]" />Claire Min';
+brandLink.innerHTML = '<img src="assets/icons/1.png" alt="" class="w-[30px] h-[30px] lg:w-4 lg:h-4 inline-block mr-1.5 align-middle -mt-[12px] lg:mt-[-6px]" />Claire Min';
 
-// 브랜드 로고 클릭 시 항상 메인으로
+// Brand Link Smooth Scroll
 brandLink.addEventListener('click', (e) => {
   e.preventDefault();
-  if (location.hash !== '#/') {
-    location.hash = '#/';
+  location.hash = '#/';
+  if (document.body.classList.contains('mobile-mode')) {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   } else {
-    // 이미 메인일 때도 강제로 한 번 리렌더
-    router();
+    pane.scrollTo({ top: 0, behavior: 'smooth' });
   }
 });
-
 const s = state.site.social || {};
 (document.getElementById('snsLinkedIn') || {}).href = s.linkedin || '#';
 (document.getElementById('snsX') || {}).href = s.x || '#';
@@ -389,13 +388,17 @@ const s = state.site.social || {};
 (document.getElementById('mLinkedIn') || {}).href = s.linkedin || '#';
 (document.getElementById('mX') || {}).href = s.x || '#';
 (document.getElementById('mBehance') || {}).href = s.behance || '#';
-(document.getElementById('desktopCopyright') || {}).textContent =
-  state.site.copyright || '';
-(document.getElementById('mobileCopyright') || {}).textContent =
-  state.site.copyright || '';
+// Footer SNS
+(document.getElementById('fLinkedIn') || {}).href = s.linkedin || '#';
+(document.getElementById('fX') || {}).href = s.x || '#';
+(document.getElementById('fBehance') || {}).href = s.behance || '#';
 
+(document.getElementById('desktopCopyright') || {}).textContent = state.site.copyright || '';
+(document.getElementById('mobileCopyright') || {}).textContent = state.site.copyright || '';
 if (desktopList) desktopList.innerHTML = listHTML(state.projects);
 if (mobileProjectList) mobileProjectList.innerHTML = listHTML(state.projects);
+
+updateLayoutMode(); // Ensure mode is set on init
 
 menuBtn?.addEventListener('click', openMenu);
 menuBackdrop?.addEventListener('click', closeMenu);
@@ -407,17 +410,30 @@ window.addEventListener('resize', () => {
 });
 router();
 
-
 // Scroll to Top Button (Mobile only)
 const scrollTopBtn = document.getElementById('scrollTopBtn');
 
+let lastScrollY = window.scrollY;
+const mainHeader = document.getElementById('mainHeader');
+
 function checkScroll() {
-  const scrolled = window.scrollY > 300;
+  const currentScrollY = window.scrollY;
+  const scrolled = currentScrollY > 300;
+
   if (scrolled) {
     scrollTopBtn.classList.add('visible');
   } else {
     scrollTopBtn.classList.remove('visible');
   }
+
+  // Header Slide Logic (Mobile/All)
+  // "Hide on scroll down, show on scroll up"
+  if (currentScrollY > lastScrollY && currentScrollY > 50) {
+    mainHeader?.classList.add('header-hidden');
+  } else {
+    mainHeader?.classList.remove('header-hidden');
+  }
+  lastScrollY = currentScrollY;
 }
 
 window.addEventListener('scroll', checkScroll);
