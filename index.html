@@ -539,17 +539,22 @@
         z-index: 10;
       }
 
-      /* Footer Restore: Fixed at bottom */
-      footer.lg\:hidden {
+      /* Footer Toggle: iPad Portrait uses DESKTOP footer */
+      .mobile-footer {
+        display: none !important;
+      }
+
+      .desktop-footer {
         display: block !important;
         position: fixed;
         bottom: 0;
         left: 0;
         right: 0;
         z-index: 50;
-        padding-bottom: calc(env(safe-area-inset-bottom) + 20px) !important;
+        width: 100%;
         background-color: rgba(255, 255, 255, 0.95);
         border-top: 1px solid #e5e5e5;
+        padding-bottom: calc(env(safe-area-inset-bottom) + 10px) !important;
       }
 
       /* Reset mobile changes on body */
@@ -647,7 +652,7 @@
   </div>
 
   <!-- Mobile Footer -->
-  <footer class="lg:hidden w-full bg-white/95 backdrop-blur px-5 pt-8 border-t border-neutral-200 pb-safe"
+  <footer class="mobile-footer lg:hidden w-full bg-white/95 backdrop-blur px-5 pt-8 border-t border-neutral-200 pb-safe"
     style="padding-bottom: calc(env(safe-area-inset-bottom) + 40px); margin-bottom: 0;">
     <div class="mx-auto max-w-screen-sm flex flex-col gap-4">
       <!-- 1) Copyright First -->
@@ -669,7 +674,8 @@
   </footer>
 
   <!-- Desktop Footer -->
-  <footer class="hidden lg:block fixed bottom-0 left-0 right-0 z-20 bg-white border-t border-neutral-200 py-3 px-8">
+  <footer
+    class="desktop-footer hidden lg:block fixed bottom-0 left-0 right-0 z-20 bg-white border-t border-neutral-200 py-3 px-8">
     <div class="mx-auto max-w-screen-2xl text-center text-[12px] text-neutral-500">
       <span id="desktopCopyright"></span>
     </div>
