@@ -188,8 +188,8 @@ body.mobile-mode #pane {
 
 /* Ensure Main has padding bottom on mobile to avoid footer overlap and give breathing room */
 body.mobile-mode main {
-  padding-bottom: 32px !important;
-  /* Requested 32px padding */
+  padding-bottom: 60px !important;
+  /* Requested 40-60px padding */
 }
 
 body.mobile-mode aside {
