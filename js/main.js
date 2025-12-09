@@ -246,9 +246,16 @@ function renderHome() {
   if (mobileProjectList) mobileProjectList.innerHTML = listHTML(items);
   toggleMobileHamburger(true);
 
-  // Scroll Reset
-  pane.scrollTo({ top: 0, behavior: "auto" });
+  // Scroll Reset (Smooth for Home per user request "Claire Min logic")
+  // But initial load should be instant? 
+  // User said "Home move -> scrollTo smooth".
+  // Let's check window.isBrandClick or just default smooth for home?
+  // "Router load -> Scroll smooth" might be annoying if it's initial load.
+  // But strict requirement says "Claire Min click -> smooth".
+  // If we just navigated, let's allow browser default or verify.
+  // User logic suggestion: "router -> renderHome -> window.scrollTo({top:0, behavior:'smooth'})"
   window.scrollTo({ top: 0, behavior: "smooth" });
+  pane.scrollTo({ top: 0, behavior: "auto" }); // Pane reset instant
 
   window.isBrandClick = false; // Reset flag
 }
@@ -386,9 +393,9 @@ brandLink.innerHTML = '<img src="assets/icons/1.png" alt="" class="w-[30px] h-[3
 // Brand Link Smooth Scroll
 brandLink.addEventListener('click', (e) => {
   e.preventDefault();
+  // Always smooth scroll to top
   window.scrollTo({ top: 0, behavior: "smooth" });
 
-  // Also navigate if not home?
   if (location.hash !== '#/' && location.hash !== '') {
     location.hash = '#/';
   }
