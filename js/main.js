@@ -12,12 +12,18 @@ const listHTML = (items, activeSlug = null) =>
   `<ul class="menu-list text-[30px] leading-[1.2] font-medium">` +
   items
     .map(
-      (p) => `
+      (p) => {
+        let clarityAttr = '';
+        if (p.slug === 'fp-brand-identity') clarityAttr = 'data-clarity="project_farmsplan_brand_identity_click"';
+        if (p.slug === 'Chabssal-tteogkki') clarityAttr = 'data-clarity="project_chabssal_tteokki_click"';
+
+        return `
         <li class="py-2 ${p.slug === activeSlug ? 'active' : ''}">
-          <a class="block w-fit pb-1 hover-accent" style="text-decoration:none" href="#/${p.slug}">
+          <a class="block w-fit pb-1 hover-accent" style="text-decoration:none" href="#/${p.slug}" ${clarityAttr}>
             ${esc(p.title)}
           </a>
-        </li>`
+        </li>`;
+      }
     )
     .join('') +
   `</ul>`;
@@ -38,9 +44,13 @@ const gridHTML = (items) =>
           mediaHtml = `<img loading="lazy" decoding="async" ${isGif ? 'style="will-change: transform;"' : ''} class="aspect-square w-full object-cover transition-transform duration-500 group-hover:scale-105" src="${thumb}" alt="${esc(p.title)} thumbnail" />`;
         }
 
+        let clarityAttr = '';
+        if (p.slug === 'fp-brand-identity') clarityAttr = 'data-clarity="project_farmsplan_brand_identity_click"';
+        if (p.slug === 'Chabssal-tteogkki') clarityAttr = 'data-clarity="project_chabssal_tteokki_click"';
+
         return `
         <article class="relative group">
-          <a href="#/${p.slug}" class="block overflow-hidden relative" style="text-decoration:none">
+          <a href="#/${p.slug}" class="block overflow-hidden relative" style="text-decoration:none" ${clarityAttr}>
             ${mediaHtml}
             ${p.locked ? `<div class="absolute top-0 right-0 bg-black/10 text-white text-[10px] px-3 py-1 uppercase tracking-wider font-medium">Restricted</div>` : ''}
           </a>
@@ -157,7 +167,7 @@ function detailHTML(p) {
                   ${p.links
             .map(
               (link) =>
-                `<a href="${esc(link.url)}" target="_blank" rel="noopener" class="text-[14px] text-neutral-600 hover:text-neutral-900" style="text-decoration:underline">${esc(
+                `<a href="${esc(link.url)}" target="_blank" rel="noopener" data-clarity="external_link_click" class="text-[14px] text-neutral-600 hover:text-neutral-900" style="text-decoration:underline">${esc(
                   link.label || link.url
                 )}</a>`
             )
