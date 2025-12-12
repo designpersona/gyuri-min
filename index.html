@@ -11,33 +11,14 @@
   <link rel="stylesheet" href="css/styles.css" />
 
   <!-- ✅ 데이터 -->
-  <script>
-    // 공통 함수: 클릭 이벤트 → Clarity 전송
-    function sendClarityEvent(eventName) {
-      if (typeof clarity !== "undefined") {
-        clarity("track", eventName);
-      }
-    }
+  <script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "ujwmb7p8d3");
+</script>
 
-    // ✅ 이벤트 위임 (Event Delegation) 적용
-    // 동적으로 생성되는 요소(프로젝트 리스트 등)도 놓치지 않고 모두 추적합니다.
-    document.addEventListener("click", function (e) {
-      // 1. 클릭된 요소 혹은 그 부모 요소 중 'data-clarity' 속성이 있는지 확인
-      const target = e.target.closest("[data-clarity]");
-
-      if (target) {
-        // 2. 속성값(이벤트명) 가져오기
-        const eventName = target.getAttribute("data-clarity");
-
-        // 3. Clarity 전송
-        // (Clarity가 로드되지 않았을 경우 에러 방지)
-        if (typeof clarity === "function") {
-          clarity("track", eventName);
-          // console.log("Clarity Event Sent:", eventName); // 디버깅용
-        }
-      }
-    });
-  </script>
 </head>
 
 <body class="bg-white text-neutral-900">
@@ -51,20 +32,18 @@
               class="font-semibold tracking-tight toplink text-[20px] leading-tight text-neutral-900 lg:text-base"></a>
           </div>
           <div class="flex items-center gap-4 md:gap-5">
-            <a href="#/about" data-clarity="nav_about_click"
+            <a href="#/about"
               class="hidden lg:block toplink text-[20px] leading-tight text-neutral-900 hover:opacity-70 lg:text-sm lg:mt-0 font-medium">
               ABOUT
             </a>
             <nav class="hidden lg:flex items-center gap-5 text-sm text-neutral-900">
-              <a id="snsLinkedIn" class="toplink hover:opacity-70" target="_blank" rel="noopener"
-                data-clarity="sns_linkedin_click">
+              <a id="snsLinkedIn" class="toplink hover:opacity-70" target="_blank" rel="noopener">
                 <img src="assets/icons/LinkedIn.png" alt="LinkedIn" width="20" height="20" />
               </a>
-              <a id="snsX" class="toplink hover:opacity-70" target="_blank" rel="noopener" data-clarity="sns_x_click">
+              <a id="snsX" class="toplink hover:opacity-70" target="_blank" rel="noopener">
                 <img src="assets/icons/x.png" alt="X" width="20" height="20" />
               </a>
-              <a id="snsBehance" class="toplink hover:opacity-70" target="_blank" rel="noopener"
-                data-clarity="sns_behance_click">
+              <a id="snsBehance" class="toplink hover:opacity-70" target="_blank" rel="noopener">
                 <img src="assets/icons/Behance.png" alt="Behance" width="20" height="20" />
               </a>
             </nav>
@@ -102,16 +81,13 @@
 
       <!-- 2) SNS Links Last -->
       <div class="flex justify-center gap-6">
-        <a id="fLinkedIn" class="opacity-50 hover:opacity-100 transition-opacity" target="_blank" rel="noopener"
-          data-clarity="sns_linkedin_click">
+        <a id="fLinkedIn" class="opacity-50 hover:opacity-100 transition-opacity" target="_blank" rel="noopener">
           <img src="assets/icons/LinkedIn.png" alt="LinkedIn" width="24" height="24" />
         </a>
-        <a id="fX" class="opacity-50 hover:opacity-100 transition-opacity" target="_blank" rel="noopener"
-          data-clarity="sns_x_click">
+        <a id="fX" class="opacity-50 hover:opacity-100 transition-opacity" target="_blank" rel="noopener">
           <img src="assets/icons/x.png" alt="X" width="24" height="24" />
         </a>
-        <a id="fBehance" class="opacity-50 hover:opacity-100 transition-opacity" target="_blank" rel="noopener"
-          data-clarity="sns_behance_click">
+        <a id="fBehance" class="opacity-50 hover:opacity-100 transition-opacity" target="_blank" rel="noopener">
           <img src="assets/icons/Behance.png" alt="Behance" width="24" height="24" />
         </a>
       </div>
@@ -132,10 +108,14 @@
     <div id="drawerPanel"
       class="absolute right-0 top-0 h-full w-[85%] max-w-sm bg-white px-5 pt-3 pb-2 overflow-y-auto drawer shadow-xl">
       <div class="flex items-center justify-end px-2 pt-1 pb-1 gap-2">
-        <a href="#/about" id="mobileAboutLink" class="text-[20px] font-medium text-neutral-900 leading-none"
-          data-clarity="nav_about_click" style="text-decoration:none">
-          ABOUT
-        </a>
+        <a href="#/about" id="mobileAboutLink"
+  data-clarity="about_click"
+  class="text-[20px] font-medium text-neutral-900 leading-none"
+  style="text-decoration:none">
+  ABOUT
+</a>
+
+
         <button id="menuClose"
           class="inline-flex items-center justify-center w-12 h-12 text-black hover:bg-neutral-100 rounded-full transition-colors leading-none -mr-3"
           aria-label="Close">
@@ -172,7 +152,7 @@
           class="w-full px-3 py-2 border border-neutral-300 rounded text-center focus:outline-none focus:border-[var(--accent-orange)]"
           placeholder="Password" autocomplete="off">
         <div id="lockError" class="text-xs text-red-500 hidden">Incorrect password</div>
-        <button type="submit" data-clarity="protected_unlock"
+        <button type="submit"
           class="w-full bg-neutral-900 text-white py-2 rounded hover:bg-neutral-800 transition-colors text-sm font-medium">
           Unlock
         </button>
@@ -274,8 +254,7 @@
             <span class="text-neutral-500">Get in touch →</span>
           </div>
           <div class="text-right">
-            <a href="mailto:msk1332@naver.com" class="text-[var(--accent-orange)] font-medium"
-              data-clarity="contact_email_click">
+            <a href="mailto:msk1332@naver.com" class="text-[var(--accent-orange)] font-medium">
               msk1332@naver.com
             </a>
           </div>
