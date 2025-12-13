@@ -10,15 +10,19 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="css/styles.css" />
 
-  <!-- ✅ 데이터 -->
+  <!-- Analytics & Tracking (Clarity) -->
   <script type="text/javascript">
-    (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    (function (c, l, a, r, i, t, y) {
+      c[a] = c[a] || function () {
+        (c[a].q = c[a].q || []).push(arguments)
+      };
+      t = l.createElement(r);
+      t.async = 1;
+      t.src = "https://www.clarity.ms/tag/" + i;
+      y = l.getElementsByTagName(r)[0];
+      y.parentNode.insertBefore(t, y);
     })(window, document, "clarity", "script", "ujwmb7p8d3");
-</script>
-
+  </script>
 </head>
 
 <body class="bg-white text-neutral-900">
@@ -58,12 +62,11 @@
       </div>
     </header>
 
-
     <main class="grid grid-cols-1 gap-8 lg:grid-cols-[1fr,300px] lg:h-screen lg:overflow-hidden">
-      <!-- 왼쪽: 콘텐츠 / 갤러리 -->
+      <!-- Left Pane: Main Content & Gallery -->
       <section id="pane" class="pb-24 pt-24 lg:h-full lg:overflow-y-auto" aria-live="polite"></section>
 
-      <!-- 오른쪽: 데스크톱 메뉴 리스트 (iPad Landscape 이상) -->
+      <!-- Right Pane: Desktop Navigation (Visible on lg+ screens) -->
       <aside class="hidden lg:block pb-24 pt-24 lg:h-full lg:overflow-y-auto">
         <div class="flex h-full flex-col">
           <nav id="projectListDesktop" class="flex-1 pb-24"></nav>
@@ -76,10 +79,10 @@
   <footer class="mobile-footer lg:hidden w-full bg-white/95 backdrop-blur px-5 pt-8 border-t border-neutral-200 pb-safe"
     style="padding-bottom: calc(env(safe-area-inset-bottom) + 40px); margin-bottom: 0;">
     <div class="mx-auto max-w-screen-sm flex flex-col gap-4">
-      <!-- 1) Copyright First -->
+      <!-- 1. Copyright Information -->
       <div class="text-center text-[12px] text-neutral-500" id="mobileCopyright"></div>
 
-      <!-- 2) SNS Links Last -->
+      <!-- 2. Social Media Links -->
       <div class="flex justify-center gap-6">
         <a id="fLinkedIn" class="opacity-50 hover:opacity-100 transition-opacity" target="_blank" rel="noopener">
           <img src="assets/icons/LinkedIn.png" alt="LinkedIn" width="24" height="24" />
@@ -108,14 +111,10 @@
     <div id="drawerPanel"
       class="absolute right-0 top-0 h-full w-[85%] max-w-sm bg-white px-5 pt-3 pb-2 overflow-y-auto drawer shadow-xl">
       <div class="flex items-center justify-end px-2 pt-1 pb-1 gap-2">
-        <a href="#/about" id="mobileAboutLink"
-  data-clarity="about_click"
-  class="text-[20px] font-medium text-neutral-900 leading-none"
-  style="text-decoration:none">
-  ABOUT
-</a>
-
-
+        <a href="#/about" id="mobileAboutLink" class="text-[20px] font-medium text-neutral-900 leading-none"
+          style="text-decoration:none">
+          ABOUT
+        </a>
         <button id="menuClose"
           class="inline-flex items-center justify-center w-12 h-12 text-black hover:bg-neutral-100 rounded-full transition-colors leading-none -mr-3"
           aria-label="Close">
@@ -125,7 +124,7 @@
         </button>
       </div>
 
-      <!-- 상단 여백 확보 후 메뉴 리스트 -->
+      <!-- Mobile Menu Navigation -->
       <div class="mt-4">
         <nav id="mobileProjectList"></nav>
       </div>
@@ -162,12 +161,12 @@
     </div>
   </div>
 
-  <!-- Information 템플릿 -->
+  <!-- Template: About Page Content -->
   <template id="infoTpl">
     <article class="max-w-none">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
         <div>
-          <h1 class="text-[34px] md:text-[34px] font-semibold tracking-tight">Claire Min</h1>
+          <h1 class="text-[34px] md:text-[34px] font-semibold tracking-tight">Gyuri Min</h1>
           <h1 class="text-[34px] md:text-[34px] font-semibold tracking-tight text-[var(--accent-orange)] -mt-2">Brand
             Designer</h1>
         </div>
@@ -202,7 +201,7 @@
 
       <hr class="my-8 border-neutral-300" />
 
-      <!-- Recognition & Awards -->
+      <!-- Log: Recognition & Awards -->
       <section class="mb-8">
         <h2 class="text-xl font-bold tracking-tight mb-4">Recognition</h2>
         <div class="text-base leading-relaxed text-neutral-700 space-y-2">
