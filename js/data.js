@@ -6,7 +6,7 @@ window.PROJECT_DATA = {
             "x": "https://x.com/kyurimy",
             "behance": "https://www.behance.net/kyurimy"
         },
-        "copyright": "SITE CONTENT © GYURI MIN 2013-2025. ALL RIGHTS RESERVED."
+        "copyright": "Copyright © Gyuri Min 2013-2025. All Rights Reserved."
     },
     "projects": [
         {
