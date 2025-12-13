@@ -1,5 +1,5 @@
-// ===== 설정 =====
-const LOCK_PASSWORD = '1234'; // ✅ 여기서만 비밀번호 바꾸면 됨
+/** Configuration & State */
+const LOCK_PASSWORD = '123412'; // password for protected content
 
 // Parse embedded JSON data
 const DATA = window.PROJECT_DATA;
@@ -12,18 +12,12 @@ const listHTML = (items, activeSlug = null) =>
   `<ul class="menu-list text-[30px] leading-[1.2] font-medium">` +
   items
     .map(
-      (p) => {
-        let clarityAttr = '';
-        if (p.slug === 'fp-brand-identity') clarityAttr = 'data-clarity="project_farmsplan_brand_identity_click"';
-        if (p.slug === 'Chabssal-tteogkki') clarityAttr = 'data-clarity="project_chabssal_tteokki_click"';
-
-        return `
+      (p) => `
         <li class="py-2 ${p.slug === activeSlug ? 'active' : ''}">
-          <a class="block w-fit pb-1 hover-accent" style="text-decoration:none" href="#/${p.slug}" ${clarityAttr}>
+          <a class="block w-fit pb-1 hover-accent" style="text-decoration:none" href="#/${p.slug}">
             ${esc(p.title)}
           </a>
-        </li>`;
-      }
+        </li>`
     )
     .join('') +
   `</ul>`;
@@ -44,13 +38,9 @@ const gridHTML = (items) =>
           mediaHtml = `<img loading="lazy" decoding="async" ${isGif ? 'style="will-change: transform;"' : ''} class="aspect-square w-full object-cover transition-transform duration-500 group-hover:scale-105" src="${thumb}" alt="${esc(p.title)} thumbnail" />`;
         }
 
-        let clarityAttr = '';
-        if (p.slug === 'fp-brand-identity') clarityAttr = 'data-clarity="project_farmsplan_brand_identity_click"';
-        if (p.slug === 'Chabssal-tteogkki') clarityAttr = 'data-clarity="project_chabssal_tteokki_click"';
-
         return `
         <article class="relative group">
-          <a href="#/${p.slug}" class="block overflow-hidden relative" style="text-decoration:none" ${clarityAttr}>
+          <a href="#/${p.slug}" class="block overflow-hidden relative" style="text-decoration:none">
             ${mediaHtml}
             ${p.locked ? `<div class="absolute top-0 right-0 bg-black/10 text-white text-[10px] px-3 py-1 uppercase tracking-wider font-medium">Restricted</div>` : ''}
           </a>
@@ -70,7 +60,7 @@ function detailHTML(p) {
       const src = esc(g.src);
       let media;
 
-      // YouTube detection
+      // 1. YouTube Video
       const ytMatch = src.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
 
       if (ytMatch) {
@@ -78,13 +68,13 @@ function detailHTML(p) {
               <iframe class="absolute inset-0 w-full h-full" src="https://www.youtube.com/embed/${ytMatch[1]}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>`;
       }
-      // MP4 / WebM / MOV detection
+      // 2. Local Video (MP4/WebM/MOV)
       else if (/\.(mp4|webm|mov)$/i.test(src)) {
         media = `<video class="w-full" controls playsinline preload="metadata">
               <source src="${src}" type="video/mp4">
             </video>`;
       }
-      // Default to Image
+      // 3. Default Image
       else {
         media = `<img loading="lazy" decoding="async" class="w-full" src="${src}" alt="${esc(p.title)} image" />`;
       }
@@ -98,7 +88,7 @@ function detailHTML(p) {
     .join('');
 
   const hasLinks = p.links && Array.isArray(p.links) && p.links.length > 0;
-  const hasLeftContent = p.year || p.client || p.role || p.Tools;
+  const hasLeftContent = p.year || p.client || p.role || p.tools;
   const hasRightContent = p.description || hasLinks;
 
   let infoSection = '';
@@ -131,10 +121,10 @@ function detailHTML(p) {
                     </div>`
           : ''
         }
-                  ${p.Tools
+                  ${p.tools
           ? `<div>
                       <span class="text-[13px] text-neutral-500">Tools</span>
-                      <div class="text-[15px] mt-1">${esc(p.Tools)}</div>
+                      <div class="text-[15px] mt-1">${esc(p.tools)}</div>
                     </div>`
           : ''
         }
@@ -167,7 +157,7 @@ function detailHTML(p) {
                   ${p.links
             .map(
               (link) =>
-                `<a href="${esc(link.url)}" target="_blank" rel="noopener" data-clarity="external_link_click" class="text-[14px] text-neutral-600 hover:text-neutral-900" style="text-decoration:underline">${esc(
+                `<a href="${esc(link.url)}" target="_blank" rel="noopener" class="text-[14px] text-neutral-600 hover:text-neutral-900" style="text-decoration:underline">${esc(
                   link.label || link.url
                 )}</a>`
             )
@@ -183,7 +173,7 @@ function detailHTML(p) {
         `;
   }
 
-  // Hero Section Logic
+  // --- Render Functions ---
   const heroSrc = esc(p.cover);
   const isHeroVideo = /\.(mp4|webm|mov)$/i.test(heroSrc);
   let heroMedia;
@@ -207,7 +197,7 @@ function detailHTML(p) {
         <section class="mt-6 space-y-6">
           <figure>
             ${heroMedia}
-            <!-- 커버 아래에는 캡션 표시 안 함 -->
+            <!-- Hide caption for cover/hero media -->
           </figure>
           ${gallery}
         </section>
@@ -224,7 +214,7 @@ const menuBackdrop = document.getElementById('menuBackdrop');
 const menuClose = document.getElementById('menuClose');
 const mobileProjectList = document.getElementById('mobileProjectList');
 
-// Mobile Mode Logic
+/** Layout Logic: Mobile vs Desktop */
 function updateLayoutMode() {
   // Update layout mode based on window width
   // < 768px: Mobile mode behaviors
@@ -266,13 +256,10 @@ function renderHome() {
   if (mobileProjectList) mobileProjectList.innerHTML = listHTML(items);
   toggleMobileHamburger(true);
 
-
-
-  // Reset scroll to top with smooth animation when rendering home
+  // Reset scroll position on view change
   window.scrollTo({ top: 0, behavior: "smooth" });
   pane.scrollTo({ top: 0, behavior: "auto" }); // Pane reset instant
 
-  window.isBrandClick = false; // Reset flag
 }
 
 function renderAbout() {
@@ -336,7 +323,7 @@ function router() {
   closeMenu();
 }
 
-// Lock Modal Logic
+/** Modal Logic: Lock/Unlock */
 const lockModal = document.getElementById('lockModal');
 const lockForm = document.getElementById('lockForm');
 const lockInput = document.getElementById('lockInput');
@@ -378,21 +365,21 @@ lockInput.addEventListener('input', () => {
 
 function cancelLock() {
   hideLockModal();
-  // 홈으로 돌려보내기
+  // Return to Home on cancel
   location.hash = '#/';
 }
 
 lockCancel.addEventListener('click', cancelLock);
 lockCloseX.addEventListener('click', cancelLock);
 
-// 모달 바깥 클릭 시 닫기
+// Event: Close modal on outside click
 lockModal.addEventListener('click', (e) => {
   if (e.target === lockModal) {
     cancelLock();
   }
 });
 
-// ESC로 닫기
+// Event: Close modal on Escape key
 window.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && lockModal.classList.contains('active')) {
     cancelLock();
@@ -401,9 +388,9 @@ window.addEventListener('keydown', (e) => {
 
 // init
 const brandLink = document.getElementById('brandLink');
-brandLink.innerHTML = '<img src="assets/icons/1.png" alt="" class="w-[30px] h-[30px] lg:w-4 lg:h-4 inline-block mr-1.5 align-middle -mt-[12px] lg:mt-[-6px]" />Claire Min';
+brandLink.innerHTML = '<img src="assets/icons/1.png" alt="" class="w-[30px] h-[30px] lg:w-4 lg:h-4 inline-block mr-1.5 align-middle -mt-[12px] lg:mt-[-6px]" />GYURI MIN';
 
-// Brand Link Smooth Scroll
+/** Brand Link Navigation & Smooth Scroll */
 brandLink.addEventListener('click', (e) => {
   e.preventDefault();
 
@@ -423,10 +410,8 @@ const s = state.site.social || {};
 (document.getElementById('snsLinkedIn') || {}).href = s.linkedin || '#';
 (document.getElementById('snsX') || {}).href = s.x || '#';
 (document.getElementById('snsBehance') || {}).href = s.behance || '#';
-(document.getElementById('mLinkedIn') || {}).href = s.linkedin || '#';
-(document.getElementById('mX') || {}).href = s.x || '#';
-(document.getElementById('mBehance') || {}).href = s.behance || '#';
-// Footer SNS
+
+// Footer Social Links
 (document.getElementById('fLinkedIn') || {}).href = s.linkedin || '#';
 (document.getElementById('fX') || {}).href = s.x || '#';
 (document.getElementById('fBehance') || {}).href = s.behance || '#';
@@ -449,13 +434,13 @@ window.addEventListener('hashchange', router);
 // Resize listener merged into updateLayoutMode
 router();
 
-// Scroll to Top Button (Mobile only)
+/** Feature: Scroll to Top Button (Mobile) */
 const scrollTopBtn = document.getElementById('scrollTopBtn');
 
 let lastScrollY = window.scrollY;
 const mainHeader = document.getElementById('mainHeader');
 
-// 1. Force Scroll to Top on Load & Reload (Mobile P2R / bfcache support)
+// 1. Scroll Position Restoration
 window.onbeforeunload = function () {
   window.scrollTo(0, 0);
 };
@@ -468,7 +453,7 @@ window.addEventListener('pageshow', (event) => {
   }
 });
 
-// 2. Optimized Scroll Listener (rAF based for Safari 60fps)
+// 2. Header Scroll Behavior (Hide/Show)
 let lastY = window.scrollY;
 let ticking = false;
 
@@ -506,7 +491,8 @@ window.addEventListener("scroll", () => {
 
 // Add scroll listener
 
-
-scrollTopBtn.addEventListener('click', () => {
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-});
+if (scrollTopBtn) {
+  scrollTopBtn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+}
