@@ -1,12 +1,12 @@
 window.PROJECT_DATA = {
     "site": {
-        "name": "CL",
+        "name": "GM",
         "social": {
-            "linkedin": "https://www.linkedin.com/",
-            "x": "https://x.com/",
-            "behance": "https://www.behance.net/"
+            "linkedin": "https://www.linkedin.com/in/gyuri-min",
+            "x": "https://x.com/kyurimy",
+            "behance": "https://www.behance.net/kyurimy"
         },
-        "copyright": "SITE CONTENT © Claire 2013-2025. ALL RIGHTS RESERVED."
+        "copyright": "SITE CONTENT © GYURI MIN 2013-2025. ALL RIGHTS RESERVED."
     },
     "projects": [
         {
@@ -20,7 +20,7 @@ window.PROJECT_DATA = {
             "year": "2025",
             "client": "Personal Project",
             "role": "Project Lead",
-            "Tools": "Adobe, Figma",
+            "tools": "Adobe, Figma",
             "description": [
                 "<b>The Challenge</b>",
                 "Addressing the critical employment challenges faced by the senior and middle-aged demographic, we aimed to create a recruitment ecosystem that leverages their experience and data to establish a renewed, virtuous cycle.",
@@ -45,7 +45,7 @@ window.PROJECT_DATA = {
             "year": "2025",
             "client": "Park171",
             "role": "Brand Designer",
-            "Tools": "Illustrator, Photoshop",
+            "tools": "Illustrator, Photoshop",
             "description": [
                 "<b>The Challenge</b>",
                 "The Park171 building branding project transformed the building’s core asset '171 indoor parking spaces' into a memorable visual identity. The focus was on implementing the building's spatial and functional strengths through a logo-centric visual system.",
@@ -69,7 +69,7 @@ window.PROJECT_DATA = {
             "year": "2025",
             "client": "Petit-ours(Collaboration)",
             "role": "Space & Brand Designer",
-            "Tools": "Illustrator, Photoshop, ChatGPT",
+            "tools": "Illustrator, Photoshop, ChatGPT",
             "description": [
                 "The Farmsplan Deli Cafe Branding project involved collaborating with an external partner to successfully transplant Farmsplan’s brand identity into a physical space, thereby strengthening trust and brand awareness while preserving the existing store's unique atmosphere.",
                 "We comprehensively designed key touchpoints—including the exterior façade, interior flow (circulation), paper cups, and stickers—creating an environment where visitors could naturally experience the Farmsplan brand.",
@@ -92,7 +92,7 @@ window.PROJECT_DATA = {
             "year": "2024",
             "client": "AID",
             "role": "Event Designer",
-            "Tools": "Illustrator, Photoshop",
+            "tools": "Illustrator, Photoshop",
             "description": [
                 "<b>Open Farm Seminar Event</b>",
                 "The ‘Farmsplan Open Farm’ was a brand event held for pig farm owners in the Pocheon region, organized as a seminar and experience zone. It aimed to highlight the importance of establishing healthy breeding environments and allow attendees to directly experience Farmsplan’s technology.",
@@ -113,12 +113,12 @@ window.PROJECT_DATA = {
             "title": "27 Red Brick",
             "caption": "Café Branding",
             "summary": "Café Rebranding",
-            "cover": "assets/projects/27RedBrick/cover.gif",
-            "thumbnail": "assets/projects/27RedBrick/thumbnail.gif",
+            "cover": "assets/projects/27RedBrick/cover.mp4",
+            "thumbnail": "assets/projects/27RedBrick/thumbnail.mov",
             "year": "2024",
             "client": "27 Red Brick",
             "role": "Art Director",
-            "Tools": "Illustrator, Photoshop, Sora",
+            "tools": "Illustrator, Photoshop, Sora",
             "description": [
                 "The 27 Red Brick café rebranding project focused on creating a distinctive visual identity that reflects the café's unique character and architectural heritage.",
                 "As Art Director, I led the comprehensive brand identity development, including logo design, color palette selection, and visual system establishment. The design concept draws inspiration from the café's signature red brick architecture, translating the warm, tactile quality of brick into a modern brand language.",
@@ -142,7 +142,7 @@ window.PROJECT_DATA = {
             "year": "2024",
             "client": "AID India",
             "role": "Package Designer",
-            "Tools": "Illustrator, Photoshop",
+            "tools": "Illustrator, Photoshop",
             "description": [
                 "Following the success of the Cattle Feed and Additive line, we developed the packaging design for the new Hog Feed product series.",
                 "<b>Visual Strategy</b>",
@@ -168,7 +168,7 @@ window.PROJECT_DATA = {
             "year": "2023",
             "client": "AID",
             "role": "Brand Designer(Lead)",
-            "Tools": "Illustrator, Photoshop",
+            "tools": "Illustrator, Photoshop",
             "description": [
                 "This project was initiated to redefine the brand identity and global expansion strategy of Korea Livestock Data in a rapidly changing industrial environment. We designed the AID Brand Identity to concretize the vision of 'sustainable livestock farming based on AI and data technology.'",
                 "The design inherited the essence of the existing logo while structurally strengthening its link with the service brand, 'Farmsplan.' We maximized brand recognition by incorporating the symbol's ribbon structure and subtle angle design to signify the connection between technology, livestock, and humanity."
@@ -191,7 +191,7 @@ window.PROJECT_DATA = {
             "year": "2023",
             "client": "Café Terrabite",
             "role": "Art Direction & Brand Designer",
-            "Tools": "Illustrator, Photoshop, Sora",
+            "tools": "Illustrator, Photoshop, Sora",
             "description": [
                 "The Terrabite Rebranding project involved overhauling the visual language so that the brand's mood and story could be naturally felt throughout the store. Based on the brand's meaning—derived from 'Terra' (Earth/Land) and 'Bite' (a single mouthful)—the goal was to sensuously convey the image of fresh ingredients and healthy food and beverages.",
                 "The design centered on the 'Trendy Programmer' concept, which combines 2D illustration with a programming sensibility. The process of creating coffee and food was interpreted as an 'Input–Output' structure, visualizing recipes and cooking procedures as a seamless system.",
@@ -214,7 +214,7 @@ window.PROJECT_DATA = {
             "year": "2023",
             "client": "Shinan-gun",
             "role": "Brand & Package Designer",
-            "Tools": "Illustrator, Photoshop",
+            "tools": "Illustrator, Photoshop",
             "description": [
                 "This branding project, \"Record of Sea: Shinan Salt,\" tells the story of Shinan salt's journey from the sea to the table, emphasizing its value as a crystallization of time and nature.",
                 "The brand narrative is inspired by a traveler visiting Shinan's four iconic islands (Hydrangea, Purple, Cockscomb, and Daffodil). Each island's distinct color, scent, and taste are bottled, proposing an experience of 'recording a moment of travel' through the salt.",
@@ -243,7 +243,7 @@ window.PROJECT_DATA = {
             "year": "2023",
             "client": "AID India",
             "role": "Package Designer",
-            "Tools": "Illustrator, Photoshop",
+            "tools": "Illustrator, Photoshop",
             "description": [
                 "This project utilized 3D modeling elements within the 'Farmsplan Cattle Feed' product line to communicate Farmsplan's technological identity. Visualizing the growth cycle of cattle enhanced product recognition and understanding. By merging Korean technology with an AI-driven design style, we established a distinctive brand experience in the Indian market, creating a strategic basis for expanding into pig and poultry feed lines.",
                 "<br/>",
@@ -275,7 +275,7 @@ window.PROJECT_DATA = {
             "year": "2023",
             "client": "AID Malaysia",
             "role": "Brand Communication Designer",
-            "Tools": "Illustrator, Photoshop",
+            "tools": "Illustrator, Photoshop",
             "description": [
                 "This project was a global launch branding initiative designed to intuitively communicate the distinct nature, quality, and technology-driven differentiation of Farmsplan Chicken in the Malaysian market.",
                 " ",
@@ -311,7 +311,7 @@ window.PROJECT_DATA = {
             "year": "2022",
             "client": "AID",
             "role": "Illustrator",
-            "Tools": "Illustrator, Photoshop",
+            "tools": "Illustrator, Photoshop",
             "description": [
                 "<b>The Solution</b>",
                 "Farmsplan® is a livestock healthcare service utilizing AI-driven monitoring. This promotional video visualizes how the technology tracks livestock health 24/7, reducing labor costs and antibiotic use.",
@@ -336,7 +336,7 @@ window.PROJECT_DATA = {
             "year": "2022",
             "client": "AID",
             "role": "Brand Designer",
-            "Tools": "Illustrator, Photoshop",
+            "tools": "Illustrator, Photoshop",
             "description": [
                 "This Brand Guideline was developed to consolidate Farmsplan’s vision, \"Caring for Livestock with Technology,\" into a unified image, ensuring efficient utilization of brand assets across the organization.",
                 "The design visually manifests the invisible value created by AI convergence technology. The brand palette, featuring nature-symbolizing green, paired with clear typography, establishes a foundation of clarity and trust, conveying fresh vitality.",
@@ -363,7 +363,7 @@ window.PROJECT_DATA = {
             "year": "2022",
             "client": "AID",
             "role": "Character Designer",
-            "Tools": "Illustrator, Photoshop",
+            "tools": "Illustrator, Photoshop",
             "description": [
                 "The online meat market Gullyjumper seeks to refresh the outdated image of the livestock industry by correcting information asymmetry and fostering a virtuous industry cycle.",
                 "The character was created to embody this mission, representing the new generation of young, pioneering farmers innovating in the sector.",
@@ -387,7 +387,7 @@ window.PROJECT_DATA = {
             "year": "2021",
             "client": "AID",
             "role": "Graphic Designer",
-            "Tools": "Illustrator, Photoshop, Sora",
+            "tools": "Illustrator, Photoshop, Sora",
             "description": [
                 "We designed an organizational culture poster that reinterprets the meaning of 'Immersion' to establish a healthy work culture and foster the creative energy of our team members.",
                 "Instead of viewing immersion merely as a concept of 'concentration,' we structured it into a 'Three-Stage Model of Immersion,' designing it as a clear experiential journey.",
@@ -412,7 +412,7 @@ window.PROJECT_DATA = {
             "year": "2020",
             "client": "NongHyup(Chungnam)",
             "role": "Web Designer",
-            "Tools": "Dreamweaver(Html/CSS), Photoshop, Illustrator",
+            "tools": "Dreamweaver(Html/CSS), Photoshop, Illustrator",
             "description": [
                 "This website was strategically planned and designed at the request of the National Agricultural Cooperative Federation (NongHyup), Chungcheongnam-do Headquarters, to support local farmers.",
                 "The design streamlined key information such as product features, optimal export periods, and usage recipes—making the content easily digestible for international trade partners.",
@@ -433,7 +433,7 @@ window.PROJECT_DATA = {
             "year": "2019",
             "client": "Korea Stationery Industry Cooperative",
             "role": "Brand Experience Designer",
-            "Tools": "Dreamweaver(Html/CSS), Photoshop, Illustrator",
+            "tools": "Dreamweaver(Html/CSS), Photoshop, Illustrator",
             "description": [
                 "The SISOFAIR brand identity uses bright sky blue and a character popping from a gift box to project a joyful, energetic event image.",
                 "The Logo utilizes Korean Hangul, ensuring easy recognition and conveying a dynamic feeling, rather than using an English logo. The Brand Icon is simple, intuitive, and designed to clarify the exhibition theme quickly, guiding a seamless user experience. All icons, regardless of their varied shapes, maintain a unified visual identity.",
@@ -456,7 +456,7 @@ window.PROJECT_DATA = {
             "year": "2018-2021",
             "client": "KOTRA",
             "role": "Content Designer",
-            "Tools": "Dreamweaver(Html/CSS), Photoshop, Illustrator",
+            "tools": "Dreamweaver(Html/CSS), Photoshop, Illustrator",
             "description": [
                 "This project involved the design and technical implementation of a promotional email campaign aimed at attracting participation for over 200 domestic and international exhibitions, consortia, and industry events.",
                 "<b>Industry-Specific Visual Adaptation:</b>",
@@ -478,7 +478,7 @@ window.PROJECT_DATA = {
             "year": "2015",
             "client": "Personal Project",
             "role": "Toy Artist",
-            "Tools": "Sculpey, Acrylic Paint",
+            "tools": "Sculpey, Acrylic Paint",
             "description": [
                 "<b>The Chapssal-tteok Rabbit Figure</b>",
                 "Drawing inspiration from the perfectly round and plump form of the Korean glutinous rice cake, this figure is a charming fusion of the rice cake and a rabbit.",
@@ -501,8 +501,10 @@ window.PROJECT_DATA = {
             "year": "2013",
             "client": "Personal Project",
             "role": "3D Artist",
-            "Tools": "3D Max, KeyShot, Photoshop",
-            "description": "In the future, the advancement of Artificial Intelligence will allow robots to develop distinct personalities and interact with people in unique ways. Influenced by the game 'Portal', this project involved creating 3D models of robots, each with a different personality, based on the foundation of the human eye.",
+            "tools": "3D Max, KeyShot, Photoshop",
+            "description": [
+                "In the future, the advancement of Artificial Intelligence will allow robots to develop distinct personalities and interact with people in unique ways. Influenced by the game 'Portal', this project involved creating 3D models of robots, each with a different personality, based on the foundation of the human eye."
+            ],
             "links": [],
             "gallery": [
                 { "src": "assets/projects/AI-Robots/1.jpg", "caption": "The Mechanic" },
