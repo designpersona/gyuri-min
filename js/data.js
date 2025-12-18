@@ -275,7 +275,7 @@ window.PROJECT_DATA = {
                 "This kit provides a consistent global brand experience and facilitates integrated asset management."
             ],
             "links": [
-                { "label": ">View in BuyKorea", "url": "http://buykorea.org/sh/BvJjyZT" },
+                { "label": ">View in BuyKorea", "url": "https://buykorea.org/ec/prd/selectGoodsDetail.do?goodsSn=3693472" },
                 { "label": ">Click here to view article..", "url": "https://www.pointdaily.co.kr/news/articleView.html?idxno=204648" }
             ],
             "gallery": [
@@ -508,7 +508,9 @@ window.PROJECT_DATA = {
             "links": [],
             "gallery": [
                 { "src": "assets/projects/rabbit/1.jpg", "caption": "Making Of" },
+                /*
                 { "src": "assets/projects/rabbit/2.jpg", "caption": "Food styling for a character dessert product shot" }
+                */
             ]
         },
         {
