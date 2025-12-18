@@ -10,6 +10,26 @@ window.PROJECT_DATA = {
     },
     "projects": [
         {
+            "slug": "gm-portfolio",
+            "locked": true,
+            "title": "Web Portfolio Site",
+            "caption": "Coming soon...",
+            "summary": "Web Portfolio Site Design & Code",
+            "cover": "assets/projects/GM-Portfolio/cover.jpg",
+            "thumbnail": "assets/projects/GM-Portfolio/thumbnail.jpg",
+            "year": "2025",
+            "client": "Personal Project",
+            "role": "Web Designer & Developer",
+            "tools": "Adobe, ChatGPT, Cursor, Antigravity",
+            "description": [
+                "<b>Overview</b>",
+                "This project encompasses the comprehensive design and development of my personal web portfolio. It serves as a digital showcase of my work, demonstrating my skills in both visual design and front-end development.",
+                "More detailed case study coming soon."
+            ],
+            "links": [],
+            "gallery": []
+        },
+        {
             "slug": "a-ling",
             "locked": true,
             "title": "A-Link Project",
@@ -118,7 +138,7 @@ window.PROJECT_DATA = {
             "year": "2024",
             "client": "27 Red Brick",
             "role": "Art Director",
-            "tools": "Illustrator, Photoshop, Sora",
+            "tools": "Illustrator, Photoshop, Sora(OpenAI)",
             "description": [
                 "The 27 Red Brick café rebranding project focused on creating a distinctive visual identity that reflects the café's unique character and architectural heritage.",
                 "As Art Director, I led the comprehensive brand identity development, including logo design, color palette selection, and visual system establishment. The design concept draws inspiration from the café's signature red brick architecture, translating the warm, tactile quality of brick into a modern brand language.",
@@ -191,7 +211,7 @@ window.PROJECT_DATA = {
             "year": "2023",
             "client": "Café Terrabite",
             "role": "Art Direction & Brand Designer",
-            "tools": "Illustrator, Photoshop, Sora",
+            "tools": "Illustrator, Photoshop, Sora(OpenAI)",
             "description": [
                 "The Terrabite Rebranding project involved overhauling the visual language so that the brand's mood and story could be naturally felt throughout the store. Based on the brand's meaning—derived from 'Terra' (Earth/Land) and 'Bite' (a single mouthful)—the goal was to sensuously convey the image of fresh ingredients and healthy food and beverages.",
                 "The design centered on the 'Trendy Programmer' concept, which combines 2D illustration with a programming sensibility. The process of creating coffee and food was interpreted as an 'Input–Output' structure, visualizing recipes and cooking procedures as a seamless system.",
@@ -387,7 +407,7 @@ window.PROJECT_DATA = {
             "year": "2021",
             "client": "AID",
             "role": "Graphic Designer",
-            "tools": "Illustrator, Photoshop, Sora",
+            "tools": "Illustrator, Photoshop, Sora(OpenAI)",
             "description": [
                 "We designed an organizational culture poster that reinterprets the meaning of 'Immersion' to establish a healthy work culture and foster the creative energy of our team members.",
                 "Instead of viewing immersion merely as a concept of 'concentration,' we structured it into a 'Three-Stage Model of Immersion,' designing it as a clear experiential journey.",
