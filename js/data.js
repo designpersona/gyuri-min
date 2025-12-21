@@ -89,7 +89,7 @@ window.PROJECT_DATA = {
             "year": "2025",
             "client": "Petit-ours(Collaboration)",
             "role": "Space & Brand Designer",
-            "tools": "Illustrator, Photoshop, ChatGPT",
+            "tools": "Illustrator, Photoshop, DALL·E(OpenAI)",
             "description": [
                 "The Farmsplan Deli Cafe Branding project involved collaborating with an external partner to successfully transplant Farmsplan’s brand identity into a physical space, thereby strengthening trust and brand awareness while preserving the existing store's unique atmosphere.",
                 "We comprehensively designed key touchpoints—including the exterior façade, interior flow (circulation), paper cups, and stickers—creating an environment where visitors could naturally experience the Farmsplan brand.",
