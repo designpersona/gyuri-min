@@ -11,7 +11,7 @@ window.PROJECT_DATA = {
     "projects": [
         {
             "slug": "gm-portfolio",
-            "locked": true,
+            "locked": false,
             "title": "Web Portfolio Site",
             "caption": "Coming soon...",
             "summary": "Web Portfolio Site Design & Code",
@@ -19,8 +19,8 @@ window.PROJECT_DATA = {
             "thumbnail": "assets/projects/GM-Portfolio/thumbnail.jpg",
             "year": "2025",
             "client": "Personal Project",
-            "role": "Web Designer & Developer",
-            "tools": "Adobe, ChatGPT, Cursor, Antigravity",
+            "role": "Web Designer & Developer(AI)",
+            "tools": "Adobe, ChatGPT(Codex), Cursor, Antigravity",
             "description": [
                 "<b>Overview</b>",
                 "This project encompasses the comprehensive design and development of my personal web portfolio. It serves as a digital showcase of my work, demonstrating my skills in both visual design and front-end development.",
@@ -82,7 +82,7 @@ window.PROJECT_DATA = {
         {
             "slug": "farmsplan-deli-cafe",
             "title": "Farmsplan Deli Café",
-            "caption": "Café Branding",
+            "caption": "Cafe Branding",
             "summary": "Translating Tech Identity into a Tangible Retail Experience",
             "cover": "assets/projects/FP-Deil/cover.jpg",
             "thumbnail": "assets/projects/FP-Deil/thumbnail.jpg",
@@ -129,10 +129,10 @@ window.PROJECT_DATA = {
         },
         {
             "slug": "27-red-brick",
-            "locked": true,
+            "locked": false,
             "title": "27 Red Brick",
-            "caption": "Café Branding",
-            "summary": "Café Rebranding",
+            "caption": "Cafe Branding",
+            "summary": "Cafe Rebranding",
             "cover": "assets/projects/27RedBrick/cover.mp4",
             "thumbnail": "assets/projects/27RedBrick/thumbnail.mov",
             "year": "2024",
@@ -355,7 +355,7 @@ window.PROJECT_DATA = {
             "thumbnail": "assets/projects/FP-BI/thumbnail.jpg",
             "year": "2022",
             "client": "AID",
-            "role": "Brand Designer",
+            "role": "Brand Experience Designer",
             "tools": "Illustrator, Photoshop",
             "description": [
                 "This Brand Guideline was developed to consolidate Farmsplan’s vision, \"Caring for Livestock with Technology,\" into a unified image, ensuring efficient utilization of brand assets across the organization.",
