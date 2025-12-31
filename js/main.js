@@ -40,7 +40,7 @@ const gridHTML = (items) =>
 
         return `
         <article class="relative group">
-          <a href="#/${p.slug}" class="block overflow-hidden relative" style="text-decoration:none">
+          <a href="#/${p.slug}" class="block overflow-hidden relative rounded-lg" style="text-decoration:none">
             ${mediaHtml}
             ${p.locked ? `<div class="absolute top-0 right-0 bg-black/10 text-white text-[10px] px-3 py-1 uppercase tracking-wider font-medium">Restricted</div>` : ''}
           </a>
@@ -95,7 +95,7 @@ function detailHTML(p) {
   if (hasLeftContent || hasRightContent) {
     const gridCols = hasLeftContent && hasRightContent ? 'grid-cols-1 md:grid-cols-[200px_1fr]' : 'grid-cols-1';
     infoSection = `
-          <section class="mt-12 pt-8 pb-8 border-t border-neutral-200">
+          <section class="mt-8 pt-8 mb-12 border-t border-neutral-200 order-2 lg:order-1">
             <div class="grid ${gridCols} gap-8 md:gap-12">
               ${hasLeftContent
         ? `<div>
@@ -194,14 +194,16 @@ function detailHTML(p) {
           <h1 class="text-[30px] md:text-[40px] font-semibold tracking-tight">${esc(p.title)}</h1>
           ${p.summary ? `<p class="mt-2 text-[16px] leading-[1.7] text-neutral-700">${esc(p.summary)}</p>` : ``}
         </article>
-        <section class="mt-6 space-y-6">
-          <figure>
-            ${heroMedia}
-            <!-- Hide caption for cover/hero media -->
-          </figure>
-          ${gallery}
-        </section>
-        ${infoSection}
+        <div class="flex flex-col">
+          ${infoSection}
+          <section class="mt-6 space-y-6 order-1 lg:order-2">
+            <figure>
+              ${heroMedia}
+              <!-- Hide caption for cover/hero media -->
+            </figure>
+            ${gallery}
+          </section>
+        </div>
       `;
 }
 
@@ -388,7 +390,7 @@ window.addEventListener('keydown', (e) => {
 
 // init
 const brandLink = document.getElementById('brandLink');
-brandLink.innerHTML = '<img src="assets/icons/1.png" alt="" class="w-[30px] h-[30px] lg:w-4 lg:h-4 inline-block mr-1.5 align-middle -mt-[12px] lg:mt-[-6px]" />GYURI MIN';
+brandLink.innerHTML = '<img src="assets/icons/1.png" alt="" class="w-[30px] h-[30px] lg:w-6 lg:h-6 inline-block mr-1.5 align-middle -mt-[12px] lg:mt-[-7px]" />Design Persona';
 
 /** Brand Link Navigation & Smooth Scroll */
 brandLink.addEventListener('click', (e) => {
@@ -415,6 +417,11 @@ const s = state.site.social || {};
 (document.getElementById('fLinkedIn') || {}).href = s.linkedin || '#';
 (document.getElementById('fX') || {}).href = s.x || '#';
 (document.getElementById('fBehance') || {}).href = s.behance || '#';
+
+// Desktop Footer Social Links
+(document.getElementById('dLinkedIn') || {}).href = s.linkedin || '#';
+(document.getElementById('dX') || {}).href = s.x || '#';
+(document.getElementById('dBehance') || {}).href = s.behance || '#';
 
 (document.getElementById('desktopCopyright') || {}).textContent = state.site.copyright || '';
 (document.getElementById('mobileCopyright') || {}).textContent = state.site.copyright || '';
