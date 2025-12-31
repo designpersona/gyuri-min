@@ -315,3 +315,57 @@ body.mobile-mode aside {
     right: 0 !important;
   }
 }
+/* About Me Button Drawing Animation */
+.animate-draw {
+  stroke-dasharray: 400; /* Enough to cover the perimeter */
+  stroke-dashoffset: 400; /* Start completely hidden */
+  animation: drawLine 1.5s ease-out forwards;
+}
+
+@keyframes drawLine {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Animated Button Border */
+@keyframes drawBorder {
+  0% {
+    stroke-dashoffset: 400; /* Start hidden (offset equal to perimeter) */
+  }
+  100% {
+    stroke-dashoffset: 0;   /* End visible (offset 0) */
+  }
+}
+
+.draw-border-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* Let clicks pass through to the link */
+}
+
+.draw-border-rect {
+  fill: transparent;
+  stroke: #171717; /* neutral-900 */
+  stroke-width: 1.5px;
+  stroke-dasharray: 400; /* Perimeter approx */
+  stroke-dashoffset: 400;
+  animation: drawBorder 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+/* Subtle Blink Animation for Desktop About Me */
+@keyframes subtlePulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+.animate-subtle-blink {
+  animation: subtlePulse 2s ease-in-out 3 forwards;
+}
