@@ -25,27 +25,21 @@
     <header id="mainHeader"
       class="fixed left-0 right-0 top-0 z-40 bg-[var(--accent-orange)] transition-transform duration-300">
       <div class="mx-auto max-w-screen-2xl px-4 md:px-6 lg:px-8">
-        <div class="flex items-center justify-between py-0 md:py-4">
-          <div class="flex items-center gap-4">
+        <div class="relative flex items-center py-0 md:py-4">
+
+          <!-- BRAND: Mobile Left, Desktop Absolute Center -->
+          <div
+            class="flex items-center gap-4 lg:absolute lg:left-1/2 lg:top-1/2 lg:-translate-x-1/2 lg:-translate-y-1/2">
             <a href="#/" id="brandLink"
-              class="font-semibold tracking-tight toplink text-[20px] leading-tight text-neutral-900 lg:text-base"></a>
+              class="font-semibold tracking-tight toplink text-[22px] leading-tight text-neutral-900 lg:text-lg"></a>
           </div>
-          <div class="flex items-center gap-4 md:gap-5">
+
+          <!-- RIGHT: About Me & Menu -->
+          <div class="flex items-center gap-4 md:gap-5 ml-auto">
             <a href="#/about"
               class="hidden lg:block toplink text-[20px] leading-tight text-neutral-900 hover:opacity-70 lg:text-sm lg:mt-0 font-medium">
-              ABOUT
+              ABOUT ME
             </a>
-            <nav class="hidden lg:flex items-center gap-5 text-sm text-neutral-900">
-              <a id="snsLinkedIn" class="toplink hover:opacity-70" target="_blank" rel="noopener">
-                <img src="assets/icons/LinkedIn.png" alt="LinkedIn" width="20" height="20" />
-              </a>
-              <a id="snsX" class="toplink hover:opacity-70" target="_blank" rel="noopener">
-                <img src="assets/icons/x.png" alt="X" width="20" height="20" />
-              </a>
-              <a id="snsBehance" class="toplink hover:opacity-70" target="_blank" rel="noopener">
-                <img src="assets/icons/Behance.png" alt="Behance" width="20" height="20" />
-              </a>
-            </nav>
             <button id="menuBtn" class="lg:hidden inline-flex items-center justify-center w-12 h-12 text-black -mr-3"
               aria-label="Open menu" aria-controls="mobileMenu" aria-expanded="false">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -57,12 +51,12 @@
       </div>
     </header>
 
-    <main class="grid grid-cols-1 gap-8 lg:grid-cols-[1fr,300px] lg:h-screen lg:overflow-hidden">
+    <main class="grid grid-cols-1 gap-8 lg:grid-cols-[1fr,300px]">
       <!-- Left Pane: Main Content & Gallery -->
-      <section id="pane" class="pb-24 pt-24 lg:h-full lg:overflow-y-auto" aria-live="polite"></section>
+      <section id="pane" class="pb-24 pt-24" aria-live="polite"></section>
 
       <!-- Right Pane: Desktop Navigation (Visible on lg+ screens) -->
-      <aside class="hidden lg:block pb-24 pt-24 lg:h-full lg:overflow-y-auto">
+      <aside class="hidden lg:block pb-24 pt-24 lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto">
         <div class="flex h-full flex-col">
           <nav id="projectListDesktop" class="flex-1 pb-24"></nav>
         </div>
@@ -93,10 +87,23 @@
   </footer>
 
   <!-- Desktop Footer -->
-  <footer
-    class="desktop-footer hidden lg:block fixed bottom-0 left-0 right-0 z-20 bg-white border-t border-neutral-200 py-3 px-8">
-    <div class="mx-auto max-w-screen-2xl text-center text-[12px] text-neutral-500">
-      <span id="desktopCopyright"></span>
+  <footer class="desktop-footer hidden lg:block w-full bg-white border-t border-neutral-200 py-3 px-8">
+    <div class="mx-auto max-w-screen-2xl flex items-center justify-between px-4">
+      <!-- Left: Social Icons -->
+      <div class="flex items-center gap-4">
+        <a id="dLinkedIn" class="opacity-50 hover:opacity-100 transition-opacity" target="_blank" rel="noopener">
+          <img src="assets/icons/LinkedIn.png" alt="LinkedIn" width="20" height="20" />
+        </a>
+        <a id="dX" class="opacity-50 hover:opacity-100 transition-opacity" target="_blank" rel="noopener">
+          <img src="assets/icons/x.png" alt="X" width="20" height="20" />
+        </a>
+        <a id="dBehance" class="opacity-50 hover:opacity-100 transition-opacity" target="_blank" rel="noopener">
+          <img src="assets/icons/Behance.png" alt="Behance" width="20" height="20" />
+        </a>
+      </div>
+
+      <!-- Right: Copyright -->
+      <span id="desktopCopyright" class="text-[12px] text-neutral-500"></span>
     </div>
   </footer>
 
@@ -108,7 +115,7 @@
       <div class="flex items-center justify-end px-2 pt-1 pb-1 gap-2">
         <a href="#/about" id="mobileAboutLink" class="text-[20px] font-medium text-neutral-900 leading-none"
           style="text-decoration:none">
-          ABOUT
+          ABOUT ME
         </a>
         <button id="menuClose"
           class="inline-flex items-center justify-center w-12 h-12 text-black hover:bg-neutral-100 rounded-full transition-colors leading-none -mr-3"
@@ -127,7 +134,8 @@
   </div>
   <!-- Lock Modal -->
   <div id="lockModal">
-    <div class="w-full max-w-xs p-6 text-center bg-white border border-neutral-200 rounded-lg shadow-sm relative">
+    <div
+      class="w-full max-w-xs p-6 text-center bg-white/85 backdrop-blur-sm border border-neutral-200 rounded-lg shadow-sm relative">
       <button type="button" id="lockCloseX" class="absolute right-3 top-3 text-neutral-400 hover:text-neutral-700"
         aria-label="Close">
         ✕
