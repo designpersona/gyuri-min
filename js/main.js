@@ -5,9 +5,111 @@ const LOCK_PASSWORD = '123412'; // password for protected content
 const DATA = window.PROJECT_DATA;
 const state = { site: DATA.site, projects: DATA.projects };
 let pendingSlug = null;
+let currentLang = localStorage.getItem('site_lang') || 'en';
+
+// Translations for static text
+const I18N = {
+  en: {
+    aboutLink: "ABOUT ME",
+    mobileAboutLink: "ABOUT ME",
+    back: "← Back to Archive",
+    restricted: "Restricted",
+    lockedTitle: "Protected Project",
+    lockedDesc: "Enter password to view details",
+    unlock: "Unlock",
+    cancel: "Cancel",
+    year: "Year",
+    client: "Client",
+    role: "Role",
+    tools: "Tools",
+    langLabel: "Language",
+    // About Page
+    aboutRole: "Brand Designer",
+    aboutTagline: "Brand Architect.<br />Visual Strategist.<br />Experience Builder.<br />Creative Connector.",
+    expertise: "Expertise",
+    recognition: "Recognition",
+    education: "Education",
+    credentials: "Credentials",
+    contact: "Get in touch →",
+    competencies: [
+      "<span class=\"font-semibold\">Brand Strategy & Design:</span> End-to-end identity, packaging, and campaign execution",
+      "<span class=\"font-semibold\">B2G & Public Sector:</span> RFP response, MOU negotiation, and funding acquisition",
+      "<span class=\"font-semibold\">Global Market Launch:</span> B2B/B2C expertise with distribution partnerships across Southeast Asia and India"
+    ],
+    awards: [
+      "Korea Angel Investment Association President's Award",
+      "Edison Awards Bronze Medal <span class=\"text-neutral-500\">(AID, BX Team)</span>",
+      "National University Student Design Contest",
+      "46th GG National Design Competition"
+    ],
+    eduList: [
+      "Dankook University, Visual Communication Design",
+      "The University of Waikato Pathways College"
+    ],
+    credList: [
+      "Gangnam-gu Venture Startup Academy",
+      "Craftsman Computer Graphics Operator",
+      "Design Teacher Certificate"
+    ]
+  },
+  ko: {
+    aboutLink: "ABOUT ME",
+    mobileAboutLink: "ABOUT ME",
+    back: "← 목록으로 가기",
+    restricted: "비공개",
+    lockedTitle: "비공개 프로젝트",
+    lockedDesc: "비밀번호를 입력하여 상세 내용을 확인하세요",
+    unlock: "확인",
+    cancel: "취소",
+    year: "Year",
+    client: "Client",
+    role: "Role",
+    tools: "Tools",
+    langLabel: "Language",
+    // About Page
+    aboutRole: "브랜드 디자이너",
+    aboutTagline: "브랜드 아키텍트.<br />비주얼 스트래티지스트.<br />익스피리언스 빌더.<br />크리에이티브 커넥터.",
+    expertise: "전문 분야",
+    recognition: "수상 경력",
+    education: "학력",
+    credentials: "자격증",
+    contact: "연락처 →",
+    competencies: [
+      "<span class=\"font-semibold\">브랜드 전략 및 디자인:</span> 아이덴티티, 패키지, 캠페인 실행의 전 과정 수행",
+      "<span class=\"font-semibold\">B2G 및 공공 부문:</span> 제안서(RFP) 작성, MOU 협상 및 자금 확보",
+      "<span class=\"font-semibold\">글로벌 시장 진출:</span> 동남아시아 및 인도를 아우르는 B2B/B2C 유통 파트너십 전문성"
+    ],
+    awards: [
+      "한국엔젤투자협회장상",
+      "에디슨 어워드 동상 <span class=\"text-neutral-500\">(AID, BX팀)</span>",
+      "전국 대학생 디자인 공모전",
+      "제46회 경기미술대전"
+    ],
+    eduList: [
+      "단국대학교 시각디자인과",
+      "와이카토 대학교 패스웨이 컬리지"
+    ],
+    credList: [
+      "강남구 벤처 스타트업 아카데미",
+      "컴퓨터그래픽스운용기능사",
+      "디자인 교원 자격증"
+    ]
+  }
+};
 
 const esc = (s = '') => (s ?? '').toString();
 
+/** Helper: Get localized text */
+const getText = (obj) => {
+  if (!obj) return '';
+  if (typeof obj === 'string') return obj;
+  return obj[currentLang] || obj['en'] || '';
+};
+
+const t = (key) => I18N[currentLang][key] || I18N['en'][key] || key;
+
+
+// Restoration of listHTML for mobile menu
 const listHTML = (items, activeSlug = null) =>
   `<ul class="menu-list text-[30px] leading-[1.2] font-medium">` +
   items
@@ -15,7 +117,7 @@ const listHTML = (items, activeSlug = null) =>
       (p) => `
         <li class="py-2 ${p.slug === activeSlug ? 'active' : ''}">
           <a class="block w-fit pb-1 hover-accent" style="text-decoration:none" href="#/${p.slug}">
-            ${esc(p.title)}
+            ${esc(getText(p.title))}
           </a>
         </li>`
     )
@@ -23,6 +125,7 @@ const listHTML = (items, activeSlug = null) =>
   `</ul>`;
 
 const gridHTML = (items) =>
+
   `<div class="grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">` +
   items
     .map(
@@ -35,18 +138,18 @@ const gridHTML = (items) =>
           mediaHtml = `<video class="aspect-square w-full object-cover transition-transform duration-500 group-hover:scale-105" src="${thumb}" autoplay muted loop playsinline></video>`;
         } else {
           const isGif = thumb.toLowerCase().endsWith('.gif');
-          mediaHtml = `<img loading="lazy" decoding="async" ${isGif ? 'style="will-change: transform;"' : ''} class="aspect-square w-full object-cover transition-transform duration-500 group-hover:scale-105" src="${thumb}" alt="${esc(p.title)} thumbnail" />`;
+          mediaHtml = `<img loading="lazy" decoding="async" ${isGif ? 'style="will-change: transform;"' : ''} class="aspect-square w-full object-cover transition-transform duration-500 group-hover:scale-105" src="${thumb}" alt="${esc(getText(p.title))} thumbnail" />`;
         }
 
         return `
         <article class="relative group">
           <a href="#/${p.slug}" class="block overflow-hidden relative rounded-lg" style="text-decoration:none">
             ${mediaHtml}
-            ${p.locked ? `<div class="absolute top-0 right-0 bg-black/10 text-white text-[10px] px-3 py-1 uppercase tracking-wider font-medium">Restricted</div>` : ''}
+            ${p.locked ? `<div class="absolute top-0 right-0 bg-black/10 text-white text-[10px] px-3 py-1 uppercase tracking-wider font-medium">${t('restricted')}</div>` : ''}
           </a>
           <div class="mt-3">
-            <h3 class="text-[15px] font-medium">${esc(p.title)}</h3>
-            <p class="text-[13px] text-neutral-500">${esc(p.caption)}</p>
+            <h3 class="text-[15px] font-medium">${esc(getText(p.title))}</h3>
+            <p class="text-[13px] text-neutral-500">${esc(getText(p.caption))}</p>
           </div>
         </article>`;
       }
@@ -59,6 +162,7 @@ function detailHTML(p) {
     .map((g) => {
       const src = esc(g.src);
       let media;
+      const caption = getText(g.caption);
 
       // 1. YouTube Video
       const ytMatch = src.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
@@ -76,20 +180,26 @@ function detailHTML(p) {
       }
       // 3. Default Image
       else {
-        media = `<img loading="lazy" decoding="async" class="w-full" src="${src}" alt="${esc(p.title)} image" />`;
+        media = `<img loading="lazy" decoding="async" class="w-full" src="${src}" alt="${esc(getText(p.title))} image" />`;
       }
 
       return `
         <figure>
           ${media}
-          ${g.caption ? `<figcaption>${esc(g.caption)}</figcaption>` : ``}
+          ${caption && caption.trim() !== '' ? `<figcaption>${esc(caption)}</figcaption>` : ``}
         </figure>`;
     })
     .join('');
 
   const hasLinks = p.links && Array.isArray(p.links) && p.links.length > 0;
-  const hasLeftContent = p.year || p.client || p.role || p.tools;
-  const hasRightContent = p.description || hasLinks;
+  const year = getText(p.year);
+  const client = getText(p.client);
+  const role = getText(p.role);
+  const tools = getText(p.tools); // Tools usually shared but just in case
+  const description = getText(p.description); // Array or String
+
+  const hasLeftContent = year || client || role || tools;
+  const hasRightContent = description || hasLinks;
 
   let infoSection = '';
   if (hasLeftContent || hasRightContent) {
@@ -100,31 +210,31 @@ function detailHTML(p) {
               ${hasLeftContent
         ? `<div>
                 <div class="flex flex-col gap-y-4">
-                  ${p.year
+                  ${year
           ? `<div>
-                      <span class="text-[13px] text-neutral-500">Year</span>
-                      <div class="text-[15px] mt-1">${esc(p.year)}</div>
+                      <span class="text-[13px] text-neutral-500">${t('year')}</span>
+                      <div class="text-[15px] mt-1">${esc(year)}</div>
                     </div>`
           : ''
         }
-                  ${p.client
+                  ${client
           ? `<div>
-                      <span class="text-[13px] text-neutral-500">Client</span>
-                      <div class="text-[15px] mt-1">${esc(p.client)}</div>
+                      <span class="text-[13px] text-neutral-500">${t('client')}</span>
+                      <div class="text-[15px] mt-1">${esc(client)}</div>
                     </div>`
           : ''
         }
-                  ${p.role
+                  ${role
           ? `<div>
-                      <span class="text-[13px] text-neutral-500">Role</span>
-                      <div class="text-[15px] mt-1">${esc(p.role)}</div>
+                      <span class="text-[13px] text-neutral-500">${t('role')}</span>
+                      <div class="text-[15px] mt-1">${esc(role)}</div>
                     </div>`
           : ''
         }
-                  ${p.tools
+                  ${tools
           ? `<div>
-                      <span class="text-[13px] text-neutral-500">Tools</span>
-                      <div class="text-[15px] mt-1">${esc(p.tools)}</div>
+                      <span class="text-[13px] text-neutral-500">${t('tools')}</span>
+                      <div class="text-[15px] mt-1">${esc(tools)}</div>
                     </div>`
           : ''
         }
@@ -147,13 +257,13 @@ function detailHTML(p) {
       }
               ${hasRightContent
         ? `<div class="${hasLeftContent ? '' : 'w-full'}">
-                ${p.description
-          ? `<div class="text-[15px] leading-[1.7] text-neutral-700 mb-0">${Array.isArray(p.description) ? p.description.join('<br>') : esc(p.description)
+                ${description
+          ? `<div class="text-[15px] leading-[1.7] text-neutral-700 mb-0">${Array.isArray(description) ? description.join('<br>') : esc(description)
           }</div>`
           : ''
         }
                 ${hasLinks
-          ? `<div class="${p.description ? 'mt-4' : ''} space-y-2">
+          ? `<div class="${description ? 'mt-4' : ''} space-y-2">
                   ${p.links
             .map(
               (link) =>
@@ -180,19 +290,19 @@ function detailHTML(p) {
   if (isHeroVideo) {
     heroMedia = `<video class="w-full" src="${heroSrc}" autoplay muted loop playsinline></video>`;
   } else {
-    heroMedia = `<img class="w-full" src="${heroSrc}" alt="${esc(p.title)} hero" />`;
+    heroMedia = `<img class="w-full" src="${heroSrc}" alt="${esc(getText(p.title))} hero" />`;
   }
 
   return `
         <div class="flex items-center justify-between">
           <a href="#/" class="text-[14px] text-neutral-600 hover:text-neutral-900" style="text-decoration:none">
-            ← Back to Archive
+            ${t('back')}
           </a>
-          <div class="text-[13px] text-neutral-500">${esc(p.caption)}</div>
+          <div class="text-[13px] text-neutral-500">${esc(getText(p.caption))}</div>
         </div>
         <article class="mt-3">
-          <h1 class="text-[30px] md:text-[40px] font-semibold tracking-tight">${esc(p.title)}</h1>
-          ${p.summary ? `<p class="mt-2 text-[16px] leading-[1.7] text-neutral-700">${esc(p.summary)}</p>` : ``}
+          <h1 class="text-[30px] md:text-[40px] font-semibold tracking-tight">${esc(getText(p.title))}</h1>
+          ${p.summary ? `<p class="mt-2 text-[16px] leading-[1.7] text-neutral-700">${esc(getText(p.summary))}</p>` : ``}
         </article>
         <div class="flex flex-col">
           ${infoSection}
@@ -207,6 +317,102 @@ function detailHTML(p) {
       `;
 }
 
+function aboutHTML() {
+  const years = ['2025', '2023', '2012', '2010', '2025', '2021', '2013']; // Just keeping track of years for styling if needed, but they are hardcoded below in loops
+
+  // Helper to get array items
+  const competencies = t('competencies').map(c => `<p>${c}</p>`).join('');
+
+  // Custom logic for awards with years
+  const awardsData = I18N[currentLang].awards;
+  const awardsYears = ['2025', '2023', '2012', '2010'];
+  const awardsHTML = awardsData.map((a, i) => `
+    <p>${a} <span class="text-[11px] align-top text-neutral-400 font-mono">${awardsYears[i]}</span></p>
+  `).join('');
+
+  // Education
+  const eduData = I18N[currentLang].eduList;
+  const eduHTML = eduData.map(e => `<p>${e}</p>`).join('');
+
+  // Credentials
+  const credData = I18N[currentLang].credList;
+  const credYears = ['2025', '2021', '2013'];
+  const credHTML = credData.map((c, i) => `
+    <p>${c} <span class="text-[11px] align-top text-neutral-400 font-mono">${credYears[i]}</span></p>
+  `).join('');
+
+  return `
+    <article class="max-w-none">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
+        <div>
+          <h1 class="text-[34px] md:text-[34px] font-semibold tracking-tight">Gyuri Min</h1>
+          <h1 class="text-[34px] md:text-[34px] font-semibold tracking-tight text-[var(--accent-orange)] -mt-2">${t('aboutRole')}</h1>
+        </div>
+        <div class="text-right">
+          <h1 class="text-[34px] md:text-[34px] tracking-tight">
+            ${t('aboutTagline')}
+          </h1>
+        </div>
+      </div>
+
+      <hr class="my-6 border-neutral-300" />
+
+      <!-- Core Competencies -->
+      <section class="mb-8">
+        <h2 class="text-xl font-bold tracking-tight mb-4">${t('expertise')}</h2>
+        <div class="text-base leading-relaxed text-neutral-700 space-y-3">
+          ${competencies}
+        </div>
+      </section>
+
+      <hr class="my-8 border-neutral-300" />
+
+      <!-- Log: Recognition & Awards -->
+      <section class="mb-8">
+        <h2 class="text-xl font-bold tracking-tight mb-4">${t('recognition')}</h2>
+        <div class="text-base leading-relaxed text-neutral-700 space-y-2">
+          ${awardsHTML}
+        </div>
+      </section>
+
+      <hr class="my-8 border-neutral-300" />
+
+      <!-- Education -->
+      <section class="mb-8">
+        <h2 class="text-xl font-bold tracking-tight mb-4">${t('education')}</h2>
+        <div class="text-base leading-relaxed text-neutral-700 space-y-2">
+          ${eduHTML}
+        </div>
+      </section>
+
+      <hr class="my-8 border-neutral-300" />
+
+      <!-- Professional Credentials -->
+      <section class="mb-8">
+        <h2 class="text-xl font-bold tracking-tight mb-4">${t('credentials')}</h2>
+        <div class="text-base leading-relaxed text-neutral-700 space-y-2">
+          ${credHTML}
+        </div>
+      </section>
+
+      <!-- Contact Section -->
+      <section class="mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 text-[34px]">
+          <div>
+            <span class="text-neutral-500">${t('contact')}</span>
+          </div>
+          <div class="text-right">
+            <a href="mailto:kimashe@naver.com" class="text-[var(--accent-orange)] font-medium">
+              kimashe@naver.com
+            </a>
+          </div>
+        </div>
+      </section>
+
+    </article>
+  `;
+}
+
 const pane = document.getElementById('pane');
 const desktopList = document.getElementById('projectListDesktop');
 const menuBtn = document.getElementById('menuBtn');
@@ -215,6 +421,10 @@ const drawerPanel = document.getElementById('drawerPanel');
 const menuBackdrop = document.getElementById('menuBackdrop');
 const menuClose = document.getElementById('menuClose');
 const mobileProjectList = document.getElementById('mobileProjectList');
+
+// Language Elements
+const desktopLangBtn = document.getElementById('desktopLangBtn');
+const currentLangLabel = document.getElementById('currentLangLabel');
 
 /** Layout Logic: Mobile vs Desktop */
 function updateLayoutMode() {
@@ -238,6 +448,18 @@ function toggleMobileHamburger(show) {
 
 function openMenu() {
   if (mobileProjectList) mobileProjectList.innerHTML = listHTML(state.projects);
+  // Update active status of lang toggles in mobile menu
+  document.querySelectorAll('.lang-toggle').forEach(btn => {
+    const isActive = btn.dataset.lang === currentLang;
+    if (isActive) {
+      btn.classList.remove('text-neutral-300');
+      btn.classList.add('text-neutral-900', 'font-bold');
+    } else {
+      btn.classList.add('text-neutral-300');
+      btn.classList.remove('text-neutral-900', 'font-bold');
+    }
+  });
+
   menuEl.classList.remove('hidden');
   drawerPanel.classList.add('open');
   menuBtn?.setAttribute('aria-expanded', 'true');
@@ -254,9 +476,12 @@ function renderHome() {
   pane.innerHTML = `
         ${gridHTML(items)}
       `;
-  desktopList.innerHTML = listHTML(items);
+
+  if (desktopList) desktopList.innerHTML = listHTML(items);
+
   if (mobileProjectList) mobileProjectList.innerHTML = listHTML(items);
   toggleMobileHamburger(true);
+  updateStaticText();
 
   // Reset scroll position on view change
   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -265,15 +490,14 @@ function renderHome() {
 }
 
 function renderAbout() {
-  const tpl = document.getElementById('infoTpl');
-  if (tpl) {
-    pane.innerHTML = tpl.innerHTML;
-  } else {
-    pane.innerHTML = '<p>About</p>';
-  }
-  desktopList.innerHTML = listHTML(state.projects);
+  // Use JS rendering instead of template
+  pane.innerHTML = aboutHTML();
+
+  if (desktopList) desktopList.innerHTML = listHTML(state.projects);
+
   if (mobileProjectList) mobileProjectList.innerHTML = listHTML(state.projects);
   toggleMobileHamburger(true);
+  updateStaticText();
 
   if (document.body.classList.contains('mobile-mode')) {
     requestAnimationFrame(() => window.scrollTo(0, 0));
@@ -286,16 +510,62 @@ function renderDetail(slug) {
   const p = state.projects.find((x) => x.slug === slug);
   pane.innerHTML = p
     ? detailHTML(p)
-    : '<p class="text-sm text-neutral-500">Not found.</p>';
-  desktopList.innerHTML = listHTML(state.projects, slug);
+    : `<p class="text-sm text-neutral-500">Not found.</p>`;
+
+  if (desktopList) desktopList.innerHTML = listHTML(state.projects, slug);
+
   if (mobileProjectList) mobileProjectList.innerHTML = listHTML(state.projects, slug);
   toggleMobileHamburger(true);
-
+  updateStaticText();
 
 
   // Scroll Reset
   pane.scrollTo({ top: 0, behavior: "auto" });
   window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function updateStaticText() {
+  // Header Links
+  const aboutMeText = t('aboutLink');
+  const aboutLinkEl = document.querySelector('a[href="#/about"].hidden.lg\\:block');
+  if (aboutLinkEl) aboutLinkEl.textContent = aboutMeText;
+
+  // Mobile About Link
+  const mobileAboutLink = document.getElementById('mobileAboutLink');
+  if (mobileAboutLink) mobileAboutLink.textContent = t('mobileAboutLink');
+
+  // Copyright
+  const copyText = getText(state.site.copyright);
+  (document.getElementById('desktopCopyright') || {}).textContent = copyText;
+  (document.getElementById('mobileCopyright') || {}).textContent = copyText;
+
+  // Language Label
+  if (currentLangLabel) currentLangLabel.textContent = t('langLabel');
+
+
+
+  // Language Option Styles (Desktop)
+  document.querySelectorAll('.lang-option').forEach(btn => {
+    if (btn.dataset.lang === currentLang) {
+      btn.classList.add('bg-neutral-50', 'font-semibold');
+    } else {
+      btn.classList.remove('bg-neutral-50', 'font-semibold');
+    }
+  });
+
+  // Lock Modal Strings
+  document.querySelector('#lockModal h3').textContent = t('lockedTitle');
+  document.querySelector('#lockModal p').textContent = t('lockedDesc');
+  document.querySelector('#lockForm button[type="submit"]').textContent = t('unlock');
+  document.getElementById('lockCancel').textContent = t('cancel');
+}
+
+function setLanguage(lang) {
+  if (!lang) return;
+  currentLang = lang;
+  localStorage.setItem('site_lang', lang);
+  // document.documentElement.lang = lang; // optional
+  router(); // re-render current view
 }
 
 function router() {
@@ -423,8 +693,18 @@ const s = state.site.social || {};
 (document.getElementById('dX') || {}).href = s.x || '#';
 (document.getElementById('dBehance') || {}).href = s.behance || '#';
 
-(document.getElementById('desktopCopyright') || {}).textContent = state.site.copyright || '';
-(document.getElementById('mobileCopyright') || {}).textContent = state.site.copyright || '';
+// Language Event Listeners
+document.querySelectorAll('.lang-option').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    setLanguage(e.target.dataset.lang);
+  });
+});
+document.querySelectorAll('.lang-toggle').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    setLanguage(e.target.dataset.lang);
+  });
+});
+
 if (desktopList) desktopList.innerHTML = listHTML(state.projects);
 if (mobileProjectList) mobileProjectList.innerHTML = listHTML(state.projects);
 
