@@ -7,23 +7,35 @@ window.PROJECT_DATA = {
             "behance": "https://www.behance.net/kyurimy"
         },
         "copyright": {
-            "en": "Copyright © Gyuri Min 2013-2025. All Rights Reserved.",
-            "ko": "Copyright © 민규리 2013-2025. All Rights Reserved."
+            "en": "Copyright © Gyuri Min 2013-2026. All Rights Reserved.",
+            "ko": "Copyright © Gyuri Min 2013-2026. All Rights Reserved."
         }
     },
     "projects": [
         {
             "slug": "gm-portfolio",
             "locked": false,
-            "title": { "en": "Design Persona", "ko": "디자인 페르소나" },
-            "caption": { "en": "Coming soon...", "ko": "준비 중..." },
-            "summary": { "en": "Web Portfolio Site Design & Code", "ko": "웹 포트폴리오 사이트 디자인 & 코드" },
+            "featured": false,
+            "title": {
+                "en": "Design Persona",
+                "ko": "디자인 페르소나"
+            },
+            "caption": {
+                "en": "Web Design",
+                "ko": "웹 디자인"
+            },
+            "summary": {
+                "en": "Web Portfolio Site Design & Code",
+                "ko": "웹 포트폴리오 사이트 디자인 & 코드"
+            },
             "cover": "assets/projects/GM-Portfolio/cover.jpg",
             "thumbnail": "assets/projects/GM-Portfolio/thumbnail.jpg",
             "year": "2025",
-            "client": { "en": "Personal Project", "ko": "개인 프로젝트" },
-            "role": { "en": "Web Designer & Developer(AI)", "ko": "웹 디자이너 & 개발자(AI)" },
-            "tools": "Adobe, ChatGPT(Codex), Cursor, Antigravity",
+            "client": "Personal Project",
+            "role": "Web Designer",
+            "projectType": "Digital Product",
+            "industry": "Technology",
+            "tools": "ChatGPT, Cursor",
             "description": {
                 "en": [
                     "This site is a comprehensive project that encompasses both the design portfolio composition and the web development work involved in creating a personalized web portfolio. It was created to present a branding portfolio in the form of an e-catalog, showcasing an understanding of both visual design and front-end development. Further details will be announced soon."
@@ -33,20 +45,32 @@ window.PROJECT_DATA = {
                 ]
             },
             "links": [],
-            "gallery": []
+            "gallery": [],
+            "tool_notes": "Codex used; Other tools: Antigravity"
         },
-
         {
             "slug": "farmsplan-deli-cafe",
-            "title": { "en": "Farmsplan Deli Café", "ko": "팜스플랜 델리 카페" },
-            "caption": { "en": "Cafe Branding", "ko": "카페 브랜딩" },
-            "summary": { "en": "Translating Tech Identity into a Tangible Retail Experience", "ko": "기술적 정체성을 구체적인 소매 경험으로 전환하기" },
+            "featured": false,
+            "title": {
+                "en": "Farmsplan Deli Café",
+                "ko": "팜스플랜 델리 카페"
+            },
+            "caption": {
+                "en": "Cafe Branding",
+                "ko": "카페 브랜딩"
+            },
+            "summary": {
+                "en": "Translating Tech Identity into a Tangible Retail Experience",
+                "ko": "기술적 정체성을 구체적인 소매 경험으로 전환하기"
+            },
             "cover": "assets/projects/FP-Deil/cover.jpg",
             "thumbnail": "assets/projects/FP-Deil/thumbnail.jpg",
             "year": "2025",
-            "client": { "en": "Petit-ours(Collaboration)", "ko": "Petit-ours(협업)" },
-            "role": { "en": "Space & Brand Designer", "ko": "공간 & 브랜드 디자이너" },
-            "tools": "Illustrator, Photoshop, DALL·E(OpenAI)",
+            "client": "Petit-ours (Collaboration)",
+            "role": "Brand Designer",
+            "projectType": "Brand Experience",
+            "industry": "Food",
+            "tools": "Illustrator, Photoshop, DALL·E",
             "description": {
                 "en": [
                     "The Farmsplan Deli Cafe Branding project involved collaborating with an external partner to successfully transplant Farmsplan’s brand identity into a physical space, thereby strengthening trust and brand awareness while preserving the existing store's unique atmosphere.",
@@ -64,20 +88,38 @@ window.PROJECT_DATA = {
             },
             "links": [],
             "gallery": [
-                { "src": "assets/projects/FP-Deil/1.jpg", "caption": " " },
-                { "src": "assets/projects/FP-Deil/2.jpg", "caption": " " }
+                {
+                    "src": "assets/projects/FP-Deil/1.jpg",
+                    "caption": " "
+                },
+                {
+                    "src": "assets/projects/FP-Deil/2.jpg",
+                    "caption": " "
+                }
             ]
         },
         {
             "slug": "openfarm",
-            "title": { "en": "Openfarm : Community Day", "ko": "오픈팜 : 커뮤니티 데이" },
-            "caption": { "en": "Event Branding", "ko": "이벤트 브랜딩" },
-            "summary": { "en": "Brand event and seminar for pig farm owners to experience Farmsplan’s technology", "ko": "양돈 농장주들을 위한 Farmsplan 기술 체험 브랜드 행사 및 세미나" },
+            "featured": false,
+            "title": {
+                "en": "Openfarm : Community Day",
+                "ko": "오픈팜 : 커뮤니티 데이"
+            },
+            "caption": {
+                "en": "Event Branding",
+                "ko": "이벤트 브랜딩"
+            },
+            "summary": {
+                "en": "Brand event and seminar for pig farm owners to experience Farmsplan’s technology",
+                "ko": "양돈 농장주들을 위한 Farmsplan 기술 체험 브랜드 행사 및 세미나"
+            },
             "cover": "assets/projects/openfarm/cover.jpg",
             "thumbnail": "assets/projects/openfarm/thumbnail.jpg",
             "year": "2024",
-            "client": { "en": "AID", "ko": "에이드" },
-            "role": { "en": "Event Designer", "ko": "이벤트 디자이너" },
+            "client": "AID",
+            "role": "Graphic Designer",
+            "projectType": "Campaign",
+            "industry": "Technology",
             "tools": "Illustrator, Photoshop",
             "description": {
                 "en": [
@@ -97,23 +139,53 @@ window.PROJECT_DATA = {
             },
             "links": [],
             "gallery": [
-                { "src": "assets/projects/openfarm/1.jpg", "caption": { "en": "Openfarm Poster", "ko": "오픈팜 포스터" } },
-                { "src": "assets/projects/openfarm/2.jpg", "caption": { "en": "Openfarm Banner Assets", "ko": "오픈팜 배너 자산" } },
-                { "src": "assets/projects/openfarm/3.jpg", "caption": { "en": "Seminar Venue Snapshot", "ko": "세미나 현장 스냅샷" } }
+                {
+                    "src": "assets/projects/openfarm/1.jpg",
+                    "caption": {
+                        "en": "Openfarm Poster",
+                        "ko": "오픈팜 포스터"
+                    }
+                },
+                {
+                    "src": "assets/projects/openfarm/2.jpg",
+                    "caption": {
+                        "en": "Openfarm Banner Assets",
+                        "ko": "오픈팜 배너 자산"
+                    }
+                },
+                {
+                    "src": "assets/projects/openfarm/3.jpg",
+                    "caption": {
+                        "en": "Seminar Venue Snapshot",
+                        "ko": "세미나 현장 스냅샷"
+                    }
+                }
             ]
         },
         {
             "slug": "27-red-brick",
             "locked": false,
-            "title": { "en": "27 Red Brick", "ko": "27 Red Brick" },
-            "caption": { "en": "Cafe Branding", "ko": "카페 브랜딩" },
-            "summary": { "en": "Cafe Rebranding", "ko": "카페 리브랜딩" },
+            "featured": false,
+            "title": {
+                "en": "27 Red Brick",
+                "ko": "27 Red Brick"
+            },
+            "caption": {
+                "en": "Cafe Branding",
+                "ko": "카페 브랜딩"
+            },
+            "summary": {
+                "en": "Cafe Rebranding",
+                "ko": "카페 리브랜딩"
+            },
             "cover": "assets/projects/27RedBrick/cover.mp4",
             "thumbnail": "assets/projects/27RedBrick/thumbnail.mov",
             "year": "2024",
-            "client": { "en": "27 Red Brick", "ko": "27 레드 브릭" },
-            "role": { "en": "Art Director", "ko": "아트 디렉터" },
-            "tools": "Illustrator, Photoshop, Sora(OpenAI)",
+            "client": "27 Red Brick",
+            "role": "Art Director",
+            "projectType": "Brand Experience",
+            "industry": "Food",
+            "tools": "Illustrator, Photoshop, Sora",
             "description": {
                 "en": [
                     "The 27 Red Brick café rebranding project focused on creating a distinctive visual identity that reflects the café's unique character and architectural heritage.",
@@ -128,22 +200,40 @@ window.PROJECT_DATA = {
             },
             "links": [],
             "gallery": [
-                { "src": "assets/projects/27RedBrick/1.jpg", "caption": " " },
-                { "src": "assets/projects/27RedBrick/2.jpg", "caption": " " }
+                {
+                    "src": "assets/projects/27RedBrick/1.jpg",
+                    "caption": " "
+                },
+                {
+                    "src": "assets/projects/27RedBrick/2.jpg",
+                    "caption": " "
+                }
             ]
         },
         {
             "slug": "Farmsplan-Swine-Feed",
             "country": "India",
             "flagImage": "assets/icons/india-flag.png",
-            "title": { "en": "Farmsplan Swine Feed", "ko": "팜스플랜 양돈 사료" },
-            "caption": { "en": "Package Design", "ko": "패키지 디자인" },
-            "summary": { "en": "Strategic Packaging Design Series Visualizing Growth Stages", "ko": "성장 단계를 시각화한 전략적 패키지 디자인" },
+            "featured": false,
+            "title": {
+                "en": "Farmsplan Swine Feed",
+                "ko": "팜스플랜 양돈 사료"
+            },
+            "caption": {
+                "en": "Package Design",
+                "ko": "패키지 디자인"
+            },
+            "summary": {
+                "en": "Strategic Packaging Design Series Visualizing Growth Stages",
+                "ko": "성장 단계를 시각화한 전략적 패키지 디자인"
+            },
             "cover": "assets/projects/FP-SwineFeed/cover.jpg",
             "thumbnail": "assets/projects/FP-SwineFeed/thumbnail.jpg",
             "year": "2024",
-            "client": { "en": "AID India", "ko": "AID 인도" },
-            "role": { "en": "Package Designer", "ko": "패키지 디자이너" },
+            "client": "AID",
+            "role": "Brand Designer",
+            "projectType": "Brand Experience",
+            "industry": "Food",
             "tools": "Illustrator, Photoshop",
             "description": {
                 "en": [
@@ -167,20 +257,39 @@ window.PROJECT_DATA = {
             },
             "links": [],
             "gallery": [
-                { "src": "assets/projects/FP-SwineFeed/1.jpg", "caption": " " },
-                { "src": "assets/projects/FP-SwineFeed/2.jpg", "caption": " " }
-            ]
+                {
+                    "src": "assets/projects/FP-SwineFeed/1.jpg",
+                    "caption": " "
+                },
+                {
+                    "src": "assets/projects/FP-SwineFeed/2.jpg",
+                    "caption": " "
+                }
+            ],
+            "client_detail": "India"
         },
         {
             "slug": "aid-rebranding",
-            "title": { "en": "AID Brand Refresh", "ko": "AID 브랜드 리프레시" },
-            "caption": { "en": "Corporate Branding", "ko": "기업 브랜딩" },
-            "summary": { "en": "Redefining brand identity for sustainable livestock farming based on AI and data technology", "ko": "AI와 데이터 기술 기반의 지속 가능한 축산업을 위한 브랜드 아이덴티티 재정립" },
+            "featured": false,
+            "title": {
+                "en": "AID Brand Refresh",
+                "ko": "AID 브랜드 리프레시"
+            },
+            "caption": {
+                "en": "Corporate Branding",
+                "ko": "기업 브랜딩"
+            },
+            "summary": {
+                "en": "Redefining brand identity for sustainable livestock farming based on AI and data technology",
+                "ko": "AI와 데이터 기술 기반의 지속 가능한 축산업을 위한 브랜드 아이덴티티 재정립"
+            },
             "cover": "assets/projects/AID/cover.jpg",
             "thumbnail": "assets/projects/AID/thumbnail.jpg",
             "year": "2023",
-            "client": { "en": "AID", "ko": "에이드" },
-            "role": { "en": "Brand Designer(Lead)", "ko": "브랜드 디자이너(리드)" },
+            "client": "AID",
+            "role": "Brand Designer",
+            "projectType": "Brand Experience",
+            "industry": "Technology",
             "tools": "Illustrator, Photoshop",
             "description": {
                 "en": [
@@ -194,23 +303,47 @@ window.PROJECT_DATA = {
             },
             "links": [],
             "gallery": [
-                { "src": "assets/projects/AID/1.jpg", "caption": " " },
-                { "src": "assets/projects/AID/2.jpg", "caption": " " },
-                { "src": "assets/projects/AID/3.jpg", "caption": " " },
-                { "src": "assets/projects/AID/4.jpg", "caption": " " }
+                {
+                    "src": "assets/projects/AID/1.jpg",
+                    "caption": " "
+                },
+                {
+                    "src": "assets/projects/AID/2.jpg",
+                    "caption": " "
+                },
+                {
+                    "src": "assets/projects/AID/3.jpg",
+                    "caption": " "
+                },
+                {
+                    "src": "assets/projects/AID/4.jpg",
+                    "caption": " "
+                }
             ]
         },
         {
             "slug": "cafe-terrabite",
-            "title": { "en": "Terrabite Brand Refresh", "ko": "테라바이트 브랜드 리프레시" },
-            "caption": { "en": "Cafe Branding", "ko": "카페 브랜딩" },
-            "summary": { "en": "Visual Identity Update for Café Brand", "ko": "카페 브랜드를 위한 시각적 아이덴티티 업데이트" },
+            "featured": false,
+            "title": {
+                "en": "Terrabite Brand Refresh",
+                "ko": "테라바이트 브랜드 리프레시"
+            },
+            "caption": {
+                "en": "Cafe Branding",
+                "ko": "카페 브랜딩"
+            },
+            "summary": {
+                "en": "Visual Identity Update for Café Brand",
+                "ko": "카페 브랜드를 위한 시각적 아이덴티티 업데이트"
+            },
             "cover": "assets/projects/Terrabite/cover.mp4",
             "thumbnail": "assets/projects/Terrabite/thumbnail.mov",
             "year": "2023",
-            "client": { "en": "Café Terrabite", "ko": "카페 테라바이트" },
-            "role": { "en": "Art Direction & Brand Designer", "ko": "아트 디렉션 & 브랜드 디자이너" },
-            "tools": "Illustrator, Photoshop, Sora(OpenAI)",
+            "client": "Café Terrabite",
+            "role": "Brand Designer",
+            "projectType": "Brand Experience",
+            "industry": "Food",
+            "tools": "Illustrator, Photoshop, Sora",
             "description": {
                 "en": [
                     "The Terrabite Rebranding project involved overhauling the visual language so that the brand's mood and story could be naturally felt throughout the store. Based on the brand's meaning—derived from 'Terra' (Earth/Land) and 'Bite' (a single mouthful)—the goal was to sensuously convey the image of fresh ingredients and healthy food and beverages.",
@@ -225,21 +358,51 @@ window.PROJECT_DATA = {
             },
             "links": [],
             "gallery": [
-                { "src": "assets/projects/Terrabite/1.jpg", "caption": { "en": "Menu Board", "ko": "메뉴 보드" } },
-                { "src": "assets/projects/Terrabite/2.jpg", "caption": { "en": "Promotion Poster", "ko": "프로모션 포스터" } },
-                { "src": "assets/projects/Terrabite/3.jpg", "caption": { "en": "Snapshot", "ko": "스냅샷" } }
+                {
+                    "src": "assets/projects/Terrabite/1.jpg",
+                    "caption": {
+                        "en": "Menu Board",
+                        "ko": "메뉴 보드"
+                    }
+                },
+                {
+                    "src": "assets/projects/Terrabite/2.jpg",
+                    "caption": {
+                        "en": "Promotion Poster",
+                        "ko": "프로모션 포스터"
+                    }
+                },
+                {
+                    "src": "assets/projects/Terrabite/3.jpg",
+                    "caption": {
+                        "en": "Snapshot",
+                        "ko": "스냅샷"
+                    }
+                }
             ]
         },
         {
             "slug": "record-of-sea-salt",
-            "title": { "en": "Record of Sea : Salt", "ko": "바다의 기록 : 소금" },
-            "caption": { "en": "Narrative Packaging Design", "ko": "내러티브 패키지 디자인" },
-            "summary": { "en": "Elevating Regional Goods through Sensory Narrative and Design", "ko": "감각적인 내러티브와 디자인을 통한 지역 상품 가치 제고" },
+            "featured": false,
+            "title": {
+                "en": "Record of Sea : Salt",
+                "ko": "바다의 기록 : 소금"
+            },
+            "caption": {
+                "en": "Narrative Packaging Design",
+                "ko": "내러티브 패키지 디자인"
+            },
+            "summary": {
+                "en": "Elevating Regional Goods through Sensory Narrative and Design",
+                "ko": "감각적인 내러티브와 디자인을 통한 지역 상품 가치 제고"
+            },
             "cover": "assets/projects/ROS/cover.jpg",
             "thumbnail": "assets/projects/ROS/thumbnail.jpg",
             "year": "2023",
-            "client": { "en": "Shinan-gun", "ko": "신안군" },
-            "role": { "en": "Brand & Package Designer", "ko": "브랜드 & 패키지 디자이너" },
+            "client": "Shinan-gun",
+            "role": "Brand Designer",
+            "projectType": "Brand Experience",
+            "industry": "Public Sector",
             "tools": "Illustrator, Photoshop",
             "description": {
                 "en": [
@@ -258,26 +421,56 @@ window.PROJECT_DATA = {
                 ]
             },
             "links": [
-                { "label": ">Click here to view article..", "url": "https://www.fntoday.co.kr/news/articleView.html?idxno=308841" }
+                {
+                    "label": ">Click here to view article..",
+                    "url": "https://www.fntoday.co.kr/news/articleView.html?idxno=308841"
+                }
             ],
             "gallery": [
-                { "src": "assets/projects/ROS/1.jpg", "caption": { "en": "Leaflet", "ko": "리플렛" } },
-                { "src": "assets/projects/ROS/2.jpg", "caption": { "en": "A complete gift set", "ko": "완전한 선물 세트" } },
-                { "src": "assets/projects/ROS/3.jpg", "caption": " " }
+                {
+                    "src": "assets/projects/ROS/1.jpg",
+                    "caption": {
+                        "en": "Leaflet",
+                        "ko": "리플렛"
+                    }
+                },
+                {
+                    "src": "assets/projects/ROS/2.jpg",
+                    "caption": {
+                        "en": "A complete gift set",
+                        "ko": "완전한 선물 세트"
+                    }
+                },
+                {
+                    "src": "assets/projects/ROS/3.jpg",
+                    "caption": " "
+                }
             ]
         },
         {
             "slug": "Farmsplan-Cattle-Feed",
             "country": "India",
             "flagImage": "assets/icons/india-flag.png",
-            "title": { "en": "Farmsplan Cattle Feed & Additive", "ko": "팜스플랜 비육우 사료 & 첨가제" },
-            "caption": { "en": "Packaging Branding", "ko": "패키지 브랜딩" },
-            "summary": { "en": "Integrated Packaging and Kit Design for Indian Market Entry", "ko": "인도 시장 진출을 위한 통합 패키지 및 키트 디자인" },
+            "featured": false,
+            "title": {
+                "en": "Farmsplan Cattle Feed & Additive",
+                "ko": "팜스플랜 비육우 사료 & 첨가제"
+            },
+            "caption": {
+                "en": "Packaging Branding",
+                "ko": "패키지 브랜딩"
+            },
+            "summary": {
+                "en": "Integrated Packaging and Kit Design for Indian Market Entry",
+                "ko": "인도 시장 진출을 위한 통합 패키지 및 키트 디자인"
+            },
             "cover": "assets/projects/FP-CattleFeed/cover.jpg",
             "thumbnail": "assets/projects/FP-CattleFeed/thumbnail.jpg",
             "year": "2023",
-            "client": { "en": "AID India", "ko": "AID 인도" },
-            "role": { "en": "Package Designer", "ko": "패키지 디자이너" },
+            "client": "AID",
+            "role": "Brand Designer",
+            "projectType": "Brand Experience",
+            "industry": "Food",
             "tools": "Illustrator, Photoshop",
             "description": {
                 "en": [
@@ -302,26 +495,57 @@ window.PROJECT_DATA = {
                 ]
             },
             "links": [
-                { "label": ">View in BuyKorea", "url": "https://buykorea.org/ec/prd/selectGoodsDetail.do?goodsSn=3693472" },
-                { "label": ">Click here to view article..", "url": "https://www.pointdaily.co.kr/news/articleView.html?idxno=204648" }
+                {
+                    "label": ">View in BuyKorea",
+                    "url": "https://buykorea.org/ec/prd/selectGoodsDetail.do?goodsSn=3693472"
+                },
+                {
+                    "label": ">Click here to view article..",
+                    "url": "https://www.pointdaily.co.kr/news/articleView.html?idxno=204648"
+                }
             ],
             "gallery": [
-                { "src": "assets/projects/FP-CattleFeed/1.jpg", "caption": { "en": "Feed Packaging", "ko": "사료 패키지" } },
-                { "src": "assets/projects/FP-CattleFeed/2.jpg", "caption": { "en": "Booth Design", "ko": "부스 디자인" } }
-            ]
+                {
+                    "src": "assets/projects/FP-CattleFeed/1.jpg",
+                    "caption": {
+                        "en": "Feed Packaging",
+                        "ko": "사료 패키지"
+                    }
+                },
+                {
+                    "src": "assets/projects/FP-CattleFeed/2.jpg",
+                    "caption": {
+                        "en": "Booth Design",
+                        "ko": "부스 디자인"
+                    }
+                }
+            ],
+            "client_detail": "India"
         },
         {
             "slug": "Farmsplan-Chicken",
             "country": "Malaysia",
             "flagImage": "assets/icons/malaysia-flag.png",
-            "title": { "en": "Farmsplan Chicken in Malaysia", "ko": "팜스플랜 치킨 말레이시아" },
-            "caption": { "en": "Global Market Launch", "ko": "글로벌 시장 런칭" },
-            "summary": { "en": "Global Market Launch (Design & Brand Strategy)", "ko": "글로벌 시장 런칭 (디자인 & 브랜드 전략)" },
+            "featured": false,
+            "title": {
+                "en": "Farmsplan Chicken in Malaysia",
+                "ko": "팜스플랜 치킨 말레이시아"
+            },
+            "caption": {
+                "en": "Global Market Launch",
+                "ko": "글로벌 시장 런칭"
+            },
+            "summary": {
+                "en": "Global Market Launch (Design & Brand Strategy)",
+                "ko": "글로벌 시장 런칭 (디자인 & 브랜드 전략)"
+            },
             "cover": "assets/projects/FP-Chicken/cover.jpg",
             "thumbnail": "assets/projects/FP-Chicken/thumbnail.jpg",
             "year": "2023",
-            "client": { "en": "AID Malaysia", "ko": "AID 말레이시아" },
-            "role": { "en": "Brand Communication Designer", "ko": "브랜드 커뮤니케이션 디자이너" },
+            "client": "AID",
+            "role": "Brand Designer",
+            "projectType": "Campaign",
+            "industry": "Food",
             "tools": "Illustrator, Photoshop",
             "description": {
                 "en": [
@@ -358,24 +582,55 @@ window.PROJECT_DATA = {
                 ]
             },
             "links": [
-                { "label": ">View in Jayagrocer", "url": "https://klec.jayagrocer.com/products/farmsplan-frozen-chicken-wing-450g?variant=41731762716734" }
+                {
+                    "label": ">View in Jayagrocer",
+                    "url": "https://klec.jayagrocer.com/products/farmsplan-frozen-chicken-wing-450g?variant=41731762716734"
+                }
             ],
             "gallery": [
-                { "src": "assets/projects/FP-Chicken/1.jpg", "caption": { "en": "farmsplan® Enzyme", "ko": "팜스플랜® 효소" } },
-                { "src": "assets/projects/FP-Chicken/2.jpg", "caption": { "en": "Booth Design", "ko": "부스 디자인" } },
-                { "src": "assets/projects/FP-Chicken/3.jpg", "caption": "" }
-            ]
+                {
+                    "src": "assets/projects/FP-Chicken/1.jpg",
+                    "caption": {
+                        "en": "farmsplan® Enzyme",
+                        "ko": "팜스플랜® 효소"
+                    }
+                },
+                {
+                    "src": "assets/projects/FP-Chicken/2.jpg",
+                    "caption": {
+                        "en": "Booth Design",
+                        "ko": "부스 디자인"
+                    }
+                },
+                {
+                    "src": "assets/projects/FP-Chicken/3.jpg",
+                    "caption": ""
+                }
+            ],
+            "client_detail": "Malaysia"
         },
         {
             "slug": "fp-brand-film",
-            "title": { "en": "Farmsplan Promotional Video", "ko": "팜스플랜 홍보 영상" },
-            "caption": { "en": "Brand Film", "ko": "브랜드 필름" },
-            "summary": { "en": "Promotional Video Content for YouTube", "ko": "유튜브 홍보 영상 콘텐츠" },
+            "featured": false,
+            "title": {
+                "en": "Farmsplan Promotional Video",
+                "ko": "팜스플랜 홍보 영상"
+            },
+            "caption": {
+                "en": "Brand Film",
+                "ko": "브랜드 필름"
+            },
+            "summary": {
+                "en": "Promotional Video Content for YouTube",
+                "ko": "유튜브 홍보 영상 콘텐츠"
+            },
             "cover": "assets/projects/FP-Film/cover.mp4",
             "thumbnail": "assets/projects/FP-Film/thumbnail.mov",
             "year": "2022",
-            "client": { "en": "AID", "ko": "에이드" },
-            "role": { "en": "Illustrator", "ko": "일러스트레이터" },
+            "client": "AID",
+            "role": "Illustrator",
+            "projectType": "Campaign",
+            "industry": "Technology",
             "tools": "Illustrator, Photoshop",
             "description": {
                 "en": [
@@ -397,20 +652,41 @@ window.PROJECT_DATA = {
             },
             "links": [],
             "gallery": [
-                { "src": "assets/projects/FP-Film/1.jpg", "caption": " " },
-                { "src": "assets/projects/FP-Film/film.mp4", "caption": { "en": "Promotional Video", "ko": "홍보 영상" } }
+                {
+                    "src": "assets/projects/FP-Film/1.jpg",
+                    "caption": " "
+                },
+                {
+                    "src": "assets/projects/FP-Film/film.mp4",
+                    "caption": {
+                        "en": "Promotional Video",
+                        "ko": "홍보 영상"
+                    }
+                }
             ]
         },
         {
             "slug": "fp-brand-identity",
-            "title": { "en": "Farmsplan Brand Identity", "ko": "팜스플랜 브랜드 아이덴티티" },
-            "caption": { "en": "Visual System & Guideline", "ko": "비주얼 시스템 & 가이드라인" },
-            "summary": { "en": "Visualizing AI Technology Value for Global Brand Consistency", "ko": "글로벌 브랜드 일관성을 위한 AI 기술 가치 시각화" },
+            "featured": false,
+            "title": {
+                "en": "Farmsplan Brand Identity",
+                "ko": "팜스플랜 브랜드 아이덴티티"
+            },
+            "caption": {
+                "en": "Visual System & Guideline",
+                "ko": "비주얼 시스템 & 가이드라인"
+            },
+            "summary": {
+                "en": "Visualizing AI Technology Value for Global Brand Consistency",
+                "ko": "글로벌 브랜드 일관성을 위한 AI 기술 가치 시각화"
+            },
             "cover": "assets/projects/FP-BI/cover.jpg",
             "thumbnail": "assets/projects/FP-BI/thumbnail.jpg",
             "year": "2022",
-            "client": { "en": "AID", "ko": "에이드" },
-            "role": { "en": "Brand Experience Designer", "ko": "브랜드 경험 디자이너" },
+            "client": "AID",
+            "role": "Brand Experience Designer",
+            "projectType": "Brand Experience",
+            "industry": "Technology",
             "tools": "Illustrator, Photoshop",
             "description": {
                 "en": [
@@ -430,15 +706,31 @@ window.PROJECT_DATA = {
             },
             "links": [],
             "gallery": [
-                { "src": "assets/projects/FP-BI/1.jpg", "caption": " " },
-                { "src": "assets/projects/FP-BI/2.jpg", "caption": " " },
-                { "src": "assets/projects/FP-BI/3.jpg", "caption": " " },
-                { "src": "assets/projects/FP-BI/4.jpg", "caption": " " },
-                { "src": "assets/projects/FP-BI/3D.mp4", "caption": " " }
+                {
+                    "src": "assets/projects/FP-BI/1.jpg",
+                    "caption": " "
+                },
+                {
+                    "src": "assets/projects/FP-BI/2.jpg",
+                    "caption": " "
+                },
+                {
+                    "src": "assets/projects/FP-BI/3.jpg",
+                    "caption": " "
+                },
+                {
+                    "src": "assets/projects/FP-BI/4.jpg",
+                    "caption": " "
+                },
+                {
+                    "src": "assets/projects/FP-BI/3D.mp4",
+                    "caption": " "
+                }
             ]
         },
         {
             "slug": "gullyjumper-universe",
+            "featured": false,
             "title": "Gullyjumper Universe",
             "caption": "Character Branding",
             "summary": "Visualizing Brand Values for Consumer Trust and Producer Pride",
@@ -446,7 +738,9 @@ window.PROJECT_DATA = {
             "thumbnail": "assets/projects/Gullyjumper/thumbnail.jpg",
             "year": "2022",
             "client": "AID",
-            "role": "Character Designer",
+            "role": "Illustrator",
+            "projectType": "Character IP",
+            "industry": "Food",
             "tools": "Illustrator, Photoshop",
             "description": [
                 "The online meat market Gullyjumper seeks to refresh the outdated image of the livestock industry by correcting information asymmetry and fostering a virtuous industry cycle.",
@@ -457,21 +751,39 @@ window.PROJECT_DATA = {
             ],
             "links": [],
             "gallery": [
-                { "src": "assets/projects/Gullyjumper/1.jpg", "caption": " " },
-                { "src": "assets/projects/Gullyjumper/2.jpg", "caption": " " }
+                {
+                    "src": "assets/projects/Gullyjumper/1.jpg",
+                    "caption": " "
+                },
+                {
+                    "src": "assets/projects/Gullyjumper/2.jpg",
+                    "caption": " "
+                }
             ]
         },
         {
             "slug": "deep-dive-campaign",
-            "title": { "en": "Deep Dive Campaign", "ko": "딥 다이브 캠페인" },
-            "caption": { "en": "Graphic Design", "ko": "그래픽 디자인" },
-            "summary": { "en": "Immersion Organizational Culture Branding", "ko": "몰입 조직문화 브랜딩" },
+            "featured": false,
+            "title": {
+                "en": "Deep Dive Campaign",
+                "ko": "딥 다이브 캠페인"
+            },
+            "caption": {
+                "en": "Graphic Design",
+                "ko": "그래픽 디자인"
+            },
+            "summary": {
+                "en": "Immersion Organizational Culture Branding",
+                "ko": "몰입 조직문화 브랜딩"
+            },
             "cover": "assets/projects/DeepDive/cover.mp4",
             "thumbnail": "assets/projects/DeepDive/thumbnail.mov",
             "year": "2021",
-            "client": { "en": "AID", "ko": "에이드" },
-            "role": { "en": "Graphic Designer", "ko": "그래픽 디자이너" },
-            "tools": "Illustrator, Photoshop, Sora(OpenAI)",
+            "client": "AID",
+            "role": "Graphic Designer",
+            "projectType": "Campaign",
+            "industry": "Technology",
+            "tools": "Illustrator, Photoshop, Sora",
             "description": {
                 "en": [
                     "We designed an organizational culture poster that reinterprets the meaning of 'Immersion' to establish a healthy work culture and foster the creative energy of our team members.",
@@ -494,20 +806,35 @@ window.PROJECT_DATA = {
             },
             "links": [],
             "gallery": [
-                { "src": "assets/projects/DeepDive/1.jpg", "caption": " " }
+                {
+                    "src": "assets/projects/DeepDive/1.jpg",
+                    "caption": " "
+                }
             ]
         },
         {
             "slug": "fresh-chungnam",
-            "title": { "en": "Fresh Chungnam E-Catalog", "ko": "신선 충남 E-카탈로그" },
-            "caption": { "en": "Web Design", "ko": "웹 디자인" },
-            "summary": { "en": "Responsive IA Design for Global Export", "ko": "글로벌 수출을 위한 반응형 IA 디자인" },
+            "featured": false,
+            "title": {
+                "en": "Fresh Chungnam E-Catalog",
+                "ko": "신선 충남 E-카탈로그"
+            },
+            "caption": {
+                "en": "Web Design",
+                "ko": "웹 디자인"
+            },
+            "summary": {
+                "en": "Responsive IA Design for Global Export",
+                "ko": "글로벌 수출을 위한 반응형 IA 디자인"
+            },
             "cover": "assets/projects/FreshChungnam/cover.jpg",
             "thumbnail": "assets/projects/FreshChungnam/thumbnail.jpg",
             "year": "2020",
-            "client": { "en": "NongHyup(Chungnam)", "ko": "농협(충남)" },
-            "role": { "en": "Web Designer", "ko": "웹 디자이너" },
-            "tools": "Dreamweaver(Html/CSS), Photoshop, Illustrator",
+            "client": "NongHyup (Chungnam)",
+            "role": "Web Designer",
+            "projectType": "Digital Product",
+            "industry": "Public Sector",
+            "tools": "Photoshop, Illustrator",
             "description": {
                 "en": [
                     "This website was strategically planned and designed at the request of the National Agricultural Cooperative Federation (NongHyup), Chungcheongnam-do Headquarters, to support local farmers.",
@@ -522,20 +849,36 @@ window.PROJECT_DATA = {
             },
             "links": [],
             "gallery": [
-                { "src": "assets/projects/FreshChungnam/1.jpg", "caption": " " }
-            ]
+                {
+                    "src": "assets/projects/FreshChungnam/1.jpg",
+                    "caption": " "
+                }
+            ],
+            "tool_notes": "Legacy tool: Dreamweaver"
         },
         {
             "slug": "siso-fair-2020",
-            "title": { "en": "SISO Fair 2020", "ko": "시소 페어 2020" },
-            "caption": { "en": "Event Branding", "ko": "이벤트 브랜딩" },
-            "summary": { "en": "Integrated Visual System for Event Experience", "ko": "행사 경험을 위한 통합 비주얼 시스템" },
+            "featured": false,
+            "title": {
+                "en": "SISO Fair 2020",
+                "ko": "시소 페어 2020"
+            },
+            "caption": {
+                "en": "Event Branding",
+                "ko": "이벤트 브랜딩"
+            },
+            "summary": {
+                "en": "Integrated Visual System for Event Experience",
+                "ko": "행사 경험을 위한 통합 비주얼 시스템"
+            },
             "cover": "assets/projects/SISO/cover.jpg",
             "thumbnail": "assets/projects/SISO/thumbnail.jpg",
             "year": "2019",
-            "client": { "en": "Korea Stationery Industry Cooperative", "ko": "한국문구공업협동조합" },
-            "role": { "en": "Brand Experience Designer", "ko": "브랜드 경험 디자이너" },
-            "tools": "Dreamweaver(Html/CSS), Photoshop, Illustrator",
+            "client": "Korea Stationery Industry Cooperative",
+            "role": "Brand Experience Designer",
+            "projectType": "Campaign",
+            "industry": "Retail",
+            "tools": "Photoshop, Illustrator",
             "description": {
                 "en": [
                     "The SISOFAIR brand identity uses bright sky blue and a character popping from a gift box to project a joyful, energetic event image.",
@@ -550,22 +893,44 @@ window.PROJECT_DATA = {
             },
             "links": [],
             "gallery": [
-                { "src": "assets/projects/SISO/1.jpg", "caption": " " },
-                { "src": "assets/projects/SISO/2.jpg", "caption": " " },
-                { "src": "assets/projects/SISO/3.jpg", "caption": " " }
-            ]
+                {
+                    "src": "assets/projects/SISO/1.jpg",
+                    "caption": " "
+                },
+                {
+                    "src": "assets/projects/SISO/2.jpg",
+                    "caption": " "
+                },
+                {
+                    "src": "assets/projects/SISO/3.jpg",
+                    "caption": " "
+                }
+            ],
+            "tool_notes": "Legacy tool: Dreamweaver"
         },
         {
             "slug": "News-Letter",
-            "title": { "en": "News Letter", "ko": "뉴스레터" },
-            "caption": { "en": "Integrated Digital & Content Design", "ko": "통합 디지털 & 콘텐츠 디자인" },
-            "summary": { "en": "High-Volume Digital Content Implementation", "ko": "대량 디지털 콘텐츠 구현" },
+            "featured": false,
+            "title": {
+                "en": "News Letter",
+                "ko": "뉴스레터"
+            },
+            "caption": {
+                "en": "Integrated Digital & Content Design",
+                "ko": "통합 디지털 & 콘텐츠 디자인"
+            },
+            "summary": {
+                "en": "High-Volume Digital Content Implementation",
+                "ko": "대량 디지털 콘텐츠 구현"
+            },
             "cover": "assets/projects/News-Letter/cover.jpg",
             "thumbnail": "assets/projects/News-Letter/thumbnail.jpg",
             "year": "2018-2021",
-            "client": { "en": "KOTRA", "ko": "KOTRA" },
-            "role": { "en": "Content Designer", "ko": "콘텐츠 디자이너" },
-            "tools": "Dreamweaver(Html/CSS), Photoshop, Illustrator",
+            "client": "KOTRA",
+            "role": "Brand Designer",
+            "projectType": "Digital Product",
+            "industry": "Public Sector",
+            "tools": "Photoshop, Illustrator",
             "description": {
                 "en": [
                     "This project involved the design and technical implementation of a promotional email campaign aimed at attracting participation for over 200 domestic and international exhibitions, consortia, and industry events.",
@@ -583,20 +948,32 @@ window.PROJECT_DATA = {
                 ]
             },
             "links": [],
-            "gallery": [
-            ]
+            "gallery": [],
+            "tool_notes": "Legacy tool: Dreamweaver"
         },
         {
             "slug": "Chabssal-tteogkki",
-            "title": { "en": "Chabssal-tteogkki", "ko": "찹쌀떡끼" },
-            "caption": { "en": "Handmade figure", "ko": "핸드메이드 피규어" },
-            "summary": { "en": "The Sticky Rice Cake Bunny Figure", "ko": "찹쌀떡 토끼 피규어" },
+            "featured": false,
+            "title": {
+                "en": "Chabssal-tteogkki",
+                "ko": "찹쌀떡끼"
+            },
+            "caption": {
+                "en": "Handmade figure",
+                "ko": "핸드메이드 피규어"
+            },
+            "summary": {
+                "en": "The Sticky Rice Cake Bunny Figure",
+                "ko": "찹쌀떡 토끼 피규어"
+            },
             "cover": "assets/projects/rabbit/cover.jpg",
             "thumbnail": "assets/projects/rabbit/thumbnail.jpg",
             "year": "2015",
-            "client": { "en": "Personal Project", "ko": "개인 프로젝트" },
-            "role": { "en": "Toy Artist", "ko": "토이 아티스트" },
-            "tools": "Sculpey, Acrylic Paint",
+            "client": "Personal Project",
+            "role": "3D Artist",
+            "projectType": "Personal Work",
+            "industry": "Food",
+            "tools": "",
             "description": {
                 "en": [
                     "<b>The Chapssal-tteok Rabbit Figure</b>",
@@ -613,23 +990,39 @@ window.PROJECT_DATA = {
             },
             "links": [],
             "gallery": [
-                { "src": "assets/projects/rabbit/1.jpg", "caption": { "en": "Making Of", "ko": "제작 과정" } },
-                /*
-                { "src": "assets/projects/rabbit/2.jpg", "caption": "Food styling for a character dessert product shot" }
-                */
-            ]
+                {
+                    "src": "assets/projects/rabbit/1.jpg",
+                    "caption": {
+                        "en": "Making Of",
+                        "ko": "제작 과정"
+                    }
+                }
+            ],
+            "tool_notes": "Other tools: Sculpey, Acrylic Paint"
         },
         {
             "slug": "ai-robots",
-            "title": { "en": "The Next Generation of AI Robots", "ko": "차세대 AI 로봇" },
-            "caption": { "en": "3D Character Design", "ko": "3D 캐릭터 디자인" },
-            "summary": { "en": "Personality-Driven Robotics", "ko": "퍼스널리티 주도의 로봇 공학" },
+            "featured": false,
+            "title": {
+                "en": "The Next Generation of AI Robots",
+                "ko": "차세대 AI 로봇"
+            },
+            "caption": {
+                "en": "3D Character Design",
+                "ko": "3D 캐릭터 디자인"
+            },
+            "summary": {
+                "en": "Personality-Driven Robotics",
+                "ko": "퍼스널리티 주도의 로봇 공학"
+            },
             "cover": "assets/projects/AI-Robots/cover.jpg",
             "thumbnail": "assets/projects/AI-Robots/thumbnail.jpg",
             "year": "2013",
-            "client": { "en": "Personal Project", "ko": "개인 프로젝트" },
-            "role": { "en": "3D Artist", "ko": "3D 아티스트" },
-            "tools": "3D Max, KeyShot, Photoshop",
+            "client": "Personal Project",
+            "role": "3D Artist",
+            "projectType": "Character IP",
+            "industry": "Technology",
+            "tools": "3ds Max, KeyShot, Photoshop",
             "description": {
                 "en": [
                     "In the future, the advancement of Artificial Intelligence will allow robots to develop distinct personalities and interact with people in unique ways. Influenced by the game 'Portal', this project involved creating 3D models of robots, each with a different personality, based on the foundation of the human eye."
@@ -640,8 +1033,20 @@ window.PROJECT_DATA = {
             },
             "links": [],
             "gallery": [
-                { "src": "assets/projects/AI-Robots/1.jpg", "caption": { "en": "The Mechanic", "ko": "메카닉" } },
-                { "src": "assets/projects/AI-Robots/2.jpg", "caption": { "en": "The Observer", "ko": "옵저버" } }
+                {
+                    "src": "assets/projects/AI-Robots/1.jpg",
+                    "caption": {
+                        "en": "The Mechanic",
+                        "ko": "메카닉"
+                    }
+                },
+                {
+                    "src": "assets/projects/AI-Robots/2.jpg",
+                    "caption": {
+                        "en": "The Observer",
+                        "ko": "옵저버"
+                    }
+                }
             ]
         }
     ]
