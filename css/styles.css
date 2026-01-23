@@ -423,6 +423,20 @@ body.header-collapsed #viewToggleBar {
   color: var(--accent-orange);
 }
 
+.view-toggle-text #filterToggleLabel {
+  display: inline-block;
+  min-width: 72px;
+}
+
+#viewToggleBar #desktopSortLabel {
+  display: inline-block;
+  min-width: 28px;
+}
+
+#viewToggleBar #desktopSortSelect {
+  min-width: 72px;
+}
+
 .view-toggle-label {
   color: #999 !important;
   font-size: 11px;
@@ -437,7 +451,7 @@ body.header-collapsed #viewToggleBar {
   border: none;
   background: transparent;
   color: black;
-  padding: 0 16px 0 0;
+  padding: 0 12px 0 0;
   cursor: pointer;
   text-transform: none;
   appearance: none;
@@ -445,8 +459,9 @@ body.header-collapsed #viewToggleBar {
   -moz-appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23111' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 0 center;
-  background-size: 10px 6px;
+  background-position: calc(100% - 2px) center;
+  background-size: 8px 5px;
+  text-indent: 6px;
 }
 
 .sort-select:focus {
@@ -971,6 +986,26 @@ body.header-collapsed #topBar {
   font-weight: 500;
 }
 
+#mobileTopBar #mobileFilterLabel {
+  display: inline-block;
+  min-width: 28px;
+}
+
+#mobileTopBar #mobileSortSelect {
+  min-width: 72px;
+}
+
+#mobileTopBar #mobileViewSelect {
+  min-width: 72px;
+}
+
+#mobileTopBar .sort-select {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.2;
+  height: 32px;
+}
+
 #mobileFilterOpenBtn {
   min-height: 44px;
   padding: 0.5rem 0.75rem;
@@ -1222,6 +1257,10 @@ body.header-collapsed #topBar {
 
 #mobileResultCount:empty,
 #desktopResultCount:empty {
+  visibility: hidden;
+}
+
+.i18n-pending {
   visibility: hidden;
 }
 
