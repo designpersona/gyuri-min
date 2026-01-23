@@ -6,7 +6,7 @@ const DATA = window.PROJECT_DATA;
 const state = { site: DATA.site, projects: DATA.projects };
 let pendingSlug = null;
 let currentLang = localStorage.getItem('site_lang') || 'en';
-let viewMode = localStorage.getItem('view_mode') || '2'; // '1', '2', '3', or '5'
+let viewMode = localStorage.getItem('view_mode') || '1'; // '1', '2', '3', or '5'
 let searchQuery = '';
 let activeFilters = JSON.parse(localStorage.getItem('activeFilters') || '{}'); // { projectType: [], role: [], industry: [], client: [], tools: [] }
 let sortMode = localStorage.getItem('sort_mode') || 'featured'; // featured | latest | oldest
@@ -40,14 +40,18 @@ const I18N = {
     clearFilters: "Clear all filters",
     hideFilter: "Hide Filter",
     showFilter: "Show Filter",
+    filter: "Filter",
+    resultsSuffix: "Results",
     sort: "Sort",
-    featured: "Featured",
+    featured: "Random",
     latest: "Latest",
     oldest: "Oldest",
     moreTools: "+ More",
     lessTools: "Show less",
     langLabel: "EN",
     viewLabel: "View",
+    magazineView: "Magazine",
+    thumbnailView: "Thumbnail",
     // About Page
     aboutRole: "Brand Designer",
     aboutTagline: "Brand Architect.<br />Visual Strategist.<br />Experience Builder.<br />Creative Connector.",
@@ -78,31 +82,35 @@ const I18N = {
     ]
   },
   ko: {
-    aboutLink: "ABOUT ME",
-    mobileAboutLink: "ABOUT ME",
-    back: "← 목록으로 가기",
+    aboutLink: "소개",
+    mobileAboutLink: "소개",
+    back: "← 목록으로",
     restricted: "비공개",
     lockedTitle: "비공개 프로젝트",
     lockedDesc: "비밀번호를 입력하여 상세 내용을 확인하세요",
     unlock: "확인",
     cancel: "취소",
-    year: "Year",
-    client: "Client",
-    role: "Role",
-    projectType: "Project Type",
+    year: "연도",
+    client: "클라이언트",
+    role: "역할",
+    projectType: "프로젝트 유형",
     industry: "산업",
-    tools: "Tools",
-    clearFilters: "모든 필터 지우기",
+    tools: "도구",
+    clearFilters: "필터 초기화",
     hideFilter: "필터 숨기기",
     showFilter: "필터 보이기",
+    filter: "필터",
+    resultsSuffix: "개의 결과",
     sort: "정렬",
-    featured: "Featured",
-    latest: "Latest",
-    oldest: "Oldest",
-    moreTools: "+ 더보기",
-    lessTools: "접기",
+    featured: "무작위",
+    latest: "최근 순",
+    oldest: "오래된 순",
+    moreTools: "+더보기",
+    lessTools: "간단히 보기",
     langLabel: "KO",
-    viewLabel: "보기",
+    viewLabel: "뷰",
+    magazineView: "매거진",
+    thumbnailView: "썸네일",
     // About Page
     aboutRole: "브랜드 디자이너",
     aboutTagline: "브랜드 아키텍트.<br />비주얼 스트래티지스트.<br />익스피리언스 빌더.<br />크리에이티브 커넥터.",
@@ -243,6 +251,7 @@ const esc = (s = '') => (s ?? '').toString();
 const getText = (obj) => {
   if (!obj) return '';
   if (typeof obj === 'string') return obj;
+  if (Array.isArray(obj)) return obj;
   return obj[currentLang] || obj['en'] || '';
 };
 
@@ -297,22 +306,62 @@ const gridHTML = (items) => {
           const thumb = esc(p.thumbnail);
           const isVideo = /\.(mp4|webm|mov)$/i.test(thumb);
           const isWideView = viewMode === '1'; // Now applies to mobile too
+          const aspectClass = isWideView ? 'aspect-[16/9]' : 'aspect-square';
+          const galleryImages = (p.gallery || [])
+            .map((g) => esc(g.src))
+            .filter((src) => /\.(png|jpe?g|gif|webp)$/i.test(src))
+            .slice(0, 3);
+          const coverSrc = esc(p.cover || '');
+          const isCoverImage = /\.(png|jpe?g|gif|webp)$/i.test(coverSrc);
+          const isCoverVideo = /\.(mp4|webm|mov)$/i.test(coverSrc);
 
           let mediaHtml;
-          if (isVideo) {
-            // For videos, use a more natural wide aspect ratio
-            const aspectClass = isWideView ? 'aspect-[16/9]' : 'aspect-square';
-            mediaHtml = `<video class="${aspectClass} w-full object-cover transition-transform duration-500 group-hover:scale-105" src="${thumb}" autoplay muted loop playsinline></video>`;
+          if (isWideView && (galleryImages.length || isVideo || isCoverImage || isCoverVideo)) {
+            const slides = [];
+            if (isCoverVideo) {
+              slides.push(`
+              <div class="thumb-roller-slide">
+                <video class="w-full h-full object-cover" src="${coverSrc}" autoplay muted loop playsinline></video>
+              </div>`);
+            } else if (isCoverImage) {
+              slides.push(`
+              <div class="thumb-roller-slide">
+                <img loading="lazy" decoding="async" class="w-full h-full object-cover" src="${coverSrc}" alt="${esc(getText(p.title))} cover" />
+              </div>`);
+            }
+            slides.push(
+              ...galleryImages.map(
+                (src) => `
+              <div class="thumb-roller-slide">
+                <img loading="lazy" decoding="async" class="w-full h-full object-cover" src="${src}" alt="${esc(getText(p.title))} slide" />
+              </div>`
+              )
+            );
+            if (isVideo && thumb !== coverSrc) {
+              slides.push(`
+              <div class="thumb-roller-slide">
+                <video class="w-full h-full object-cover" src="${thumb}" autoplay muted loop playsinline></video>
+              </div>`);
+            }
+            const slidesHtml = slides.join('');
+            mediaHtml = `
+            <div class="thumb-roller ${aspectClass} w-full" data-slide-count="${slides.length}">
+              <button class="thumb-roller-btn thumb-roller-prev" type="button" aria-label="Previous thumbnail" data-thumb-slider="prev">‹</button>
+              <div class="thumb-roller-track">
+                ${slidesHtml}
+              </div>
+              <button class="thumb-roller-btn thumb-roller-next" type="button" aria-label="Next thumbnail" data-thumb-slider="next">›</button>
+            </div>`;
+          } else if (isVideo) {
+            mediaHtml = `<video class="${aspectClass} w-full object-cover thumb-media" src="${thumb}" autoplay muted loop playsinline></video>`;
           } else {
             const isGif = thumb.toLowerCase().endsWith('.gif');
-            // For images, use a more natural wide aspect ratio that fits most thumbnails
-            const aspectClass = isWideView ? 'aspect-[16/9]' : 'aspect-square';
-            mediaHtml = `<img loading="lazy" decoding="async" ${isGif ? 'style="will-change: transform;"' : ''} class="${aspectClass} w-full object-cover transition-transform duration-500 group-hover:scale-105" src="${thumb}" alt="${esc(getText(p.title))} thumbnail" />`;
+            mediaHtml = `<img loading="lazy" decoding="async" ${isGif ? 'style="will-change: transform;"' : ''} class="${aspectClass} w-full object-cover thumb-media" src="${thumb}" alt="${esc(getText(p.title))} thumbnail" />`;
           }
 
           return `
         <article class="relative group ${isWideView ? 'w-full max-w-full' : ''}">
-          <a href="#/${p.slug}" class="block overflow-hidden relative" style="text-decoration:none">
+          <a href="#/${p.slug}" class="block overflow-hidden relative thumb-frame" style="text-decoration:none">
             ${mediaHtml}
             ${p.locked ? `<div class="absolute top-0 right-0 bg-black/10 text-white text-[10px] px-3 py-1 uppercase tracking-wider font-medium">${t('restricted')}</div>` : ''}
           </a>
@@ -334,22 +383,17 @@ function detailHTML(p) {
       let media;
       const caption = getText(g.caption);
 
-      // 1. YouTube Video
       const ytMatch = src.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
 
       if (ytMatch) {
         media = `<div class="relative w-full aspect-video">
               <iframe class="absolute inset-0 w-full h-full" src="https://www.youtube.com/embed/${ytMatch[1]}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>`;
-      }
-      // 2. Local Video (MP4/WebM/MOV)
-      else if (/\.(mp4|webm|mov)$/i.test(src)) {
+      } else if (/\.(mp4|webm|mov)$/i.test(src)) {
         media = `<video class="w-full" controls playsinline preload="metadata">
               <source src="${src}" type="video/mp4">
             </video>`;
-      }
-      // 3. Default Image
-      else {
+      } else {
         media = `<img loading="lazy" decoding="async" class="w-full" src="${src}" alt="${esc(getText(p.title))} image" />`;
       }
 
@@ -379,7 +423,7 @@ function detailHTML(p) {
   if (hasLeftContent || hasRightContent) {
     const gridCols = hasLeftContent && hasRightContent ? 'grid-cols-1 md:grid-cols-[200px_1fr]' : 'grid-cols-1';
     infoSection = `
-          <section class="mt-8 pt-8 mb-12 border-t border-neutral-200 order-2 lg:order-1">
+          <section class="mt-8 pt-8 mb-12 border-t border-neutral-200">
             <div class="grid ${gridCols} gap-8 md:gap-12">
               ${hasLeftContent
         ? `<div>
@@ -471,7 +515,6 @@ function detailHTML(p) {
         `;
   }
 
-  // --- Render Functions ---
   const heroSrc = esc(p.cover);
   const isHeroVideo = /\.(mp4|webm|mov)$/i.test(heroSrc);
   let heroMedia;
@@ -493,14 +536,14 @@ function detailHTML(p) {
           ${p.summary ? `<p class="mt-2 text-[16px] leading-[1.7] text-neutral-700">${esc(getText(p.summary))}</p>` : ``}
         </article>
         <div class="flex flex-col">
-          ${infoSection}
-          <section class="mt-6 space-y-6 order-1 lg:order-2">
+          <section class="mt-6 space-y-6">
             <figure>
               ${heroMedia}
               <!-- Hide caption for cover/hero media -->
             </figure>
             ${gallery}
           </section>
+          ${infoSection}
         </div>
       `;
 }
@@ -625,6 +668,10 @@ const mobileViewDropdownLabel = document.getElementById('mobileViewDropdownLabel
 const mobileViewDropdown = document.getElementById('mobileViewDropdown');
 const mobileResultCount = document.getElementById('mobileResultCount');
 
+function clearThumbRollers() {
+  // No-op for manual sliders.
+}
+
 // Language Elements
 const desktopLangBtn = document.getElementById('desktopLangBtn');
 const currentLangLabel = document.getElementById('currentLangLabel');
@@ -641,13 +688,25 @@ function updateLayoutMode() {
     document.body.classList.remove('mobile-mode');
   }
 
+  if (!isMobile) {
+    const desktopDefaultSet = localStorage.getItem('view_mode_initialized') === '1';
+    if (!desktopDefaultSet) {
+      localStorage.setItem('view_mode_initialized', '1');
+      if (viewMode !== '1') {
+        setViewMode('1');
+      }
+    }
+  }
+
   if (isMobile && viewMode !== '2') {
     setViewMode('2');
   }
 
   if (!isMobile && viewMode === '2') {
-    setViewMode('3');
+    setViewMode('1');
   }
+
+  updateViewToggleButtons();
 }
 window.addEventListener('resize', updateLayoutMode);
 updateLayoutMode();
@@ -804,17 +863,26 @@ const getYearRange = (yearValue) => {
   return { start, end };
 };
 
+const shuffleArray = (items) => {
+  const arr = [...items];
+  for (let i = arr.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+};
+
 const sortProjects = (items) => {
+  if (sortMode === 'featured') {
+    const featuredItems = items.filter((item) => item.featured);
+    const normalItems = items.filter((item) => !item.featured);
+    return [...shuffleArray(featuredItems), ...shuffleArray(normalItems)];
+  }
+
   const sorted = [...items];
   sorted.sort((a, b) => {
     const yearA = getYearRange(getText(a.year));
     const yearB = getYearRange(getText(b.year));
-
-    if (sortMode === 'featured') {
-      const featuredDiff = (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
-      if (featuredDiff !== 0) return featuredDiff;
-      return yearB.end - yearA.end;
-    }
 
     if (sortMode === 'oldest') {
       return yearA.start - yearB.start;
@@ -841,30 +909,6 @@ function filterMenuHTML() {
   };
 
   let html = '<div class="filter-menu-sections">';
-
-  const sortCollapsed = collapsedSections.sort || false;
-  html += `
-      <div class="filter-section ${sortCollapsed ? 'collapsed' : ''}" data-filter-type="sort">
-        <h3 class="filter-section-title">
-          ${t('sort')}
-          <svg class="filter-toggle-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="6 9 12 15 18 9"></polyline>
-          </svg>
-        </h3>
-        <div class="filter-options-wrapper">
-          <div class="filter-options-container space-y-2">
-            ${SORT_MODES.map((mode) => {
-    const labelKey = mode === 'featured' ? 'featured' : mode === 'latest' ? 'latest' : 'oldest';
-    const isActive = sortMode === mode;
-    return `
-              <button type="button" class="sort-option ${isActive ? 'active' : ''}" data-sort="${mode}">
-                ${t(labelKey)}
-              </button>`;
-  }).join('')}
-          </div>
-        </div>
-      </div>
-    `;
 
   ['projectType', 'role', 'industry', 'client', 'tools'].forEach(filterType => {
     const filterValues = options[filterType];
@@ -941,6 +985,8 @@ function filterMenuHTML() {
 
 function renderHome() {
   document.body.classList.remove('about-page-active');
+  document.body.classList.remove('detail-page-active');
+  clearThumbRollers();
   const filteredItems = sortProjects(filterProjects());
 
   // Show filter menu on home page - respect filterVisible state
@@ -968,8 +1014,10 @@ function renderHome() {
   updateViewToggleBar();
 
   pane.innerHTML = gridHTML(filteredItems);
+  initThumbRollers();
   updateMobileViewDropdown();
   updateMobileResultCount();
+  updateDesktopResultCount();
 
   // Render filter menu
   if (filterMenuContent) {
@@ -993,6 +1041,8 @@ function renderHome() {
 
 function renderAbout() {
   document.body.classList.add('about-page-active');
+  document.body.classList.remove('detail-page-active');
+  clearThumbRollers();
   // Use JS rendering instead of template
   pane.innerHTML = aboutHTML();
 
@@ -1027,17 +1077,23 @@ function renderAbout() {
 
 function renderDetail(slug) {
   document.body.classList.remove('about-page-active');
+  document.body.classList.add('detail-page-active');
+  clearThumbRollers();
+  const filterMenu = document.getElementById('desktopFilterMenu');
+  if (filterMenu) {
+    filterMenu.classList.add('hidden');
+  }
+  const main = document.querySelector('main');
+  if (main) {
+    main.classList.remove('filter-visible', 'filter-hidden');
+  }
+  updateViewToggleBar();
   const p = state.projects.find((x) => x.slug === slug);
   pane.innerHTML = p
     ? detailHTML(p)
     : `<p class="text-sm text-neutral-500">Not found.</p>`;
 
-  // Render filter menu (even on detail page)
-  if (filterMenuContent) {
-    filterMenuContent.innerHTML = filterMenuHTML();
-    setupFilterListeners();
-    syncMobileFilterContent();
-  }
+  // Do not render filter menu on detail page.
 
   // Update filter visibility
   updateFilterVisibility();
@@ -1053,6 +1109,38 @@ function renderDetail(slug) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
+function initThumbRollers() {
+  const rollers = document.querySelectorAll('.thumb-roller');
+  if (!rollers.length) return;
+  rollers.forEach((roller) => {
+    const track = roller.querySelector('.thumb-roller-track');
+    const slides = roller.querySelectorAll('.thumb-roller-slide');
+    if (!track || slides.length === 0) return;
+    const prevBtn = roller.querySelector('[data-thumb-slider="prev"]');
+    const nextBtn = roller.querySelector('[data-thumb-slider="next"]');
+    let index = 0;
+    const setActive = (nextIndex) => {
+      index = (nextIndex + slides.length) % slides.length;
+      track.style.transform = `translateX(-${index * 100}%)`;
+    };
+    if (prevBtn) {
+      prevBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setActive(index - 1);
+      });
+    }
+    if (nextBtn) {
+      nextBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setActive(index + 1);
+      });
+    }
+  });
+}
+
+
 function updateStaticText() {
   // Header Links
   const aboutMeText = t('aboutLink');
@@ -1062,6 +1150,8 @@ function updateStaticText() {
   // Mobile About Link
   const mobileAboutLink = document.getElementById('mobileAboutLink');
   if (mobileAboutLink) mobileAboutLink.textContent = t('mobileAboutLink');
+  const mobileFilterLabel = document.getElementById('mobileFilterLabel');
+  if (mobileFilterLabel) mobileFilterLabel.textContent = t('filter');
 
   // Copyright
   const copyText = getText(state.site.copyright);
@@ -1072,6 +1162,30 @@ function updateStaticText() {
   if (currentLangLabel) currentLangLabel.textContent = t('langLabel');
   const topBarLangLabel = document.getElementById('topBarLangLabel');
   if (topBarLangLabel) topBarLangLabel.textContent = t('langLabel');
+
+  // Desktop Sort Labels
+  const desktopSortLabel = document.getElementById('desktopSortLabel');
+  const desktopSortFeatured = document.getElementById('desktopSortFeatured');
+  const desktopSortLatest = document.getElementById('desktopSortLatest');
+  const desktopSortOldest = document.getElementById('desktopSortOldest');
+  if (desktopSortLabel) desktopSortLabel.textContent = t('sort');
+  if (desktopSortFeatured) desktopSortFeatured.textContent = t('featured');
+  if (desktopSortLatest) desktopSortLatest.textContent = t('latest');
+  if (desktopSortOldest) desktopSortOldest.textContent = t('oldest');
+  const mobileSortFeatured = document.getElementById('mobileSortFeatured');
+  const mobileSortLatest = document.getElementById('mobileSortLatest');
+  const mobileSortOldest = document.getElementById('mobileSortOldest');
+  if (mobileSortFeatured) mobileSortFeatured.textContent = t('featured');
+  if (mobileSortLatest) mobileSortLatest.textContent = t('latest');
+  if (mobileSortOldest) mobileSortOldest.textContent = t('oldest');
+  document.querySelectorAll('.mobile-view-option').forEach((option) => {
+    const nextView = option.dataset.view;
+    if (nextView === '1') {
+      option.textContent = t('magazineView');
+    } else if (nextView === '2') {
+      option.textContent = t('thumbnailView');
+    }
+  });
 
 
 
@@ -1300,7 +1414,7 @@ if (mobileFilterDrawer) {
 const updateMobileViewDropdown = () => {
   if (!mobileViewDropdownLabel) return;
   const isMagazine = viewMode === '1';
-  mobileViewDropdownLabel.textContent = isMagazine ? 'Magazine View' : 'Thumbnail View';
+  mobileViewDropdownLabel.textContent = isMagazine ? t('magazineView') : t('thumbnailView');
 };
 
 function setViewMode(nextMode, { render = true, closeMobileDropdown = false } = {}) {
@@ -1321,8 +1435,55 @@ function setViewMode(nextMode, { render = true, closeMobileDropdown = false } = 
 const updateMobileResultCount = () => {
   if (!mobileResultCount) return;
   const count = filterProjects().length;
-  mobileResultCount.textContent = `${count} Results`;
+  mobileResultCount.textContent = currentLang === 'ko'
+    ? `${count}${t('resultsSuffix')}`
+    : `${count} ${t('resultsSuffix')}`;
 };
+
+const updateDesktopResultCount = () => {
+  const desktopResultCount = document.getElementById('desktopResultCount');
+  if (!desktopResultCount) return;
+  const count = filterProjects().length;
+  desktopResultCount.textContent = currentLang === 'ko'
+    ? `${count}${t('resultsSuffix')}`
+    : `${count} ${t('resultsSuffix')}`;
+};
+
+const desktopSortSelect = document.getElementById('desktopSortSelect');
+if (desktopSortSelect) {
+  desktopSortSelect.addEventListener('change', (e) => {
+    const nextMode = e.target.value;
+    if (!SORT_MODES.includes(nextMode) || sortMode === nextMode) return;
+    sortMode = nextMode;
+    localStorage.setItem('sort_mode', sortMode);
+    if (location.hash === '#/' || location.hash === '') {
+      renderHome();
+    } else if (filterMenuContent) {
+      filterMenuContent.innerHTML = filterMenuHTML();
+      setupFilterListeners();
+      syncMobileFilterContent();
+    }
+    updateViewToggleButtons();
+  });
+}
+
+const mobileSortSelect = document.getElementById('mobileSortSelect');
+if (mobileSortSelect) {
+  mobileSortSelect.addEventListener('change', (e) => {
+    const nextMode = e.target.value;
+    if (!SORT_MODES.includes(nextMode) || sortMode === nextMode) return;
+    sortMode = nextMode;
+    localStorage.setItem('sort_mode', sortMode);
+    if (location.hash === '#/' || location.hash === '') {
+      renderHome();
+    } else if (filterMenuContent) {
+      filterMenuContent.innerHTML = filterMenuHTML();
+      setupFilterListeners();
+      syncMobileFilterContent();
+    }
+    updateViewToggleButtons();
+  });
+}
 
 if (mobileViewDropdownBtn && mobileViewDropdown) {
   if (mobileViewDropdownBtn.dataset.bound !== 'true') {
@@ -1492,6 +1653,14 @@ function updateViewToggleButtons() {
   if (activeToggle) {
     activeToggle.classList.add('active');
   }
+  const desktopSortSelect = document.getElementById('desktopSortSelect');
+  if (desktopSortSelect) {
+    desktopSortSelect.value = sortMode;
+  }
+  const mobileSortSelect = document.getElementById('mobileSortSelect');
+  if (mobileSortSelect) {
+    mobileSortSelect.value = sortMode;
+  }
 }
 
 /** Update the fixed view toggle bar state */
@@ -1504,6 +1673,9 @@ function updateViewToggleBar() {
   const viewToggleBar = document.getElementById('viewToggleBar');
   if (viewToggleBar) {
     if (document.body.classList.contains('about-page-active')) {
+      viewToggleBar.classList.add('hidden');
+      viewToggleBar.classList.remove('lg:flex');
+    } else if (location.hash && location.hash !== '#/' && location.hash !== '') {
       viewToggleBar.classList.add('hidden');
       viewToggleBar.classList.remove('lg:flex');
     } else {
@@ -1523,8 +1695,13 @@ function updateFilterToggleButton() {
 function updateFilterVisibility() {
   const filterMenu = document.getElementById('desktopFilterMenu');
   const main = document.querySelector('main');
+  const isDetailPage = location.hash && location.hash !== '#/' && location.hash !== '' && location.hash !== '#/about';
 
   if (filterMenu) {
+    if (isDetailPage) {
+      filterMenu.classList.add('hidden');
+      filterMenu.classList.remove('filter-visible', 'filter-hidden');
+    } else
     if (filterVisible) {
       filterMenu.classList.remove('filter-hidden');
       filterMenu.classList.add('filter-visible');
@@ -1538,6 +1715,9 @@ function updateFilterVisibility() {
   }
 
   if (main) {
+    if (isDetailPage) {
+      main.classList.remove('filter-visible', 'filter-hidden');
+    } else
     if (filterVisible) {
       main.classList.remove('filter-hidden');
       main.classList.add('filter-visible');
@@ -1784,11 +1964,8 @@ function updateDesktopHeaderVars() {
   const isCollapsed = document.body.classList.contains('header-collapsed');
   const offset = isCollapsed ? 0 : headerStack;
   document.documentElement.style.setProperty('--desktop-header-offset', `${Math.round(offset)}px`);
-  if (viewToggleBar) {
-    const viewBottom = viewToggleBar.getBoundingClientRect().bottom;
-    const contentHeight = Math.max(0, window.innerHeight - viewBottom);
-    document.documentElement.style.setProperty('--desktop-content-height', `${Math.round(contentHeight)}px`);
-  }
+  const contentHeight = Math.max(0, window.innerHeight - offset - viewToggleHeight);
+  document.documentElement.style.setProperty('--desktop-content-height', `${Math.round(contentHeight)}px`);
 }
 
 // 1. Scroll Position Restoration
@@ -1807,17 +1984,27 @@ window.addEventListener('pageshow', (event) => {
 // 2. Header Scroll Behavior (Hide/Show)
 let lastY = window.scrollY;
 let ticking = false;
+let isHeaderCollapsed = document.body.classList.contains('header-collapsed');
 
 function updateHeader() {
   const currentY = window.scrollY;
+  const isDesktop = window.innerWidth >= 1024;
 
   // Header collapse effect
-  if (currentY > 50) {
-    document.body.classList.add('header-collapsed');
+  if (isDesktop) {
+    if (isHeaderCollapsed) {
+      document.body.classList.remove('header-collapsed');
+      isHeaderCollapsed = false;
+      updateDesktopHeaderVars();
+    }
   } else {
-    document.body.classList.remove('header-collapsed');
+    const shouldCollapse = currentY > 50;
+    if (shouldCollapse !== isHeaderCollapsed) {
+      document.body.classList.toggle('header-collapsed', shouldCollapse);
+      isHeaderCollapsed = shouldCollapse;
+      updateDesktopHeaderVars();
+    }
   }
-  updateDesktopHeaderVars();
 
   // Scroll Top Button Logic
   if (currentY > 300) {
