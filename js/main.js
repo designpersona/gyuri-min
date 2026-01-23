@@ -111,6 +111,7 @@ document.body.classList.toggle('lang-ko', currentLang === 'ko');
 // Translations for static text
 const I18N = {
   en: {
+    aboutName: "Gyuri Min",
     aboutLink: "ABOUT ME",
     mobileAboutLink: "ABOUT ME",
     back: "← Back to Archive",
@@ -170,8 +171,9 @@ const I18N = {
     ]
   },
   ko: {
-    aboutLink: "소개",
-    mobileAboutLink: "소개",
+    aboutName: "민규리",
+    aboutLink: "about me",
+    mobileAboutLink: "about me",
     back: "← 목록으로",
     restricted: "비공개",
     lockedTitle: "비공개 프로젝트",
@@ -201,7 +203,7 @@ const I18N = {
     thumbnailView: "썸네일",
     // About Page
     aboutRole: "브랜드 디자이너",
-    aboutTagline: "브랜드 아키텍트.<br />비주얼 스트래티지스트.<br />익스피리언스 빌더.<br />크리에이티브 커넥터.",
+    aboutTagline: "브랜드 설계.<br />시각 전략.<br />경험 빌더.<br />창의적 연결.",
     expertise: "전문 분야",
     recognition: "수상 경력",
     education: "학력",
@@ -666,7 +668,7 @@ function aboutHTML() {
     <article class="max-w-none">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
         <div>
-          <h1 class="text-[34px] md:text-[34px] font-semibold tracking-tight">Gyuri Min</h1>
+          <h1 class="text-[34px] md:text-[34px] font-semibold tracking-tight">${t('aboutName')}</h1>
           <h1 class="text-[34px] md:text-[34px] font-semibold tracking-tight text-[var(--accent-orange)] -mt-2">${t('aboutRole')}</h1>
         </div>
         <div class="text-right">
