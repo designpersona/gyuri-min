@@ -706,6 +706,11 @@ main.filter-visible #pane {
   #mobileSearchInput {
     min-height: 44px;
     padding: 0 4px;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #111;
+    border-radius: 0;
+    width: 100%;
   }
 
   #drawerPanel {
