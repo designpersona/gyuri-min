@@ -198,7 +198,7 @@ const I18N = {
     moreTools: "+더보기",
     lessTools: "간단히 보기",
     langLabel: "KO",
-    viewLabel: "뷰",
+    viewLabel: "보기",
     magazineView: "매거진",
     thumbnailView: "썸네일",
     // About Page
@@ -1331,6 +1331,8 @@ function updateStaticText() {
   if (mobileAboutLink) mobileAboutLink.textContent = t('mobileAboutLink');
   const mobileFilterLabel = document.getElementById('mobileFilterLabel');
   if (mobileFilterLabel) mobileFilterLabel.textContent = t('filter');
+  const mobileFilterTitle = document.querySelector('#mobileFilterDrawer h3');
+  if (mobileFilterTitle) mobileFilterTitle.textContent = t('filter');
 
   // Copyright
   const copyText = getText(state.site.copyright);
@@ -1344,10 +1346,12 @@ function updateStaticText() {
 
   // Desktop Sort Labels
   const desktopSortLabel = document.getElementById('desktopSortLabel');
+  const desktopViewLabel = document.getElementById('desktopViewLabel');
   const desktopSortFeatured = document.getElementById('desktopSortFeatured');
   const desktopSortLatest = document.getElementById('desktopSortLatest');
   const desktopSortOldest = document.getElementById('desktopSortOldest');
   if (desktopSortLabel) desktopSortLabel.textContent = t('sort');
+  if (desktopViewLabel) desktopViewLabel.textContent = t('viewLabel');
   if (desktopSortFeatured) desktopSortFeatured.textContent = t('featured');
   if (desktopSortLatest) desktopSortLatest.textContent = t('latest');
   if (desktopSortOldest) desktopSortOldest.textContent = t('oldest');
@@ -1398,6 +1402,11 @@ function setLanguage(lang) {
   document.body.classList.toggle('lang-en', lang === 'en');
   document.body.classList.toggle('lang-ko', lang === 'ko');
   // document.documentElement.lang = lang; // optional
+  updateStaticText();
+  updateFilterToggleButton();
+  updateMobileViewDropdown();
+  updateMobileResultCount();
+  updateDesktopResultCount();
   router(); // re-render current view
   // Update filter toggle button text if on home page
   if (location.hash === '#/' || location.hash === '') {
