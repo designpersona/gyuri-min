@@ -113,9 +113,6 @@ figcaption {
   display: none;
   position: fixed;
   inset: 0;
-  display: none;
-  position: fixed;
-  inset: 0;
   z-index: var(--z-modal);
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(5px);
@@ -141,7 +138,6 @@ figcaption {
   cursor: pointer;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.3s, visibility 0.3s, transform 0.2s;
   transition: opacity 0.3s, visibility 0.3s, transform 0.2s;
   z-index: var(--z-scrolltop);
   display: flex;
@@ -224,12 +220,6 @@ header#mainHeader {
   #brandLink {
     font-size: 36px !important;
   }
-}
-
-body.header-collapsed header#mainHeader {
-  transform: translateY(-113px);
-  /* Desktop: Slides away fully */
-  pointer-events: none;
 }
 
 @media (max-width: 1023px) {
@@ -397,6 +387,15 @@ body.mobile-mode aside {
   body.view-mode-5 #pane article > .mt-3 {
     display: none !important;
   }
+
+  body.view-mode-5 main {
+    min-height: auto !important;
+  }
+
+  body.view-mode-5 #pane {
+    min-height: auto !important;
+    padding-bottom: 0.75rem !important;
+  }
 }
 
 body.header-collapsed #viewToggleBar {
@@ -429,7 +428,42 @@ body.header-collapsed #viewToggleBar {
   cursor: default;
 }
 
+.sort-select {
+  font-size: 14px;
+  font-weight: 400;
+  font-family: inherit;
+  border: none;
+  background: transparent;
+  color: black;
+  padding: 0 16px 0 0;
+  cursor: pointer;
+  text-transform: none;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23111' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0 center;
+  background-size: 10px 6px;
+}
+
+.sort-select:focus {
+  outline: none;
+}
+
+.dropdown-button {
+  padding-right: 16px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23111' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0 center;
+  background-size: 10px 6px;
+}
+
 body.about-page-active #viewToggleBar {
+  display: none !important;
+}
+
+body.detail-page-active #viewToggleBar {
   display: none !important;
 }
 
@@ -624,7 +658,10 @@ main.filter-visible #pane {
 #pane .grid.grid-cols-1 article {
   width: 100%;
   max-width: 100%;
-}/* Top Bar Styles */
+  margin: 0 auto;
+}
+
+/* Top Bar Styles */
 #topBar {
   height: 32px;
   background-color: var(--accent-orange) !important;
@@ -670,8 +707,8 @@ main.filter-visible #pane {
   }
 
   #drawerPanel {
-    width: 72% !important;
-    max-width: 72vw !important;
+    width: 60% !important;
+    max-width: 60vw !important;
   }
 
   #mobileMenu .topbar-lang-option {
@@ -769,8 +806,6 @@ body.header-collapsed #topBar {
   transition: transform 0.2s ease-out, opacity 0.2s ease-out, visibility 0.2s;
   opacity: 0;
   visibility: hidden;
-  opacity: 0;
-  visibility: hidden;
   z-index: var(--z-dropdown);
 }
 
@@ -803,18 +838,65 @@ body.header-collapsed #topBar {
   transform: rotate(45deg);
 }
 
-/* Adjust main content padding for top bar, header, and view toggle bar */
-
-
 /* Single Column View Styles */
-#pane .grid.grid-cols-1 article {
-  width: 100%;
-  margin: 0 auto;
-}
-
 #pane .grid.grid-cols-1 {
   gap: 2rem;
 }
+
+/* Thumbnail roller (view-mode-1) */
+.thumb-roller {
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+}
+
+.thumb-roller-track {
+  display: flex;
+  transition: transform 0.6s ease;
+  will-change: transform;
+  height: 100%;
+}
+
+.thumb-roller-slide {
+  min-width: 100%;
+  height: 100%;
+}
+
+.thumb-roller img,
+.thumb-roller video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.thumb-roller-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 0;
+  background: transparent;
+  color: #111;
+  font-size: 28px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.thumb-roller-prev {
+  left: 6px;
+}
+
+.thumb-roller-next {
+  right: 6px;
+}
+
 
 /* Desktop Menu Drawer */
 #desktopDrawerPanel {
@@ -949,8 +1031,8 @@ body.header-collapsed #topBar {
 /* Filter Menu Styles */
 .filter-section {
   border-bottom: 1px solid #f0f0f0;
-  padding-bottom: 1.5rem;
-  margin-bottom: 1.5rem;
+  padding-bottom: 0.4rem;
+  margin-bottom: 0.4rem;
 }
 
 .filter-section:last-child {
@@ -960,15 +1042,15 @@ body.header-collapsed #topBar {
 
 #filterMenuContent h3 {
   margin: 0;
-  margin-bottom: 1.25rem;
+  margin-bottom: 0.5rem;
   /* Increased margin below title */
-  padding: 0;
+  padding: 0.2rem 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
   user-select: none;
-  font-size: 13px;
+  font-size: 17px;
   font-weight: 600;
   color: #171717;
   letter-spacing: 0.05em;
@@ -1017,7 +1099,21 @@ body.header-collapsed #topBar {
 #filterMenuContent label {
   user-select: none;
   min-height: 44px;
-  padding: 0.25rem 0;
+  padding: 0;
+}
+
+#filterMenuContent .filter-options-container.space-y-2 > * + * {
+  margin-top: 0.2rem !important;
+}
+
+@media (min-width: 1024px) {
+  #filterMenuContent label {
+    min-height: 28px;
+  }
+
+  #filterMenuContent .sort-option {
+    min-height: 28px;
+  }
 }
 
 /* Sort Options */
@@ -1107,6 +1203,7 @@ body.header-collapsed #topBar {
 /* Fix spacing between toggle bar and thumbnails */
 #pane {
   padding-top: 0 !important;
+  padding-bottom: 1.5rem !important;
   height: auto;
   overflow-y: visible !important;
 }
@@ -1134,6 +1231,14 @@ body.about-page-active main {
 }
 
 body.about-page-active #desktopFilterMenu {
+  display: none !important;
+}
+
+body.detail-page-active #desktopFilterMenu {
+  display: none !important;
+}
+
+body.detail-page-active #mobileTopBar {
   display: none !important;
 }
 
