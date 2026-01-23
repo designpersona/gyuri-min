@@ -41,6 +41,55 @@ const safeJsonParse = (value, fallback) => {
 
 // Parse embedded JSON data
 const DATA = window.PROJECT_DATA;
+if (!DATA || !DATA.site || !DATA.projects) {
+  const paneFallback = document.getElementById('pane');
+  let retryCount = 0;
+  try {
+    retryCount = parseInt(sessionStorage.getItem('data_retry_count') || '0', 10);
+  } catch (err) {
+    retryCount = 0;
+  }
+  if (retryCount < 2) {
+    try {
+      sessionStorage.setItem('data_retry_count', String(retryCount + 1));
+    } catch (err) {
+      // Ignore storage failures.
+    }
+    if (paneFallback) {
+      paneFallback.innerHTML = '<div class="py-16 text-center text-sm text-neutral-500">Loading failed. Retrying...</div>';
+    }
+    const retryScript = document.createElement('script');
+    retryScript.src = `js/data.js?v=${Date.now()}`;
+    retryScript.onload = () => window.location.reload();
+    retryScript.onerror = () => {
+      if (paneFallback) {
+        paneFallback.innerHTML = '<div class="py-16 text-center text-sm text-neutral-500">Failed to load data. Please refresh.</div>';
+      }
+    };
+    document.head.appendChild(retryScript);
+    throw new Error('PROJECT_DATA missing');
+  }
+  if (paneFallback) {
+    paneFallback.innerHTML = '<div class="py-16 text-center text-sm text-neutral-500">Failed to load data.<div class="mt-3"><button id="retryDataBtn" class="text-[12px] text-neutral-500 hover:text-neutral-900 transition-colors underline">Retry</button></div></div>';
+    const retryBtn = document.getElementById('retryDataBtn');
+    if (retryBtn) {
+      retryBtn.addEventListener('click', () => {
+        try {
+          sessionStorage.removeItem('data_retry_count');
+        } catch (err) {
+          // Ignore storage failures.
+        }
+        window.location.reload();
+      });
+    }
+  }
+  throw new Error('PROJECT_DATA missing');
+}
+try {
+  sessionStorage.removeItem('data_retry_count');
+} catch (err) {
+  // Ignore storage failures.
+}
 const state = { site: DATA.site, projects: DATA.projects };
 let pendingSlug = null;
 let currentLang = storage.get('site_lang', 'en');
@@ -686,6 +735,8 @@ function aboutHTML() {
 }
 
 const pane = document.getElementById('pane');
+const paneLoading = pane ? pane.querySelector('.pane-loading') : null;
+if (paneLoading) paneLoading.remove();
 const desktopList = document.getElementById('projectListDesktop');
 const menuBtn = document.getElementById('menuBtn');
 const desktopMenuBtn = document.getElementById('desktopMenuBtn');
@@ -739,8 +790,14 @@ function updateLayoutMode() {
     }
   }
 
-  if (isMobile && viewMode !== '2') {
-    setViewMode('2');
+  if (isMobile) {
+    const mobileDefaultSet = storage.get('mobile_view_mode_initialized', '0') === '1';
+    if (!mobileDefaultSet) {
+      storage.set('mobile_view_mode_initialized', '1');
+      if (viewMode !== '2') {
+        setViewMode('2');
+      }
+    }
   }
 
   if (!isMobile && viewMode === '2') {
@@ -749,7 +806,16 @@ function updateLayoutMode() {
 
   updateViewToggleButtons();
 }
-window.addEventListener('resize', updateLayoutMode);
+let layoutResizeTimer = null;
+window.addEventListener('resize', () => {
+  if (layoutResizeTimer) {
+    clearTimeout(layoutResizeTimer);
+  }
+  layoutResizeTimer = setTimeout(() => {
+    updateLayoutMode();
+    layoutResizeTimer = null;
+  }, 150);
+});
 updateLayoutMode();
 
 function toggleMobileHamburger(show) {
@@ -1162,9 +1228,10 @@ function initThumbRollers() {
     let index = 0;
     let touchStartX = 0;
     let touchStartY = 0;
+    let lastTouchX = 0;
     let didSwipe = false;
     let suppressClick = false;
-    let lastTouchX = 0;
+    let lockedAxis = null;
     const setActive = (nextIndex) => {
       index = (nextIndex + slides.length) % slides.length;
       track.style.transform = `translateX(-${index * 100}%)`;
@@ -1189,8 +1256,10 @@ function initThumbRollers() {
       const touch = e.touches[0];
       touchStartX = touch.clientX;
       touchStartY = touch.clientY;
-      didSwipe = false;
       lastTouchX = touchStartX;
+      didSwipe = false;
+      suppressClick = false;
+      lockedAxis = null;
     };
 
     const handleTouchMove = (e) => {
@@ -1198,15 +1267,27 @@ function initThumbRollers() {
       const touch = e.touches[0];
       const deltaX = touch.clientX - touchStartX;
       const deltaY = touch.clientY - touchStartY;
-      lastTouchX = touch.clientX;
-      if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 12) {
-        didSwipe = true;
-        e.preventDefault();
+      if (!lockedAxis) {
+        if (Math.abs(deltaX) > Math.abs(deltaY) + 4) {
+          lockedAxis = 'x';
+        } else if (Math.abs(deltaY) > Math.abs(deltaX) + 4) {
+          lockedAxis = 'y';
+        }
+      }
+      if (lockedAxis === 'x') {
+        lastTouchX = touch.clientX;
+        if (Math.abs(deltaX) > 12) {
+          didSwipe = true;
+          e.preventDefault();
+        }
       }
     };
 
     const handleTouchEnd = () => {
-      if (!didSwipe) return;
+      if (lockedAxis !== 'x' || !didSwipe) {
+        lockedAxis = null;
+        return;
+      }
       const swipeDistance = touchStartX - lastTouchX;
       if (Math.abs(swipeDistance) > 40) {
         if (swipeDistance > 0) {
@@ -1217,11 +1298,17 @@ function initThumbRollers() {
         suppressClick = true;
       }
       didSwipe = false;
+      lockedAxis = null;
     };
 
     roller.addEventListener('touchstart', handleTouchStart, { passive: true });
     roller.addEventListener('touchmove', handleTouchMove, { passive: false });
     roller.addEventListener('touchend', handleTouchEnd);
+    roller.addEventListener('touchcancel', () => {
+      didSwipe = false;
+      suppressClick = false;
+      lockedAxis = null;
+    });
     roller.addEventListener('click', (e) => {
       if (suppressClick) {
         e.preventDefault();
