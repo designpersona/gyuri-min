@@ -41,7 +41,7 @@
         <div class="hidden lg:flex items-center gap-4 relative group cursor-pointer">
           <button id="topBarLangBtn"
             class="text-[12px] font-medium text-neutral-900 flex items-center gap-1 hover:opacity-70 transition-opacity uppercase tracking-wide">
-            <span id="topBarLangLabel">Language</span>
+            <span id="topBarLangLabel">EN</span>
             <svg class="w-2.5 h-2.5 ml-0.5 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
             </svg>
@@ -71,13 +71,21 @@
           <!-- BRAND: Left -->
           <div class="flex items-center gap-4">
             <a href="#/" id="brandLink"
-              class="font-semibold tracking-tight toplink text-[44px] leading-tight text-neutral-900 lg:text-[36px]"></a>
+              class="font-semibold tracking-tight toplink text-[44px] leading-tight text-neutral-900 lg:text-[36px]">
+              <img src="assets/icons/1.png" alt="" class="w-[60px] h-[60px] lg:w-12 lg:h-12 inline-block mr-3 align-middle -mt-[24px] lg:mt-[-14px]" />Design Persona
+            </a>
           </div>
 
           <!-- RIGHT: Search & Menu -->
           <div class="flex items-center gap-3 md:gap-5 ml-auto">
             <!-- Search Box -->
-            <div class="hidden lg:flex items-center">
+            <div class="hidden lg:flex items-center desktop-search">
+              <span class="desktop-search-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.5"></circle>
+                  <path d="M20 20l-4-4" stroke="currentColor" stroke-width="1.5"></path>
+                </svg>
+              </span>
               <input type="text" id="searchInput" placeholder="Search..." class="text-[14px]">
             </div>
             <!-- Mobile Search -->
@@ -125,7 +133,7 @@
         <div class="flex items-center gap-3">
           <span id="desktopSortLabel" class="view-toggle-label">Sort</span>
           <select id="desktopSortSelect" class="sort-select" aria-label="Sort">
-            <option id="desktopSortFeatured" value="featured">Featured</option>
+          <option id="desktopSortFeatured" value="featured">Random</option>
             <option id="desktopSortLatest" value="latest">Latest</option>
             <option id="desktopSortOldest" value="oldest">Oldest</option>
           </select>
@@ -148,7 +156,7 @@
           <span id="mobileFilterLabel">Filter</span>
         </button>
         <select id="mobileSortSelect" class="sort-select" aria-label="Sort">
-          <option id="mobileSortFeatured" value="featured">Featured</option>
+          <option id="mobileSortFeatured" value="featured">Random</option>
           <option id="mobileSortLatest" value="latest">Latest</option>
           <option id="mobileSortOldest" value="oldest">Oldest</option>
         </select>
@@ -156,16 +164,75 @@
           <button id="mobileViewDropdownBtn"
             class="dropdown-button flex items-center gap-2 text-sm font-medium text-neutral-900 hover:text-[var(--accent-orange)] transition-colors"
             aria-label="Toggle view mode" aria-expanded="false">
-            <span id="mobileViewDropdownLabel">Thumbnail View</span>
+            <span id="mobileViewDropdownLabel">Magazine</span>
           </button>
           <div id="mobileViewDropdown"
             class="hidden absolute right-0 mt-2 w-40 bg-white border border-neutral-200 shadow-sm">
-            <button class="mobile-view-option block w-full text-left px-3 py-2 text-sm hover:bg-neutral-50" data-view="1">Magazine View</button>
-            <button class="mobile-view-option block w-full text-left px-3 py-2 text-sm hover:bg-neutral-50" data-view="2">Thumbnail View</button>
+            <button class="mobile-view-option block w-full text-left px-3 py-2 text-sm hover:bg-neutral-50" data-view="1">Magazine</button>
+            <button class="mobile-view-option block w-full text-left px-3 py-2 text-sm hover:bg-neutral-50" data-view="2">Thumbnail</button>
           </div>
         </div>
       </div>
     </div>
+    <script>
+      (function () {
+        var lang = 'en';
+        var viewMode = '1';
+        var filterVisible = null;
+        try {
+          lang = localStorage.getItem('site_lang') || 'en';
+          viewMode = localStorage.getItem('view_mode') || '1';
+          filterVisible = localStorage.getItem('filterVisible');
+        } catch (e) {
+          // Ignore storage failures.
+        }
+        var dict = {
+          en: {
+            filter: 'Filter',
+            hideFilter: 'Hide Filter',
+            showFilter: 'Show Filter',
+            random: 'Random',
+            magazine: 'Magazine',
+            thumbnail: 'Thumbnail'
+          },
+          ko: {
+            filter: '필터',
+            hideFilter: '필터 숨기기',
+            showFilter: '필터 보이기',
+            random: '무작위',
+            magazine: '매거진',
+            thumbnail: '썸네일'
+          }
+        };
+        var t = dict[lang] || dict.en;
+        var isVisible = filterVisible === null ? true : filterVisible !== 'false';
+        var filterToggleLabel = document.getElementById('filterToggleLabel');
+        if (filterToggleLabel) filterToggleLabel.textContent = isVisible ? t.hideFilter : t.showFilter;
+        var mobileFilterLabel = document.getElementById('mobileFilterLabel');
+        if (mobileFilterLabel) mobileFilterLabel.textContent = t.filter;
+        var mobileFilterTitle = document.querySelector('#mobileFilterDrawer h3');
+        if (mobileFilterTitle) mobileFilterTitle.textContent = t.filter;
+        var desktopSortFeatured = document.getElementById('desktopSortFeatured');
+        if (desktopSortFeatured) desktopSortFeatured.textContent = t.random;
+        var mobileSortFeatured = document.getElementById('mobileSortFeatured');
+        if (mobileSortFeatured) mobileSortFeatured.textContent = t.random;
+        var mobileViewDropdownLabel = document.getElementById('mobileViewDropdownLabel');
+        if (mobileViewDropdownLabel) {
+          mobileViewDropdownLabel.textContent = viewMode === '1' ? t.magazine : t.thumbnail;
+        }
+        var desktopResultCount = document.getElementById('desktopResultCount');
+        if (desktopResultCount) desktopResultCount.textContent = lang === 'ko' ? '0개의 결과' : '0 Results';
+        var mobileResultCount = document.getElementById('mobileResultCount');
+        if (mobileResultCount) mobileResultCount.textContent = lang === 'ko' ? '0개의 결과' : '0 Results';
+        document.querySelectorAll('.mobile-view-option').forEach(function (option) {
+          var nextView = option.getAttribute('data-view');
+          if (nextView === '1') option.textContent = t.magazine;
+          if (nextView === '2') option.textContent = t.thumbnail;
+        });
+        var topBarLangLabel = document.getElementById('topBarLangLabel');
+        if (topBarLangLabel) topBarLangLabel.textContent = lang === 'ko' ? 'KO' : 'EN';
+      })();
+    </script>
 
     <main class="flex flex-col lg:flex-row filter-visible w-full">
       <!-- Left Pane: Desktop Filter Menu (Visible on lg+ screens) -->
@@ -200,7 +267,9 @@
       </div>
 
       <!-- Right Pane: Main Content & Gallery -->
-      <section id="pane" class="pb-24 w-full" aria-live="polite"></section>
+      <section id="pane" class="pb-24 w-full" aria-live="polite">
+        <div class="py-16 text-center text-sm text-neutral-500">Loading...</div>
+      </section>
     </main>
   </div>
 
