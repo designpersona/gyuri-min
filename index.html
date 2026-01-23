@@ -160,18 +160,10 @@
           <option id="mobileSortLatest" value="latest">Latest</option>
           <option id="mobileSortOldest" value="oldest">Oldest</option>
         </select>
-        <div class="relative">
-          <button id="mobileViewDropdownBtn"
-            class="dropdown-button flex items-center gap-2 text-sm font-medium text-neutral-900 hover:text-[var(--accent-orange)] transition-colors"
-            aria-label="Toggle view mode" aria-expanded="false">
-            <span id="mobileViewDropdownLabel">Magazine</span>
-          </button>
-          <div id="mobileViewDropdown"
-            class="hidden absolute right-0 mt-2 w-40 bg-white border border-neutral-200 shadow-sm">
-            <button class="mobile-view-option block w-full text-left px-3 py-2 text-sm hover:bg-neutral-50" data-view="1">Magazine</button>
-            <button class="mobile-view-option block w-full text-left px-3 py-2 text-sm hover:bg-neutral-50" data-view="2">Thumbnail</button>
-          </div>
-        </div>
+        <select id="mobileViewSelect" class="sort-select" aria-label="View">
+          <option id="mobileViewMagazine" value="1">Magazine</option>
+          <option id="mobileViewThumbnail" value="2">Thumbnail</option>
+        </select>
       </div>
     </div>
     <script>
@@ -222,15 +214,12 @@
         if (desktopSortSelect) desktopSortSelect.value = sortMode;
         var mobileSortSelect = document.getElementById('mobileSortSelect');
         if (mobileSortSelect) mobileSortSelect.value = sortMode;
-        var mobileViewDropdownLabel = document.getElementById('mobileViewDropdownLabel');
-        if (mobileViewDropdownLabel) {
-          mobileViewDropdownLabel.textContent = viewMode === '1' ? t.magazine : t.thumbnail;
-        }
-        document.querySelectorAll('.mobile-view-option').forEach(function (option) {
-          var nextView = option.getAttribute('data-view');
-          if (nextView === '1') option.textContent = t.magazine;
-          if (nextView === '2') option.textContent = t.thumbnail;
-        });
+        var mobileViewSelect = document.getElementById('mobileViewSelect');
+        if (mobileViewSelect) mobileViewSelect.value = viewMode === '1' ? '1' : '2';
+        var mobileViewMagazine = document.getElementById('mobileViewMagazine');
+        if (mobileViewMagazine) mobileViewMagazine.textContent = t.magazine;
+        var mobileViewThumbnail = document.getElementById('mobileViewThumbnail');
+        if (mobileViewThumbnail) mobileViewThumbnail.textContent = t.thumbnail;
         var topBarLangLabel = document.getElementById('topBarLangLabel');
         if (topBarLangLabel) topBarLangLabel.textContent = lang === 'ko' ? 'KO' : 'EN';
       })();
@@ -317,7 +306,7 @@
   <!-- Mobile Search Modal -->
   <div id="mobileSearchModal" class="fixed inset-0 hidden z-[80] bg-black/40">
     <div class="flex items-center justify-center h-full px-4">
-      <div class="w-full max-w-sm bg-white px-4 pt-4 pb-5 shadow-sm">
+      <div id="mobileSearchBox" class="w-full max-w-sm bg-white px-4 pt-4 pb-5 shadow-sm">
         <div class="flex items-center gap-2">
         <input type="text" id="mobileSearchInput" placeholder="Search..."
           class="w-full text-[15px] border-b border-neutral-900 bg-transparent focus:outline-none" />
