@@ -26,12 +26,12 @@ window.PROJECT_DATA = {
             },
             "summary": {
                 "en": "Web Portfolio Site Design & Code",
-                "ko": "웹 포트폴리오 사이트 디자인 & 코드"
+                "ko": "웹 포트폴리오 사이트 디자인 및 개발"
             },
             "cover": "assets/projects/GM-Portfolio/cover.jpg",
             "thumbnail": "assets/projects/GM-Portfolio/thumbnail.jpg",
             "year": "2025",
-            "client": "Personal Project",
+            "client": "Personal Work",
             "role": "Web Designer",
             "projectType": "Digital Product",
             "industry": "Technology",
@@ -41,7 +41,7 @@ window.PROJECT_DATA = {
                     "This site is a comprehensive project that encompasses both the design portfolio composition and the web development work involved in creating a personalized web portfolio. It was created to present a branding portfolio in the form of an e-catalog, showcasing an understanding of both visual design and front-end development. Further details will be announced soon."
                 ],
                 "ko": [
-                    "본 사이트는 개인 맞춤형 웹 포트폴리오 제작을 위한 디자인 포트폴리오 구성과 웹 개발 작업을 포함한 종합 프로젝트입니다. 시각 디자인과 프론트엔드 개발에 대한 이해를 바탕으로 브랜딩 포트폴리오를 E-카탈로그 형태로 선보이기 위해 제작되었습니다. 자세한 내용은 곧 공개될 예정입니다."
+                    "이 사이트는 개인 웹 포트폴리오를 위해 기획·디자인·프런트엔드 개발까지 모두 수행한 종합 프로젝트입니다. 시각 디자인과 프런트엔드 개발 역량을 바탕으로 브랜딩 포트폴리오를 e-카탈로그 형식으로 구성했습니다. 자세한 내용은 곧 공개할 예정입니다."
                 ]
             },
             "links": [],
@@ -61,7 +61,7 @@ window.PROJECT_DATA = {
             },
             "summary": {
                 "en": "Translating Tech Identity into a Tangible Retail Experience",
-                "ko": "기술적 정체성을 구체적인 소매 경험으로 전환하기"
+                "ko": "기술적 아이덴티티를 실제 리테일 경험으로 전환"
             },
             "cover": "assets/projects/FP-Deil/cover.jpg",
             "thumbnail": "assets/projects/FP-Deil/thumbnail.jpg",
@@ -70,7 +70,7 @@ window.PROJECT_DATA = {
             "role": "Brand Designer",
             "projectType": "Brand Experience",
             "industry": "Food",
-            "tools": "Illustrator, Photoshop, DALL·E",
+            "tools": "Adobe Illustrator, Adobe Photoshop, DALL·E",
             "description": {
                 "en": [
                     "The Farmsplan Deli Cafe Branding project involved collaborating with an external partner to successfully transplant Farmsplan’s brand identity into a physical space, thereby strengthening trust and brand awareness while preserving the existing store's unique atmosphere.",
@@ -79,11 +79,11 @@ window.PROJECT_DATA = {
                     "The menu concept and product characteristics were instantly recognizable through concise composition and intuitive graphics. Through this process, the livestock technology brand successfully expanded into a brand experience space—a deli café—connecting consumers' daily lives with the brand's core values at this new point of contact."
                 ],
                 "ko": [
-                    "Farmsplan Deli Cafe 브랜딩 프로젝트는 외부 파트너와의 협업을 통해 Farmsplan의 브랜드 아이덴티티를 물리적 공간에 성공적으로 이식함으로써, 기존 매장의 고유한 분위기를 유지하면서 신뢰와 브랜드 인지도를 강화한 작업이었습니다.",
-                    "외관 파사드, 내부 동선(circulation), 종이컵, 스티커 등 주요 접점을 종합적으로 디자인하여, 방문객이 자연스럽게 Farmsplan 브랜드를 체험할 수 있는 환경을 조성했습니다.",
-                    "디자인은 기존 카페의 아늑한 아이보리 톤을 유지하면서, Farmsplan Meat의 신선함과 간결함을 상징하는 그린과, 무게감과 신뢰감을 전달하는 블루를 조화롭게 더했습니다. 이러한 컬러 팔레트는 안정적이고 일관된 브랜드 이미지를 확립합니다.",
-                    "메뉴 콘셉트와 제품 특성은 간결한 구성과 직관적인 그래픽을 통해 즉각적으로 인식될 수 있도록 설계되었습니다.",
-                    "이 과정을 통해 축산 기술 브랜드인 Farmsplan은 소비자의 일상 속으로 확장되어, 브랜드의 핵심 가치를 새로운 접점인 델리 카페 공간에서 경험할 수 있는 브랜드 경험 공간으로 발전했습니다."
+                    "Farmsplan Deli Cafe 브랜딩은 외부 파트너와 협업해 Farmsplan의 아이덴티티를 오프라인 공간에 이식하고, 기존 매장의 분위기를 유지하면서 신뢰와 인지도를 높인 프로젝트입니다.",
+                    "외관 파사드, 내부 동선, 종이컵, 스티커 등 주요 접점을 통합 디자인해 방문객이 자연스럽게 Farmsplan을 경험하도록 구성했습니다.",
+                    "기존 카페의 아늑한 아이보리 톤을 유지하면서 Farmsplan Meat의 신선함을 상징하는 그린과 신뢰를 전달하는 블루를 조화롭게 사용해 안정적이고 일관된 브랜드 이미지를 만들었습니다.",
+                    "메뉴 콘셉트와 제품 특성은 간결한 구성과 직관적인 그래픽으로 빠르게 인식될 수 있도록 설계했습니다.",
+                    "그 결과, Farmsplan은 델리 카페라는 새로운 접점을 통해 브랜드의 핵심 가치를 일상 속에서 경험하게 하는 브랜드 경험 공간으로 확장되었습니다."
                 ]
             },
             "links": [],
@@ -111,7 +111,7 @@ window.PROJECT_DATA = {
             },
             "summary": {
                 "en": "Brand event and seminar for pig farm owners to experience Farmsplan’s technology",
-                "ko": "양돈 농장주들을 위한 Farmsplan 기술 체험 브랜드 행사 및 세미나"
+                "ko": "양돈 농장주 대상 Farmsplan 기술 체험 행사 및 세미나"
             },
             "cover": "assets/projects/openfarm/cover.jpg",
             "thumbnail": "assets/projects/openfarm/thumbnail.jpg",
@@ -120,7 +120,7 @@ window.PROJECT_DATA = {
             "role": "Graphic Designer",
             "projectType": "Campaign",
             "industry": "Technology",
-            "tools": "Illustrator, Photoshop",
+            "tools": "Adobe Illustrator, Adobe Photoshop",
             "description": {
                 "en": [
                     "<b>Open Farm Seminar Event</b>",
@@ -130,11 +130,11 @@ window.PROJECT_DATA = {
                     "For the event, we created a unified design for all visual elements—including on-site booth graphics, banners, and information panels—based on logo typography and 3D graphics. These assets featured motifs inspired by the daily life of pig farmers, farm helpers, the farm environment, and the pigs themselves. This approach successfully conveyed both the professionalism of the technology and a sense of everyday familiarity."
                 ],
                 "ko": [
-                    "<b>오픈 팜 세미나 이벤트</b>",
-                    "포천 지역의 양돈 농장주를 대상으로 한 브랜드 행사로, 세미나와 체험존 형태로 진행되었습니다. 이 행사는 건강한 사육 환경 구축의 중요성을 강조하고, 참가자들이 팜스플랜의 기술을 직접 체험할 수 있도록 하는 것을 목표로 했습니다.",
-                    "본 행사는 1세대와 2세대 농장주 간의 정보 격차를 해소하고 커뮤니티를 활성화하는 플랫폼 역할을 했습니다. 또한 팜스플랜 서비스의 실제 적용 사례를 소개함으로써 고객 신뢰를 강화하고, 실질적이고 현장 친화적인 경험을 통해 브랜드의 기술적 가치를 확장했습니다.",
-                    "<b>오픈 팜 배너 자산</b>",
-                    "이벤트를 위해 현장 부스 그래픽, 배너, 정보 패널 등 모든 시각 요소를 로고 타이포그래피와 3D 그래픽을 기반으로 통합된 디자인으로 제작했습니다. 이러한 시각 자산들은 양돈 농장주의 일상, 농장 도우미, 농장 환경, 그리고 돼지 자체에서 영감을 받은 모티프를 담고 있습니다. 이 접근 방식은 기술의 전문성과 함께 일상적인 친근함을 동시에 효과적으로 전달했습니다."
+                    "<b>오픈팜 세미나 이벤트</b>",
+                    "포천 지역 양돈 농장주를 대상으로 한 브랜드 행사로, 세미나와 체험존 형태로 진행되었습니다. 건강한 사육 환경의 중요성을 강조하고 참가자들이 Farmsplan 기술을 직접 체험하도록 설계했습니다.",
+                    "1세대와 2세대 농장주 사이의 정보 격차를 줄이고 커뮤니티를 활성화하는 플랫폼 역할을 했습니다. 또한 서비스의 실제 적용 사례를 소개해 신뢰를 높이고, 현장 친화적인 경험으로 브랜드의 기술적 가치를 확장했습니다.",
+                    "<b>오픈팜 배너 자산</b>",
+                    "현장 부스 그래픽, 배너, 정보 패널 등 모든 시각 요소를 로고 타이포그래피와 3D 그래픽을 기반으로 통합 디자인했습니다. 농장주의 일상, 농장 도우미, 농장 환경, 돼지에서 모티프를 얻어 기술의 전문성과 일상적 친근감을 동시에 전달했습니다."
                 ]
             },
             "links": [],
@@ -185,7 +185,7 @@ window.PROJECT_DATA = {
             "role": "Art Director",
             "projectType": "Brand Experience",
             "industry": "Food",
-            "tools": "Illustrator, Photoshop, Sora",
+            "tools": "Adobe Illustrator, Adobe Photoshop, Sora",
             "description": {
                 "en": [
                     "The 27 Red Brick café rebranding project focused on creating a distinctive visual identity that reflects the café's unique character and architectural heritage.",
@@ -193,9 +193,9 @@ window.PROJECT_DATA = {
                     "The resulting identity successfully captures the balance between the café's traditional charm and contemporary café culture, creating a memorable brand experience that resonates with customers."
                 ],
                 "ko": [
-                    "27 Red Brick 카페 리브랜딩 프로젝트는 카페의 독특한 개성과 건축적 유산을 반영하는 차별화된 시각적 아이덴티티를 구축하는 데 중점을 두었습니다.",
-                    "아트 디렉터로서 로고 디자인, 색상 팔레트 선정, 비주얼 시스템 구축 등 전반적인 브랜드 아이덴티티 개발을 주도했습니다. 디자인 콘셉트는 카페의 시그니처인 붉은 벽돌 건축물에서 영감을 받아, 벽돌이 지닌 따뜻하고 촉감적인 특성을 현대적인 브랜드 언어로 재해석했습니다.",
-                    "그 결과, 완성된 아이덴티티는 카페의 전통적인 매력과 현대적인 카페 문화 사이의 균형을 성공적으로 담아내며, 고객에게 깊은 인상을 남기는 브랜드 경험을 창출했습니다."
+                    "27 Red Brick 카페 리브랜딩은 카페의 고유한 개성과 건축적 유산을 반영한 차별화된 시각 아이덴티티 구축에 초점을 맞췄습니다.",
+                    "아트 디렉터로서 로고, 컬러 팔레트, 비주얼 시스템 등 전반적인 아이덴티티 개발을 주도했습니다. 콘셉트는 시그니처인 붉은 벽돌 건축에서 착안해 벽돌의 따뜻한 질감을 현대적인 브랜드 언어로 재해석했습니다.",
+                    "그 결과 전통적 매력과 현대적 카페 문화의 균형을 담아, 고객에게 선명한 인상을 남기는 브랜드 경험을 만들었습니다."
                 ]
             },
             "links": [],
@@ -225,7 +225,7 @@ window.PROJECT_DATA = {
             },
             "summary": {
                 "en": "Strategic Packaging Design Series Visualizing Growth Stages",
-                "ko": "성장 단계를 시각화한 전략적 패키지 디자인"
+                "ko": "성장 단계 시각화를 통한 전략적 패키지 디자인"
             },
             "cover": "assets/projects/FP-SwineFeed/cover.jpg",
             "thumbnail": "assets/projects/FP-SwineFeed/thumbnail.jpg",
@@ -234,7 +234,7 @@ window.PROJECT_DATA = {
             "role": "Brand Designer",
             "projectType": "Brand Experience",
             "industry": "Food",
-            "tools": "Illustrator, Photoshop",
+            "tools": "Adobe Illustrator, Adobe Photoshop",
             "description": {
                 "en": [
                     "Following the success of the Cattle Feed and Additive line, we developed the packaging design for the new Hog Feed product series.",
@@ -246,13 +246,13 @@ window.PROJECT_DATA = {
                     "The design successfully balances engaging visual storytelling with clear product identity, ensuring that the Hog Feed range maintains the strong, professional presence required for global market expansion."
                 ],
                 "ko": [
-                    "비육우 사료 및 첨가제 라인의 성공에 이어, 새로운 양돈 사료 제품 시리즈를 위한 패키지 디자인을 개발했습니다.",
+                    "비육우 사료·첨가제 라인의 성공 이후, 새로운 양돈 사료 제품 시리즈를 위한 패키지 디자인을 개발했습니다.",
                     "<b>시각적 전략</b>",
-                    "돼지의 다양한 성장 단계를 묘사한 생동감 넘치는 만화 스타일의 일러스트레이션을 활용했습니다. 이 접근 방식은 즉각적인 흥미를 유발하고 라인 내 특정 제품에 대한 고객의 인지도를 크게 높이기 위해 선택되었습니다.",
+                    "돼지의 성장 단계를 표현한 생동감 있는 만화 스타일 일러스트를 사용해 즉각적인 흥미를 유발하고 라인 내 제품 인지도를 높였습니다.",
                     "<b>브랜드 통합 및 안정성</b>",
-                    "안정성과 브랜드 연속성을 전달하기 위해, 배경 디자인은 핵심 팜스플랜 심볼을 연상시키는 기하학적 형태를 미묘하게 특징으로 합니다. 이러한 전략적인 패턴 사용은 생동감 넘치는 그래픽을 잡아주며, 제품의 장난스러운 매력과 브랜드의 확립된 전문성을 조화시킵니다.",
+                    "안정성과 연속성을 위해 배경에 팜스플랜 심볼을 연상시키는 기하학 패턴을 미묘하게 적용했습니다. 생동감 있는 그래픽을 정돈해 브랜드의 전문성과 제품의 친근함을 균형 있게 담았습니다.",
                     "<b>성과</b>",
-                    "이 디자인은 매력적인 시각적 스토리텔링과 명확한 제품 아이덴티티의 균형을 성공적으로 맞추어, 양돈 사료 제품군이 글로벌 시장 확장에 필요한 강력하고 전문적인 존재감을 유지하도록 보장합니다."
+                    "스토리텔링과 제품 식별성을 균형 있게 결합해, 글로벌 시장 확장에 필요한 전문적인 인상을 확보했습니다."
                 ]
             },
             "links": [],
@@ -281,7 +281,7 @@ window.PROJECT_DATA = {
             },
             "summary": {
                 "en": "Redefining brand identity for sustainable livestock farming based on AI and data technology",
-                "ko": "AI와 데이터 기술 기반의 지속 가능한 축산업을 위한 브랜드 아이덴티티 재정립"
+                "ko": "AI·데이터 기반 지속가능한 축산을 위한 브랜드 아이덴티티 재정립"
             },
             "cover": "assets/projects/AID/cover.jpg",
             "thumbnail": "assets/projects/AID/thumbnail.jpg",
@@ -290,15 +290,15 @@ window.PROJECT_DATA = {
             "role": "Brand Designer",
             "projectType": "Brand Experience",
             "industry": "Technology",
-            "tools": "Illustrator, Photoshop",
+            "tools": "Adobe Illustrator, Adobe Photoshop",
             "description": {
                 "en": [
                     "This project was initiated to redefine the brand identity and global expansion strategy of Korea Livestock Data in a rapidly changing industrial environment. We designed the AID Brand Identity to concretize the vision of 'sustainable livestock farming based on AI and data technology.'",
                     "The design inherited the essence of the existing logo while structurally strengthening its link with the service brand, 'Farmsplan.' We maximized brand recognition by incorporating the symbol's ribbon structure and subtle angle design to signify the connection between technology, livestock, and humanity."
                 ],
                 "ko": [
-                    "이 프로젝트는 급변하는 산업 환경 속에서 한국축산데이터의 브랜드 아이덴티티와 글로벌 확장에 대한 전략을 재정의하기 위해 시작되었습니다. 우리는 'AI와 데이터 기술 기반의 지속 가능한 축산업'이라는 비전을 구체화하기 위해 AID 브랜드 아이덴티티를 디자인했습니다.",
-                    "기존 로고의 본질을 계승하면서 서비스 브랜드인 '팜스플랜'과의 구조적 연결성을 강화했습니다. 심볼의 리본 구조와 미묘한 각도 디자인을 통합하여 기술, 가축, 사람 간의 연결을 상징함으로써 브랜드 인지도를 극대화했습니다."
+                    "급변하는 산업 환경에서 한국축산데이터의 아이덴티티와 글로벌 확장 전략을 재정의하기 위해 시작된 프로젝트입니다. 'AI·데이터 기반 지속가능한 축산' 비전을 구체화하는 AID 브랜드 아이덴티티를 설계했습니다.",
+                    "기존 로고의 핵심을 유지하면서 서비스 브랜드인 '팜스플랜'과의 구조적 연결성을 강화했습니다. 심볼의 리본 구조와 미묘한 각도감을 활용해 기술·가축·사람의 연결을 상징하고 브랜드 인지도를 높였습니다."
                 ]
             },
             "links": [],
@@ -334,7 +334,7 @@ window.PROJECT_DATA = {
             },
             "summary": {
                 "en": "Visual Identity Update for Café Brand",
-                "ko": "카페 브랜드를 위한 시각적 아이덴티티 업데이트"
+                "ko": "카페 브랜드 시각 아이덴티티 업데이트"
             },
             "cover": "assets/projects/Terrabite/cover.mp4",
             "thumbnail": "assets/projects/Terrabite/thumbnail.mov",
@@ -343,7 +343,7 @@ window.PROJECT_DATA = {
             "role": "Brand Designer",
             "projectType": "Brand Experience",
             "industry": "Food",
-            "tools": "Illustrator, Photoshop, Sora",
+            "tools": "Adobe Illustrator, Adobe Photoshop, Sora",
             "description": {
                 "en": [
                     "The Terrabite Rebranding project involved overhauling the visual language so that the brand's mood and story could be naturally felt throughout the store. Based on the brand's meaning—derived from 'Terra' (Earth/Land) and 'Bite' (a single mouthful)—the goal was to sensuously convey the image of fresh ingredients and healthy food and beverages.",
@@ -351,9 +351,9 @@ window.PROJECT_DATA = {
                     "Menu boards and posters were newly designed using a Pixel motif and a graphic structure reminiscent of a developer's screen. The contrasting black and mint color palette creates an atmosphere that is both intuitive and highly individualistic."
                 ],
                 "ko": [
-                    "테라바이트 리브랜딩 프로젝트는 매장 곳곳에서 브랜드의 무드와 스토리를 자연스럽게 느낄 수 있도록 시각 언어를 전면 개편하는 작업이었습니다. 'Terra'(지구/땅)와 'Bite'(한 입)에서 유래한 브랜드 의미를 바탕으로, 신선한 재료와 건강한 식음료의 이미지를 감각적으로 전달하는 것을 목표로 했습니다.",
-                    "디자인은 2D 일러스트레이션과 프로그래밍 감성을 결합한 '트렌디 프로그래머' 컨셉을 중심으로 진행되었습니다. 커피와 음식을 만드는 과정을 '입력(Input)-출력(Output)' 구조로 해석하여, 레시피와 조리 과정을 하나의 매끄러운 시스템으로 시각화했습니다.",
-                    "메뉴판과 포스터는 픽셀 모티프와 개발자 화면을 연상시키는 그래픽 구조를 사용하여 새롭게 디자인되었습니다. 블랙과 민트의 대조적인 컬러 팔레트는 직관적이면서도 개성 강한 분위기를 연출합니다."
+                    "테라바이트 리브랜딩은 매장 전반에서 브랜드의 무드와 스토리가 자연스럽게 느껴지도록 시각 언어를 전면 개편한 작업입니다. 'Terra'(지구/땅)와 'Bite'(한 입)에서 유래한 의미를 바탕으로 신선한 재료와 건강한 식음료의 이미지를 감각적으로 전달하는 데 초점을 맞췄습니다.",
+                    "'트렌디 프로그래머' 콘셉트로 2D 일러스트와 프로그래밍 감성을 결합했고, 커피·음식 제조 과정을 '입력-출력' 구조로 해석해 레시피와 조리 과정을 하나의 시스템으로 시각화했습니다.",
+                    "메뉴 보드와 포스터는 픽셀 모티프와 개발자 화면을 연상시키는 그래픽 구조로 새롭게 구성했습니다. 블랙과 민트의 대비를 통해 직관적이면서 개성 있는 분위기를 연출했습니다."
                 ]
             },
             "links": [],
@@ -394,7 +394,7 @@ window.PROJECT_DATA = {
             },
             "summary": {
                 "en": "Elevating Regional Goods through Sensory Narrative and Design",
-                "ko": "감각적인 내러티브와 디자인을 통한 지역 상품 가치 제고"
+                "ko": "감각적 내러티브와 디자인으로 지역 상품 가치 제고"
             },
             "cover": "assets/projects/ROS/cover.jpg",
             "thumbnail": "assets/projects/ROS/thumbnail.jpg",
@@ -403,7 +403,7 @@ window.PROJECT_DATA = {
             "role": "Brand Designer",
             "projectType": "Brand Experience",
             "industry": "Public Sector",
-            "tools": "Illustrator, Photoshop",
+            "tools": "Adobe Illustrator, Adobe Photoshop",
             "description": {
                 "en": [
                     "This branding project, \"Record of Sea: Shinan Salt,\" tells the story of Shinan salt's journey from the sea to the table, emphasizing its value as a crystallization of time and nature.",
@@ -413,11 +413,11 @@ window.PROJECT_DATA = {
                     "The packaging adopts a 'Record' format, featuring a clean, organized layout of ingredients, numbering, and text. The minimalist glass bottle allows the salt's natural texture and color to show through, offering a daily reminder of Shinan's purity and its sea."
                 ],
                 "ko": [
-                    "\"바다의 기록: 신안 소금\" 브랜딩 프로젝트는 바다에서 식탁까지 이어지는 신안 소금의 여정을 이야기하며, 시간과 자연의 결정체로서의 가치를 강조합니다.",
-                    "브랜드 내러티브는 신안의 4개 아이코닉한 섬(수국, 퍼플, 맨드라미, 수선화)을 방문하는 여행자에게서 영감을 받았습니다. 각 섬의 고유한 색과 향, 맛을 병에 담아 소금을 통해 '여행의 순간을 기록'하는 경험을 제안합니다.",
+                    "\"바다의 기록: 신안 소금\" 브랜딩은 바다에서 식탁까지 이어지는 신안 소금의 여정을 담아, 시간과 자연의 결정체로서의 가치를 강조합니다.",
+                    "신안의 네 개 대표 섬(수국, 퍼플, 맨드라미, 수선화)을 여행하는 여정에서 영감을 받아, 각 섬의 색·향·맛을 병에 담아 소금을 통해 '여행의 순간을 기록'하는 경험을 제안했습니다.",
                     "<b>패키지 디자인</b>",
-                    "이 섬들에서 영감을 받은 4가지 컬러 팔레트를 사용했습니다. 각 컬러는 섬의 풍경을 재해석하고 제품의 맛 및 재료와 유기적으로 조화를 이루며, 지역 정체성과 감각적 경험을 강화합니다.",
-                    "패키지는 재료, 번호, 텍스트의 깔끔하고 정돈된 레이아웃을 특징으로 하는 '기록(Record)' 형식을 채택합니다. 미니멀한 유리병은 소금의 자연스러운 질감과 색상을 그대로 보여주며, 신안의 순수함과 바다를 매일 상기시켜 줍니다."
+                    "섬에서 도출한 4가지 컬러 팔레트를 적용해 각 섬의 풍경을 재해석하고, 제품의 맛과 재료와 유기적으로 연결했습니다. 이를 통해 지역 정체성과 감각적 경험을 강화했습니다.",
+                    "패키지는 재료, 번호, 텍스트를 정돈해 배치한 '기록' 형식을 채택했습니다. 미니멀한 유리병은 소금의 질감과 색을 그대로 드러내며 신안의 순수함과 바다를 일상 속에서 떠올리게 합니다."
                 ]
             },
             "links": [
@@ -454,7 +454,7 @@ window.PROJECT_DATA = {
             "featured": false,
             "title": {
                 "en": "Farmsplan Cattle Feed & Additive",
-                "ko": "팜스플랜 비육우 사료 & 첨가제"
+                "ko": "팜스플랜 소 사료 & 첨가제"
             },
             "caption": {
                 "en": "Packaging Branding",
@@ -462,7 +462,7 @@ window.PROJECT_DATA = {
             },
             "summary": {
                 "en": "Integrated Packaging and Kit Design for Indian Market Entry",
-                "ko": "인도 시장 진출을 위한 통합 패키지 및 키트 디자인"
+                "ko": "인도 시장 진출을 위한 통합 패키지·키트 디자인"
             },
             "cover": "assets/projects/FP-CattleFeed/cover.jpg",
             "thumbnail": "assets/projects/FP-CattleFeed/thumbnail.jpg",
@@ -471,7 +471,7 @@ window.PROJECT_DATA = {
             "role": "Brand Designer",
             "projectType": "Brand Experience",
             "industry": "Food",
-            "tools": "Illustrator, Photoshop",
+            "tools": "Adobe Illustrator, Adobe Photoshop",
             "description": {
                 "en": [
                     "This project utilized 3D modeling elements within the 'Farmsplan Cattle Feed' product line to communicate Farmsplan's technological identity. Visualizing the growth cycle of cattle enhanced product recognition and understanding. By merging Korean technology with an AI-driven design style, we established a distinctive brand experience in the Indian market, creating a strategic basis for expanding into pig and poultry feed lines.",
@@ -484,14 +484,14 @@ window.PROJECT_DATA = {
                     "This kit provides a consistent global brand experience and facilitates integrated asset management."
                 ],
                 "ko": [
-                    "이 프로젝트는 팜스플랜의 기술적 아이덴티티를 전달하기 위해 '팜스플랜 비육우 사료' 제품 라인 내에 3D 모델링 요소를 활용했습니다. 소의 성장 주기를 시각화하여 제품 인지도와 이해도를 높였습니다. 한국의 기술력과 AI 기반 디자인 스타일을 융합하여 인도 시장에서 독보적인 브랜드 경험을 구축하고 양돈 및 양계 사료 라인으로 확장할 수 있는 전략적 기반을 마련했습니다.",
+                    "팜스플랜의 기술적 아이덴티티를 전달하기 위해 비육우 사료 라인에 3D 모델링 요소를 적용했습니다. 소의 성장 주기를 시각화해 제품 인지도와 이해도를 높였고, 한국의 기술력과 AI 기반 디자인 스타일을 결합해 인도 시장에서 차별화된 브랜드 경험을 구축했습니다. 이를 통해 양돈·양계 사료 라인으로의 확장 기반을 마련했습니다.",
                     "<br/>",
                     "<b>인도 시장을 위한 통합 브랜드 키트</b>",
-                    "글로벌 비즈니스를 지원하기 위해 일관된 브랜드 키트(부스, 브로슈어, 패키지)를 제작했습니다. 인도 시장을 타겟으로 3D 요소, 일러스트레이션, 사진을 결합하여 팜스플랜의 기술과 한국적인 디자인 감성을 통합했습니다.",
-                    "<b>전시회:</b> 현대적인 느낌과 시각적 몰입감을 제공하여 브랜드를 차별화했습니다.",
-                    "<b>브로슈어:</b> 명확한 정보 전달과 가독성에 최적화되었습니다.",
-                    "<b>패키지:</b> 3D 캐릭터를 적극적으로 활용하여 제품 신뢰도와 브랜드 확장성을 높였습니다.",
-                    "이 키트는 일관된 글로벌 브랜드 경험을 제공하고 통합 자산 관리를 용이하게 합니다."
+                    "글로벌 확장을 위해 부스, 브로슈어, 패키지를 포함한 일관된 브랜드 키트를 제작했습니다. 인도 시장을 타깃으로 3D 요소, 일러스트, 사진을 결합해 팜스플랜의 기술성과 한국적인 디자인 감성을 통합했습니다.",
+                    "<b>전시:</b> 현대적인 인상과 시각적 몰입감을 제공해 브랜드를 차별화했습니다.",
+                    "<b>브로슈어:</b> 정보 전달과 가독성을 최적화했습니다.",
+                    "<b>패키지:</b> 3D 캐릭터를 적극 활용해 제품 신뢰도와 브랜드 확장성을 강화했습니다.",
+                    "이 키트는 일관된 글로벌 브랜드 경험을 제공하고 자산 관리를 효율화합니다."
                 ]
             },
             "links": [
@@ -537,7 +537,7 @@ window.PROJECT_DATA = {
             },
             "summary": {
                 "en": "Global Market Launch (Design & Brand Strategy)",
-                "ko": "글로벌 시장 런칭 (디자인 & 브랜드 전략)"
+                "ko": "글로벌 시장 런칭(디자인·브랜드 전략)"
             },
             "cover": "assets/projects/FP-Chicken/cover.jpg",
             "thumbnail": "assets/projects/FP-Chicken/thumbnail.jpg",
@@ -546,7 +546,7 @@ window.PROJECT_DATA = {
             "role": "Brand Designer",
             "projectType": "Campaign",
             "industry": "Food",
-            "tools": "Illustrator, Photoshop",
+            "tools": "Adobe Illustrator, Adobe Photoshop",
             "description": {
                 "en": [
                     "This project was a global launch branding initiative designed to intuitively communicate the distinct nature, quality, and technology-driven differentiation of Farmsplan Chicken in the Malaysian market.",
@@ -558,27 +558,27 @@ window.PROJECT_DATA = {
                     "<b>Jaya Grocer & Grab Mart (Store Environment)</b>",
                     "We applied the Tech-based brand mood carried by the Farmsplan 3D character to visually express the connection between technology, solution, and feed quality. The design communicates a virtuous cycle, linking Korean livestock technology and feed ingredients (like Kimchi and Ginseng) to human health. This approach sensuously visualizes the 'healthy flow of nutrition' the brand intends to convey.",
                     " ",
-                    "<b>2023 Food and Drink Malaysia by SIAL Exhibition(Marketing)</b>",
+                    "<b>2023 Food and Drink Malaysia by SIAL Exhibition (Marketing)</b>",
                     "We designed the exhibition booth to guide customer understanding by following the brand message flow: Service → Certification → Product → Efficacy → Food.",
                     "<b>Design:</b> We enhanced visibility using the brand's core colors (Green, White, and Black).",
                     "<b>Imagery:</b> Model photography emphasized the clean, healthy image characteristic of the Korean Wave (Hallyu).",
                     "<b>Product Clarity:</b> We utilized the chicken character to clearly distinguish product types, making the otherwise simple food images more engaging and familiar."
                 ],
                 "ko": [
-                    "이 프로젝트는 말레이시아 시장에서 팜스플랜 치킨의 차별성, 품질, 기술 기반의 차별화를 직관적으로 전달하기 위해 기획된 글로벌 런칭 브랜딩 이니셔티브입니다.",
+                    "말레이시아 시장에서 팜스플랜 치킨의 차별성, 품질, 기술 기반 가치를 직관적으로 전달하기 위해 기획한 글로벌 런칭 브랜딩 프로젝트입니다.",
                     " ",
                     "<b>팜스플랜 치킨 (식품 패키지)</b>",
-                    "말레이시아 시장을 위한 팜스플랜 치킨 제품 시리즈는 패키지 전체에 걸친 포괄적인 일관성에 중점을 두고 디자인되었습니다.",
-                    "핵심인 블랙 패키지는 세련된 배경을 제공하며, 김치와 인삼의 실사 이미지를 라벨 밴드에 적용하여 제품의 핵심 셀링 포인트를 직관적으로 보여주었습니다. 치킨 이미지와 라벨 색상의 대비를 활용하여 소비자 주목도를 효과적으로 높였습니다.",
+                    "말레이시아 전용 팜스플랜 치킨 제품군은 패키지 전반의 일관성을 중심으로 설계했습니다.",
+                    "블랙을 기본 톤으로 사용하고 김치·인삼 실사 이미지를 라벨 밴드에 배치해 핵심 셀링 포인트를 직관적으로 전달했습니다. 치킨 이미지와 라벨 컬러의 대비로 주목도를 높였습니다.",
                     " ",
                     "<b>Jaya Grocer & Grab Mart (매장 환경)</b>",
-                    "팜스플랜 3D 캐릭터가 지닌 테크 기반의 브랜드 무드를 적용하여 기술, 솔루션, 사료 품질 간의 연결성을 시각적으로 표현했습니다. 디자인은 한국 축산 기술과 사료 성분(김치, 인삼 등)을 인간의 건강과 연결하는 선순환 구조를 전달합니다. 이러한 접근 방식은 브랜드가 전달하고자 하는 '건강한 영양의 흐름'을 감각적으로 시각화합니다.",
+                    "팜스플랜 3D 캐릭터의 테크 기반 무드를 적용해 기술, 솔루션, 사료 품질의 연결성을 시각화했습니다. 한국 축산 기술과 사료 성분(김치, 인삼 등)을 사람의 건강과 연결하는 선순환 구조를 전달하며, 브랜드가 말하는 '건강한 영양의 흐름'을 감각적으로 표현했습니다.",
                     " ",
                     "<b>2023 Food and Drink Malaysia by SIAL Exhibition (마케팅)</b>",
-                    "서비스 → 인증 → 제품 → 효능 → 음식으로 이어지는 브랜드 메시지 흐름을 따라 고객의 이해를 돕도록 전시 부스를 디자인했습니다.",
-                    "<b>디자인:</b> 브랜드 핵심 컬러(그린, 화이트, 블랙)를 사용하여 가시성을 높였습니다.",
-                    "<b>이미지:</b> 모델 사진을 활용하여 한류 특유의 깨끗하고 건강한 이미지를 강조했습니다.",
-                    "<b>제품 명확성:</b> 치킨 캐릭터를 활용하여 제품 유형을 명확히 구분함으로써, 자칫 단순할 수 있는 음식 이미지를 더욱 매력적이고 친숙하게 만들었습니다."
+                    "서비스 → 인증 → 제품 → 효능 → 음식으로 이어지는 메시지 흐름을 따라 고객 이해를 돕는 전시 부스를 구성했습니다.",
+                    "<b>디자인:</b> 브랜드 핵심 컬러(그린·화이트·블랙)를 사용해 가시성을 강화했습니다.",
+                    "<b>이미지:</b> 모델 사진으로 한류 특유의 깨끗하고 건강한 이미지를 강조했습니다.",
+                    "<b>제품 명확성:</b> 치킨 캐릭터로 제품 유형을 명확히 구분해 단순할 수 있는 음식 이미지를 더 매력적이고 친숙하게 만들었습니다."
                 ]
             },
             "links": [
@@ -631,7 +631,7 @@ window.PROJECT_DATA = {
             "role": "Illustrator",
             "projectType": "Campaign",
             "industry": "Technology",
-            "tools": "Illustrator, Photoshop",
+            "tools": "Adobe Illustrator, Adobe Photoshop",
             "description": {
                 "en": [
                     "<b>The Solution</b>",
@@ -643,11 +643,11 @@ window.PROJECT_DATA = {
                 ],
                 "ko": [
                     "<b>솔루션</b>",
-                    "팜스플랜®은 AI 기반 모니터링을 활용한 가축 헬스케어 서비스입니다. 이 홍보 영상은 기술이 어떻게 24시간 가축의 건강을 추적하여 인건비와 항생제 사용을 줄이는지 시각화합니다.",
+                    "팜스플랜®은 AI 기반 모니터링으로 가축 건강을 관리하는 서비스입니다. 이 영상은 기술이 24시간 건강 상태를 추적해 인건비와 항생제 사용을 줄이는 과정을 시각화합니다.",
                     "<b>역할: 일러스트레이션 & 아트 디렉션</b>",
-                    "저는 전체적인 비주얼 개발을 담당하여 모션 디자이너의 대략적인 스토리보드 스케치를 브랜드에 부합하는 세련된 일러스트레이션으로 변환했습니다. 영상이 일관되고 고급스러운 룩을 유지하도록 캐릭터 스타일, 컬러 팔레트, 장면 구성을 정의했습니다.",
+                    "모션 디자이너의 러프 스토리보드를 브랜드에 맞는 완성도 높은 일러스트로 발전시키고, 캐릭터 스타일·컬러 팔레트·장면 구성을 정의해 일관된 톤을 유지했습니다.",
                     "<b>모션 리서치 & 기획</b>",
-                    "정적 디자인과 애니메이션 사이의 간극을 줄이기 위해 내러티브에 적합한 구체적인 모션 스타일을 조사하고 제안했습니다. 각 장면의 '룩 앤 필'에 대한 상세한 레퍼런스와 디렉션을 제공하여 모션 디자이너가 원하는 시각적 임팩트를 달성하도록 안내했습니다."
+                    "정적 디자인과 애니메이션의 간극을 줄이기 위해 내러티브에 맞는 모션 스타일을 조사·제안했습니다. 각 장면의 룩 앤드 필에 대한 레퍼런스와 디렉션을 제공해 원하는 시각적 임팩트를 구현했습니다."
                 ]
             },
             "links": [],
@@ -687,7 +687,7 @@ window.PROJECT_DATA = {
             "role": "Brand Experience Designer",
             "projectType": "Brand Experience",
             "industry": "Technology",
-            "tools": "Illustrator, Photoshop",
+            "tools": "Adobe Illustrator, Adobe Photoshop",
             "description": {
                 "en": [
                     "This Brand Guideline was developed to consolidate Farmsplan’s vision, \"Caring for Livestock with Technology,\" into a unified image, ensuring efficient utilization of brand assets across the organization.",
@@ -697,11 +697,11 @@ window.PROJECT_DATA = {
                     "Through this cohesive identity, Farmsplan moves beyond traditional livestock services. By leveraging technology, the company reinforces its commitment to 'One Health' and sustainable economic viability, firmly establishing its unique identity in the global market."
                 ],
                 "ko": [
-                    "이 브랜드 가이드라인은 \"기술로 가축을 돌보다\"라는 팜스플랜의 비전을 하나의 통일된 이미지로 통합하여 조직 전체에서 브랜드 자산을 효율적으로 활용할 수 있도록 개발되었습니다.",
-                    "디자인은 AI 융합 기술이 창출하는 보이지 않는 가치를 시각적으로 구체화합니다. 자연을 상징하는 그린 컬러를 포함한 브랜드 팔레트와 명확한 타이포그래피는 명확성과 신뢰의 기반을 마련하며 신선한 활력을 전달합니다.",
-                    "가이드라인은 일관된 표현을 보장하기 위해 색상, 타이포그래피, 아이콘 시스템, 레이아웃 원칙 등 핵심 요소를 세밀하게 정의합니다. 이 시스템은 패키지, 웹 인터페이스, 문구류 등 다양한 적용 분야에서 통일성을 유지하도록 구조화되었습니다.",
-                    "브랜드 아이콘은 축산 산업 내재된 복잡한 정보를 단순하고 명확하게 인지할 수 있도록 체계적으로 디자인되었습니다. 다양한 분야의 아이콘들이 통일된 톤 앤 매너로 조화롭게 작동하며, 일관된 형태는 브랜드의 신뢰도와 사용성을 높여 직관적이고 효율적인 사용자 경험을 제공합니다.",
-                    "이 일관된 아이덴티티를 통해 팜스플랜은 전통적인 가축 서비스를 넘어섭니다. 기술을 활용하여 'One Health'와 지속 가능한 경제적 생존 가능성에 대한 헌신을 강화하며 글로벌 시장에서 독보적인 정체성을 확고히 합니다."
+                    "이 브랜드 가이드라인은 \"기술로 가축을 돌보다\"라는 팜스플랜의 비전을 하나의 통합된 이미지로 정리해, 조직 전반에서 브랜드 자산을 효율적으로 활용할 수 있도록 만든 문서입니다.",
+                    "AI 융합 기술이 만들어내는 보이지 않는 가치를 시각적으로 구현했습니다. 자연을 상징하는 그린을 중심으로 한 팔레트와 명확한 타이포그래피로 신뢰와 명료함을 전달합니다.",
+                    "색상, 타이포그래피, 아이콘 시스템, 레이아웃 원칙 등 핵심 요소를 세밀하게 규정해 패키지, 웹, 문구류 등 다양한 접점에서 일관성을 유지하도록 구조화했습니다.",
+                    "브랜드 아이콘은 축산 산업의 복잡한 정보를 단순하고 명확하게 전달하도록 설계했습니다. 통일된 톤 앤드 매너와 형태로 신뢰도와 사용성을 높여 직관적인 사용자 경험을 제공합니다.",
+                    "이 정체성을 통해 팜스플랜은 전통적인 축산 서비스를 넘어, 기술 기반의 'One Health'와 지속가능성을 강화하며 글로벌 시장에서 독자적 입지를 확보합니다."
                 ]
             },
             "links": [],
@@ -731,9 +731,18 @@ window.PROJECT_DATA = {
         {
             "slug": "gullyjumper-universe",
             "featured": false,
-            "title": "Gullyjumper Universe",
-            "caption": "Character Branding",
-            "summary": "Visualizing Brand Values for Consumer Trust and Producer Pride",
+            "title": {
+                "en": "Gullyjumper Universe",
+                "ko": "Gullyjumper Universe"
+            },
+            "caption": {
+                "en": "Character Branding",
+                "ko": "캐릭터 브랜딩"
+            },
+            "summary": {
+                "en": "Visualizing Brand Values for Consumer Trust and Producer Pride",
+                "ko": "소비자 신뢰와 생산자 자부심을 위한 브랜드 가치 시각화"
+            },
             "cover": "assets/projects/Gullyjumper/cover.jpg",
             "thumbnail": "assets/projects/Gullyjumper/thumbnail.jpg",
             "year": "2022",
@@ -741,14 +750,23 @@ window.PROJECT_DATA = {
             "role": "Illustrator",
             "projectType": "Character IP",
             "industry": "Food",
-            "tools": "Illustrator, Photoshop",
-            "description": [
-                "The online meat market Gullyjumper seeks to refresh the outdated image of the livestock industry by correcting information asymmetry and fostering a virtuous industry cycle.",
-                "The character was created to embody this mission, representing the new generation of young, pioneering farmers innovating in the sector.",
-                "Gullyjumper symbolizes the spirit of challenge and the industry's modern face. The design conveys an authentic, proud farmer who is down-to-earth yet deeply mission-driven.",
-                "Visually, the character uses a strong silhouette and dynamic curves to project persistence, vitality, and forward momentum. The red and green color contrast signifies the necessary balance between freshness (production) and trust (quality).",
-                "Ultimately, the character is more than just a brand element; it serves as the key icon driving a positive industry cycle, building trust with consumers and instilling pride among producers."
-            ],
+            "tools": "Adobe Illustrator, Adobe Photoshop",
+            "description": {
+                "en": [
+                    "The online meat market Gullyjumper seeks to refresh the outdated image of the livestock industry by correcting information asymmetry and fostering a virtuous industry cycle.",
+                    "The character was created to embody this mission, representing the new generation of young, pioneering farmers innovating in the sector.",
+                    "Gullyjumper symbolizes the spirit of challenge and the industry's modern face. The design conveys an authentic, proud farmer who is down-to-earth yet deeply mission-driven.",
+                    "Visually, the character uses a strong silhouette and dynamic curves to project persistence, vitality, and forward momentum. The red and green color contrast signifies the necessary balance between freshness (production) and trust (quality).",
+                    "Ultimately, the character is more than just a brand element; it serves as the key icon driving a positive industry cycle, building trust with consumers and instilling pride among producers."
+                ],
+                "ko": [
+                    "온라인 육류 마켓 Gullyjumper는 정보 비대칭을 해소하고 선순환 구조를 만드는 것을 통해, 축산업의 낡은 이미지를 새롭게 전환하고자 합니다.",
+                    "이 캐릭터는 그 미션을 구현하기 위해 제작되었으며, 산업을 혁신하는 젊고 개척적인 농부 세대를 상징합니다.",
+                    "Gullyjumper는 도전 정신과 산업의 현대적 얼굴을 상징합니다. 현실적이면서도 자부심이 있는, 사명감 있는 농부의 이미지를 담았습니다.",
+                    "강한 실루엣과 역동적인 곡선을 통해 끈기, 활력, 전진성을 표현했습니다. 레드와 그린의 대비는 신선함(생산)과 신뢰(품질)의 균형을 의미합니다.",
+                    "결과적으로 이 캐릭터는 브랜드 요소를 넘어, 소비자 신뢰와 생산자 자부심을 만드는 선순환의 핵심 아이콘 역할을 합니다."
+                ]
+            },
             "links": [],
             "gallery": [
                 {
@@ -774,7 +792,7 @@ window.PROJECT_DATA = {
             },
             "summary": {
                 "en": "Immersion Organizational Culture Branding",
-                "ko": "몰입 조직문화 브랜딩"
+                "ko": "몰입을 주제로 한 조직문화 브랜딩"
             },
             "cover": "assets/projects/DeepDive/cover.mp4",
             "thumbnail": "assets/projects/DeepDive/thumbnail.mov",
@@ -783,7 +801,7 @@ window.PROJECT_DATA = {
             "role": "Graphic Designer",
             "projectType": "Campaign",
             "industry": "Technology",
-            "tools": "Illustrator, Photoshop, Sora",
+            "tools": "Adobe Illustrator, Adobe Photoshop, Sora",
             "description": {
                 "en": [
                     "We designed an organizational culture poster that reinterprets the meaning of 'Immersion' to establish a healthy work culture and foster the creative energy of our team members.",
@@ -795,13 +813,13 @@ window.PROJECT_DATA = {
                     "<b>Dive</b> represents the 'Moment of Experience', visualizing the idea that 'the working moment becomes art' through light illuminating an object."
                 ],
                 "ko": [
-                    "건강한 업무 문화를 정착시키고 구성원의 창의적 에너지를 도모하기 위해 '몰입'의 의미를 재해석한 조직문화 포스터를 디자인했습니다.",
-                    "몰입을 단순한 '집중'의 개념이 아닌 '3단계 몰입 모델'로 구조화하여 명확한 경험적 여정으로 디자인했습니다.",
+                    "건강한 업무 문화를 만들고 구성원의 창의적 에너지를 이끌어내기 위해 '몰입'을 재해석한 조직문화 포스터를 디자인했습니다.",
+                    "몰입을 단순한 '집중'이 아닌 '3단계 몰입 모델'로 구조화해 명확한 경험적 여정으로 구성했습니다.",
                     "<br/>",
-                    "캠페인 슬로건의 세 단어(Work → Think → Dive)를 각각의 몰입 단계와 매칭했습니다:",
-                    "<b>Work</b>는 '행동의 순간'을 의미하며, 시력검사표 비주얼을 통해 관객의 참여를 유도합니다.",
-                    "<b>Think</b>는 '시간의 순간'을 의미하며, 녹아내리는 시계 비주얼을 통해 깊은 사유를 전달합니다.",
-                    "<b>Dive</b>는 '경험의 순간'을 의미하며, 물체를 비추는 빛을 통해 '일하는 순간이 예술이 된다'는 아이디어를 시각화합니다."
+                    "캠페인 슬로건의 세 단어(Work → Think → Dive)를 각 몰입 단계와 연결했습니다:",
+                    "<b>Work</b>는 '행동의 순간'으로, 시력검사표 비주얼을 통해 참여를 유도합니다.",
+                    "<b>Think</b>는 '시간의 순간'으로, 녹아내리는 시계로 깊은 사유를 전달합니다.",
+                    "<b>Dive</b>는 '경험의 순간'으로, 물체를 비추는 빛을 통해 '일하는 순간이 예술이 된다'는 아이디어를 시각화합니다."
                 ]
             },
             "links": [],
@@ -817,7 +835,7 @@ window.PROJECT_DATA = {
             "featured": false,
             "title": {
                 "en": "Fresh Chungnam E-Catalog",
-                "ko": "신선 충남 E-카탈로그"
+                "ko": "프레시 충남 E-카탈로그"
             },
             "caption": {
                 "en": "Web Design",
@@ -834,7 +852,7 @@ window.PROJECT_DATA = {
             "role": "Web Designer",
             "projectType": "Digital Product",
             "industry": "Public Sector",
-            "tools": "Photoshop, Illustrator",
+            "tools": "Adobe Photoshop, Adobe Illustrator",
             "description": {
                 "en": [
                     "This website was strategically planned and designed at the request of the National Agricultural Cooperative Federation (NongHyup), Chungcheongnam-do Headquarters, to support local farmers.",
@@ -842,9 +860,9 @@ window.PROJECT_DATA = {
                     "I developed a layout and visual system optimized for various devices, ensuring seamless and convenient access to company and product information across desktops, tablets, and mobile phones."
                 ],
                 "ko": [
-                    "이 웹사이트는 농협 충남지역본부의 요청으로 지역 농가를 지원하기 위해 전략적으로 기획 및 디자인되었습니다.",
-                    "상품 특징, 최적 수출 시기, 활용 레시피 등 핵심 정보를 간소화하여 해외 무역 파트너들이 내용을 쉽게 이해할 수 있도록 했습니다.",
-                    "데스크탑, 태블릿, 모바일 등 다양한 디바이스에 최적화된 레이아웃과 비주얼 시스템을 개발하여 기업 및 제품 정보에 원활하고 편리하게 접근할 수 있도록 보장했습니다."
+                    "이 웹사이트는 농협 충남지역본부의 요청으로 지역 농가를 지원하기 위해 전략적으로 기획·디자인되었습니다.",
+                    "상품 특징, 최적 수출 시기, 활용 레시피 등 핵심 정보를 정리해 해외 무역 파트너가 쉽게 이해하도록 구성했습니다.",
+                    "데스크톱·태블릿·모바일에 최적화된 레이아웃과 비주얼 시스템을 구축해 기업 및 제품 정보에 원활하게 접근할 수 있도록 했습니다."
                 ]
             },
             "links": [],
@@ -878,7 +896,7 @@ window.PROJECT_DATA = {
             "role": "Brand Experience Designer",
             "projectType": "Campaign",
             "industry": "Retail",
-            "tools": "Photoshop, Illustrator",
+            "tools": "Adobe Photoshop, Adobe Illustrator",
             "description": {
                 "en": [
                     "The SISOFAIR brand identity uses bright sky blue and a character popping from a gift box to project a joyful, energetic event image.",
@@ -886,9 +904,9 @@ window.PROJECT_DATA = {
                     "For Digital Application, the Homepage combines calm deep blue and bright sky blue to balance professionalism and friendliness. The cute character and icons reinforce the fun event atmosphere. Detailed information is available on bulletin board pages. The Mobile environment is fully optimized, offering users a seamless experience consistent with the desktop version."
                 ],
                 "ko": [
-                    "시소페어 브랜드 아이덴티티는 밝은 하늘색과 선물 상자에서 튀어 나오는 캐릭터를 활용하여 즐겁고 에너지 넘치는 행사 이미지를 투영합니다.",
-                    "로고는 영문 대신 한글을 활용하여 인지도를 높이고 역동적인 느낌을 전달합니다. 브랜드 아이콘은 단순하고 직관적이며 전시 주제를 빠르게 명확히 하도록 디자인되어 원활한 사용자 경험을 안내합니다. 모든 아이콘은 다양한 형태에도 불구하고 통일된 시각적 정체성을 유지합니다.",
-                    "디지털 애플리케이션의 경우, 홈페이지는 차분한 딥블루와 밝은 하늘색을 결합하여 전문성과 친근함의 균형을 맞췄습니다. 귀여운 캐릭터와 아이콘은 즐거운 행사 분위기를 강화합니다. 자세한 정보는 게시판 페이지에서 제공됩니다. 모바일 환경은 데스크탑 버전과 일관된 끊김 없는 경험을 제공하도록 완전히 최적화되었습니다."
+                    "SISOFAIR의 아이덴티티는 밝은 하늘색과 선물 상자에서 튀어나오는 캐릭터를 활용해 즐겁고 에너지 넘치는 행사 이미지를 전달합니다.",
+                    "로고는 영문 대신 한글을 사용해 인지도를 높이고 역동성을 강조했습니다. 브랜드 아이콘은 단순하고 직관적으로 설계해 전시 주제를 빠르게 이해하도록 돕고, 다양한 형태에서도 통일된 정체성을 유지합니다.",
+                    "디지털 영역에서는 딥블루와 하늘색을 조합해 전문성과 친근함의 균형을 맞췄습니다. 캐릭터와 아이콘은 행사 분위기를 강화하고, 상세 정보는 게시판 페이지에서 제공됩니다. 모바일 환경은 데스크톱과 동일한 경험을 제공하도록 최적화했습니다."
                 ]
             },
             "links": [],
@@ -921,7 +939,7 @@ window.PROJECT_DATA = {
             },
             "summary": {
                 "en": "High-Volume Digital Content Implementation",
-                "ko": "대량 디지털 콘텐츠 구현"
+                "ko": "대량 디지털 콘텐츠 제작 및 운영"
             },
             "cover": "assets/projects/News-Letter/cover.jpg",
             "thumbnail": "assets/projects/News-Letter/thumbnail.jpg",
@@ -930,7 +948,7 @@ window.PROJECT_DATA = {
             "role": "Brand Designer",
             "projectType": "Digital Product",
             "industry": "Public Sector",
-            "tools": "Photoshop, Illustrator",
+            "tools": "Adobe Photoshop, Adobe Illustrator",
             "description": {
                 "en": [
                     "This project involved the design and technical implementation of a promotional email campaign aimed at attracting participation for over 200 domestic and international exhibitions, consortia, and industry events.",
@@ -940,11 +958,11 @@ window.PROJECT_DATA = {
                     "Effectively managed the design and production pipeline for a large volume of over 200 unique promotional assets while maintaining strict visual quality and brand standards."
                 ],
                 "ko": [
-                    "이 프로젝트는 200개 이상의 국내외 전시회, 컨소시엄, 산업 행사의 참여 유도를 위한 홍보 이메일 캠페인의 디자인 및 기술적 구현을 포함했습니다.",
+                    "이 프로젝트는 200건이 넘는 국내외 전시·컨소시엄·산업 행사의 참여 유도를 위한 이메일 캠페인의 디자인 및 구현을 포함했습니다.",
                     "<b>산업별 비주얼 적용:</b>",
-                    "홍보 대상인 각 특정 산업이나 행사의 고유한 정체성과 주제를 정확하게 반영하도록 타겟팅된 배너 비주얼을 디자인했습니다.",
+                    "산업/행사의 고유한 정체성과 주제를 정확히 반영한 타깃 배너 비주얼을 설계했습니다.",
                     "<b>대량 콘텐츠 관리:</b>",
-                    "엄격한 시각적 품질과 브랜드 표준을 유지하면서 200개 이상의 고유한 홍보 자산에 대한 디자인 및 제작 파이프라인을 효과적으로 관리했습니다."
+                    "엄격한 품질과 브랜드 기준을 유지하며 200개 이상의 홍보 자산 제작 파이프라인을 효율적으로 운영했습니다."
                 ]
             },
             "links": [],
@@ -969,7 +987,7 @@ window.PROJECT_DATA = {
             "cover": "assets/projects/rabbit/cover.jpg",
             "thumbnail": "assets/projects/rabbit/thumbnail.jpg",
             "year": "2015",
-            "client": "Personal Project",
+            "client": "Personal Work",
             "role": "3D Artist",
             "projectType": "Personal Work",
             "industry": "Food",
@@ -983,9 +1001,9 @@ window.PROJECT_DATA = {
                 ],
                 "ko": [
                     "<b>찹쌀떡 토끼 피규어</b>",
-                    "한국 찹쌀떡의 완벽하게 둥글고 통통한 형태에서 영감을 받아, 찹쌀떡과 토끼를 매력적으로 융합한 피규어입니다.",
+                    "한국 찹쌀떡의 둥글고 통통한 형태에서 착안해 찹쌀떡과 토끼를 결합한 피규어입니다.",
                     "<b>살아있는 찹쌀떡 이야기</b>",
-                    "집에 찹쌀떡을 가져왔는데, 살아 움직입니다! 몸에 비해 우스꽝스럽게 짧은 다리 때문에 대부분의 시간을 그저 누워서 평범한 찹쌀떡인 척하며 보냅니다. 때때로 흔적도 없이 사라지기도 하며, 무슨 생각을 하는지 도무지 알 수 없습니다. 어쩌면 찹쌀떡 은하계에서 온 작은 외계인일지도 모릅니다."
+                    "집에 들여온 찹쌀떡이 살아 움직입니다! 몸에 비해 짧은 다리 탓에 대부분 누워서 평범한 찹쌀떡인 척 지내지만, 가끔 흔적도 없이 사라지곤 합니다. 무슨 생각을 하는지 알 수 없으며, 어쩌면 찹쌀떡 은하에서 온 작은 외계인일지도 모릅니다."
                 ]
             },
             "links": [],
@@ -1013,22 +1031,22 @@ window.PROJECT_DATA = {
             },
             "summary": {
                 "en": "Personality-Driven Robotics",
-                "ko": "퍼스널리티 주도의 로봇 공학"
+                "ko": "퍼스널리티 중심의 로보틱스"
             },
             "cover": "assets/projects/AI-Robots/cover.jpg",
             "thumbnail": "assets/projects/AI-Robots/thumbnail.jpg",
             "year": "2013",
-            "client": "Personal Project",
+            "client": "Personal Work",
             "role": "3D Artist",
             "projectType": "Character IP",
             "industry": "Technology",
-            "tools": "3ds Max, KeyShot, Photoshop",
+            "tools": "3ds Max, KeyShot, Adobe Photoshop",
             "description": {
                 "en": [
                     "In the future, the advancement of Artificial Intelligence will allow robots to develop distinct personalities and interact with people in unique ways. Influenced by the game 'Portal', this project involved creating 3D models of robots, each with a different personality, based on the foundation of the human eye."
                 ],
                 "ko": [
-                    "미래에 인공지능의 발전은 로봇이 뚜렷한 성격을 개발하고 독특한 방식으로 인간과 상호 작용할 수 있게 할 것입니다. 게임 '포탈'에서 영감을 받아, 인간의 눈을 기초로 하여 각기 다른 성격을 가진 로봇의 3D 모델을 제작하는 프로젝트였습니다."
+                    "인공지능의 발전으로 로봇이 각기 다른 성격을 갖고 인간과 독특하게 상호작용할 미래를 상상하며, 게임 '포탈'에서 영감을 받아 인간의 눈을 모티프로 한 서로 다른 성격의 로봇 3D 모델을 제작했습니다."
                 ]
             },
             "links": [],
