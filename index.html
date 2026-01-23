@@ -24,7 +24,7 @@
   <!-- Top Bar (Above Header) -->
   <div id="topBar" class="fixed left-0 right-0 top-0 z-[60] bg-[var(--accent-orange)] border-b border-neutral-200">
     <div class="w-full px-4 md:px-6 lg:px-8">
-      <div class="flex items-center justify-end gap-5 py-2">
+      <div id="topBarRow" class="flex items-center justify-between gap-5 py-2">
         <!-- About Me -->
         <a href="#/about" id="topBarAboutLink"
           class="hidden lg:block text-[12px] font-medium text-neutral-900 hover:opacity-70 transition-opacity uppercase tracking-wide">
@@ -75,10 +75,21 @@
           </div>
 
           <!-- RIGHT: Search & Menu -->
-          <div class="flex items-center gap-4 md:gap-5 ml-auto">
+          <div class="flex items-center gap-3 md:gap-5 ml-auto">
             <!-- Search Box -->
             <div class="hidden lg:flex items-center">
               <input type="text" id="searchInput" placeholder="Search..." class="text-[14px]">
+            </div>
+            <!-- Mobile Search -->
+            <div class="lg:hidden flex items-center gap-2">
+              <button id="mobileSearchBtn"
+                class="inline-flex items-center justify-center w-11 h-11 text-black"
+                aria-label="Open search">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.5"></circle>
+                  <path d="M20 20l-4-4" stroke="currentColor" stroke-width="1.5"></path>
+                </svg>
+              </button>
             </div>
 
             <!-- Desktop Hamburger Menu -->
@@ -105,15 +116,23 @@
     <!-- View Toggle Menu Bar (Desktop only) -->
     <div id="viewToggleBar"
       class="hidden lg:flex fixed left-0 right-0 z-45 bg-neutral-100 border-b border-neutral-200 items-center justify-end px-4 md:px-6 lg:px-8">
+      <span id="desktopResultCount" class="text-[11px] font-medium text-neutral-600 hidden">0 Results</span>
       <div class="flex items-center gap-6">
         <button id="toggleFilterBtn" class="view-toggle-text flex items-center gap-2" aria-label="Hide/Show Filter">
           <img src="./assets/icons/Filter.png" alt="" class="w-4 h-4 object-contain">
           <span id="filterToggleLabel">Hide Filter</span>
         </button>
-        <div class="flex items-center gap-4 ml-2">
+        <div class="flex items-center gap-3">
+          <span id="desktopSortLabel" class="view-toggle-label">Sort</span>
+          <select id="desktopSortSelect" class="sort-select" aria-label="Sort">
+            <option id="desktopSortFeatured" value="featured">Featured</option>
+            <option id="desktopSortLatest" value="latest">Latest</option>
+            <option id="desktopSortOldest" value="oldest">Oldest</option>
+          </select>
+        </div>
+        <div class="flex items-center gap-4 ml-2 -mr-3">
           <span class="view-toggle-label">View</span>
           <button id="viewToggle1" class="view-toggle-text" data-view="1" aria-label="1개씩 보기">1</button>
-          <button id="viewToggle2" class="view-toggle-text" data-view="2" aria-label="2개씩 보기">2</button>
           <button id="viewToggle3" class="view-toggle-text" data-view="3" aria-label="3개씩 보기">3</button>
           <button id="viewToggle5" class="view-toggle-text" data-view="5" aria-label="5개씩 보기">5</button>
         </div>
@@ -121,16 +140,31 @@
     </div>
 
     <!-- Mobile View & Filter Bar -->
-    <div id="mobileTopBar" class="lg:hidden fixed left-0 right-0 bg-white border-b border-neutral-200 flex items-center justify-between px-4 py-2.5 z-[34]" style="top: 73px;">
-      <div class="flex items-center gap-3">
-        <span class="text-xs font-medium text-neutral-600">View</span>
-        <button id="mobileViewToggle1" class="mobile-view-toggle" data-view="1" aria-label="1개씩 보기">1</button>
-        <button id="mobileViewToggle2" class="mobile-view-toggle active" data-view="2" aria-label="2개씩 보기">2</button>
+    <div id="mobileTopBar" class="lg:hidden sticky left-0 right-0 bg-white border-b border-neutral-200 flex items-center gap-3 px-4 py-2.5 z-[60]">
+      <span id="mobileResultCount" class="text-xs font-medium text-neutral-600">0 Results</span>
+      <div class="ml-auto flex items-center gap-3">
+        <button id="mobileFilterOpenBtn" class="flex items-center gap-2 text-sm font-medium text-neutral-900 hover:text-[var(--accent-orange)] transition-colors" aria-label="Open filter">
+          <img src="./assets/icons/Filter.png" alt="" class="w-4 h-4 object-contain">
+          <span id="mobileFilterLabel">Filter</span>
+        </button>
+        <select id="mobileSortSelect" class="sort-select" aria-label="Sort">
+          <option id="mobileSortFeatured" value="featured">Featured</option>
+          <option id="mobileSortLatest" value="latest">Latest</option>
+          <option id="mobileSortOldest" value="oldest">Oldest</option>
+        </select>
+        <div class="relative">
+          <button id="mobileViewDropdownBtn"
+            class="dropdown-button flex items-center gap-2 text-sm font-medium text-neutral-900 hover:text-[var(--accent-orange)] transition-colors"
+            aria-label="Toggle view mode" aria-expanded="false">
+            <span id="mobileViewDropdownLabel">Thumbnail View</span>
+          </button>
+          <div id="mobileViewDropdown"
+            class="hidden absolute right-0 mt-2 w-40 bg-white border border-neutral-200 shadow-sm">
+            <button class="mobile-view-option block w-full text-left px-3 py-2 text-sm hover:bg-neutral-50" data-view="1">Magazine View</button>
+            <button class="mobile-view-option block w-full text-left px-3 py-2 text-sm hover:bg-neutral-50" data-view="2">Thumbnail View</button>
+          </div>
+        </div>
       </div>
-      <button id="mobileFilterOpenBtn" class="flex items-center gap-2 text-sm font-medium text-neutral-900 hover:text-[var(--accent-orange)] transition-colors" aria-label="Open filter">
-        <img src="./assets/icons/Filter.png" alt="" class="w-4 h-4 object-contain">
-        <span>Filter</span>
-      </button>
     </div>
 
     <main class="flex flex-col lg:flex-row filter-visible w-full">
@@ -146,8 +180,8 @@
       </aside>
 
       <!-- Mobile Filter Drawer (Only visible on mobile) -->
-      <div id="mobileFilterDrawer"
-        class="lg:hidden fixed inset-0 hidden z-[40] bg-black/40"
+    <div id="mobileFilterDrawer"
+        class="lg:hidden fixed inset-0 z-[40] bg-black/40"
         role="dialog" aria-modal="true">
         <div class="absolute right-0 top-0 h-full w-[85%] max-w-sm bg-white px-5 pt-4 pb-2 overflow-y-auto drawer shadow-xl" style="padding-top: 16px;">
           <div class="flex items-center justify-between pb-4 mb-4 border-b border-neutral-200">
@@ -211,12 +245,36 @@
     </div>
   </div>
 
+  <!-- Mobile Search Modal -->
+  <div id="mobileSearchModal" class="fixed inset-0 hidden z-[80] bg-black/40">
+    <div class="flex items-center justify-center h-full px-4">
+      <div class="w-full max-w-sm bg-white px-4 pt-4 pb-5 shadow-sm">
+        <div class="flex items-center gap-2">
+        <input type="text" id="mobileSearchInput" placeholder="Search..."
+          class="w-full text-[15px] border-b border-neutral-900 bg-transparent focus:outline-none" />
+        <button id="mobileSearchClose"
+          class="inline-flex items-center justify-center w-10 h-10 text-black hover:bg-neutral-100 rounded-full transition-colors"
+          aria-label="Close search">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M6 6l12 12M18 6l-12 12" stroke="currentColor" stroke-width="2" />
+          </svg>
+        </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Mobile Menu Drawer -->
   <div id="mobileMenu" class="fixed inset-0 hidden">
     <button id="menuBackdrop" class="absolute inset-0 bg-black/40" aria-label="Close menu"></button>
     <div id="drawerPanel"
-      class="absolute right-0 top-0 h-full w-[85%] max-w-sm bg-white px-5 pt-3 pb-2 overflow-y-auto drawer shadow-xl">
-      <div class="flex items-center justify-end px-2 pt-1 pb-1 gap-2">
+      class="absolute right-0 top-0 h-full w-[60%] max-w-sm bg-white px-5 pt-3 pb-2 overflow-y-auto drawer shadow-xl">
+      <div class="flex items-center justify-between px-2 pt-1 pb-1 gap-2">
+        <div class="flex items-center gap-2">
+          <button class="topbar-lang-option text-[12px] font-medium uppercase tracking-wide" data-lang="en">EN</button>
+          <span class="text-[12px] text-neutral-300">/</span>
+          <button class="topbar-lang-option text-[12px] font-medium uppercase tracking-wide" data-lang="ko">KO</button>
+        </div>
         <a href="#/about" id="mobileAboutLink" class="text-[20px] font-medium text-neutral-900 leading-none"
           style="text-decoration:none">
           ABOUT ME
@@ -231,17 +289,6 @@
       </div>
 
       <!-- Mobile Menu Navigation -->
-      <div class="mt-8 px-1 mb-6">
-        <p class="text-[12px] text-neutral-400 font-medium mb-3 uppercase tracking-wider">Language</p>
-        <div class="flex items-center gap-4">
-          <button class="text-[24px] font-medium text-neutral-300 hover:text-neutral-900 transition-colors lang-toggle"
-            data-lang="en">EN</button>
-          <span class="text-[24px] text-neutral-200 font-light">/</span>
-          <button class="text-[24px] font-medium text-neutral-300 hover:text-neutral-900 transition-colors lang-toggle"
-            data-lang="ko">KR</button>
-        </div>
-      </div>
-
       <div class="mt-4">
         <nav id="mobileProjectList"></nav>
       </div>
@@ -385,88 +432,6 @@
 
   <script src="js/data.js"></script>
   <script src="js/main.js"></script>
-
-  <!-- Mobile Filter & View Toggle Script -->
-  <script>
-    // Mobile Filter Drawer Toggle
-    const mobileFilterOpenBtn = document.getElementById('mobileFilterOpenBtn');
-    const mobileFilterDrawer = document.getElementById('mobileFilterDrawer');
-    const mobileFilterClose = document.getElementById('mobileFilterClose');
-
-    if (mobileFilterOpenBtn) {
-      mobileFilterOpenBtn.addEventListener('click', () => {
-        mobileFilterDrawer.classList.add('open');
-      });
-    }
-
-    if (mobileFilterClose) {
-      mobileFilterClose.addEventListener('click', () => {
-        mobileFilterDrawer.classList.remove('open');
-      });
-    }
-
-    if (mobileFilterDrawer) {
-      mobileFilterDrawer.addEventListener('click', (e) => {
-        if (e.target === mobileFilterDrawer) {
-          mobileFilterDrawer.classList.remove('open');
-        }
-      });
-    }
-
-    // Mobile View Toggle
-    const mobileViewToggle1 = document.getElementById('mobileViewToggle1');
-    const mobileViewToggle2 = document.getElementById('mobileViewToggle2');
-
-    function updateMobileViewToggle() {
-      const viewMode = localStorage.getItem('view_mode') || '2';
-      if (mobileViewToggle1) {
-        mobileViewToggle1.classList.toggle('active', viewMode === '1');
-      }
-      if (mobileViewToggle2) {
-        mobileViewToggle2.classList.toggle('active', viewMode === '2');
-      }
-    }
-
-    if (mobileViewToggle1) {
-      mobileViewToggle1.addEventListener('click', () => {
-        localStorage.setItem('view_mode', '1');
-        document.getElementById('viewToggle1')?.click();
-        updateMobileViewToggle();
-      });
-    }
-
-    if (mobileViewToggle2) {
-      mobileViewToggle2.addEventListener('click', () => {
-        localStorage.setItem('view_mode', '2');
-        document.getElementById('viewToggle2')?.click();
-        updateMobileViewToggle();
-      });
-    }
-
-    // Copy filter content to mobile filter drawer when filter menu is updated
-    function syncFilterContent() {
-      const filterMenuContent = document.getElementById('filterMenuContent');
-      const mobileFilterContent = document.getElementById('mobileFilterContent');
-      if (filterMenuContent && mobileFilterContent && filterMenuContent.innerHTML) {
-        mobileFilterContent.innerHTML = filterMenuContent.innerHTML;
-      }
-    }
-
-    // Initial sync
-    setTimeout(() => {
-      syncFilterContent();
-    }, 500);
-
-    // Watch for filter content changes
-    const filterMenuContent = document.getElementById('filterMenuContent');
-    if (filterMenuContent) {
-      const observer = new MutationObserver(syncFilterContent);
-      observer.observe(filterMenuContent, { childList: true, subtree: true, characterData: true });
-    }
-
-    // Also sync after main renders
-    document.addEventListener('mainRendered', syncFilterContent);
-  </script>
 
 </body>
 
