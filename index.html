@@ -124,7 +124,7 @@
     <!-- View Toggle Menu Bar (Desktop only) -->
     <div id="viewToggleBar"
       class="hidden lg:flex fixed left-0 right-0 z-45 bg-neutral-100 border-b border-neutral-200 items-center justify-end px-4 md:px-6 lg:px-8">
-      <span id="desktopResultCount" class="text-[11px] font-medium text-neutral-600 hidden">0 Results</span>
+      <span id="desktopResultCount" class="text-[11px] font-medium text-neutral-600 hidden"></span>
       <div class="flex items-center gap-6">
         <button id="toggleFilterBtn" class="view-toggle-text flex items-center gap-2" aria-label="Hide/Show Filter">
           <img src="./assets/icons/Filter.png" alt="" class="w-4 h-4 object-contain">
@@ -149,7 +149,7 @@
 
     <!-- Mobile View & Filter Bar -->
     <div id="mobileTopBar" class="lg:hidden sticky left-0 right-0 bg-white border-b border-neutral-200 flex items-center gap-3 px-4 py-2.5 z-[60]">
-      <span id="mobileResultCount" class="text-xs font-medium text-neutral-600">0 Results</span>
+      <span id="mobileResultCount" class="text-xs font-medium text-neutral-600"></span>
       <div class="ml-auto flex items-center gap-3">
         <button id="mobileFilterOpenBtn" class="flex items-center gap-2 text-sm font-medium text-neutral-900 hover:text-[var(--accent-orange)] transition-colors" aria-label="Open filter">
           <img src="./assets/icons/Filter.png" alt="" class="w-4 h-4 object-contain">
@@ -179,10 +179,12 @@
         var lang = 'en';
         var viewMode = '1';
         var filterVisible = null;
+        var sortMode = 'featured';
         try {
           lang = localStorage.getItem('site_lang') || 'en';
           viewMode = localStorage.getItem('view_mode') || '1';
           filterVisible = localStorage.getItem('filterVisible');
+          sortMode = localStorage.getItem('sort_mode') || 'featured';
         } catch (e) {
           // Ignore storage failures.
         }
@@ -216,14 +218,14 @@
         if (desktopSortFeatured) desktopSortFeatured.textContent = t.random;
         var mobileSortFeatured = document.getElementById('mobileSortFeatured');
         if (mobileSortFeatured) mobileSortFeatured.textContent = t.random;
+        var desktopSortSelect = document.getElementById('desktopSortSelect');
+        if (desktopSortSelect) desktopSortSelect.value = sortMode;
+        var mobileSortSelect = document.getElementById('mobileSortSelect');
+        if (mobileSortSelect) mobileSortSelect.value = sortMode;
         var mobileViewDropdownLabel = document.getElementById('mobileViewDropdownLabel');
         if (mobileViewDropdownLabel) {
           mobileViewDropdownLabel.textContent = viewMode === '1' ? t.magazine : t.thumbnail;
         }
-        var desktopResultCount = document.getElementById('desktopResultCount');
-        if (desktopResultCount) desktopResultCount.textContent = lang === 'ko' ? '0개의 결과' : '0 Results';
-        var mobileResultCount = document.getElementById('mobileResultCount');
-        if (mobileResultCount) mobileResultCount.textContent = lang === 'ko' ? '0개의 결과' : '0 Results';
         document.querySelectorAll('.mobile-view-option').forEach(function (option) {
           var nextView = option.getAttribute('data-view');
           if (nextView === '1') option.textContent = t.magazine;
@@ -267,9 +269,7 @@
       </div>
 
       <!-- Right Pane: Main Content & Gallery -->
-      <section id="pane" class="pb-24 w-full" aria-live="polite">
-        <div class="py-16 text-center text-sm text-neutral-500">Loading...</div>
-      </section>
+      <section id="pane" class="pb-24 w-full" aria-live="polite"></section>
     </main>
   </div>
 
@@ -498,6 +498,13 @@
 
     </article>
   </template>
+
+  <!-- Scroll To Top Button -->
+  <button id="scrollTopBtn" type="button" aria-label="Scroll to top">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M6 14l6-6 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+  </button>
 
   <script src="js/data.js"></script>
   <script src="js/main.js"></script>
