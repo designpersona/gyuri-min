@@ -1,20 +1,59 @@
 /** Configuration & State */
 const LOCK_PASSWORD = '123412'; // password for protected content
 
+const storage = (() => {
+  let available = true;
+  try {
+    const key = '__storage_test__';
+    localStorage.setItem(key, '1');
+    localStorage.removeItem(key);
+  } catch (err) {
+    available = false;
+  }
+  return {
+    get(key, fallback) {
+      if (!available) return fallback;
+      try {
+        const value = localStorage.getItem(key);
+        return value === null ? fallback : value;
+      } catch (err) {
+        return fallback;
+      }
+    },
+    set(key, value) {
+      if (!available) return;
+      try {
+        localStorage.setItem(key, value);
+      } catch (err) {
+        // Ignore storage failures (private mode, quota, etc.)
+      }
+    }
+  };
+})();
+
+const safeJsonParse = (value, fallback) => {
+  try {
+    return JSON.parse(value);
+  } catch (err) {
+    return fallback;
+  }
+};
+
 // Parse embedded JSON data
 const DATA = window.PROJECT_DATA;
 const state = { site: DATA.site, projects: DATA.projects };
 let pendingSlug = null;
-let currentLang = localStorage.getItem('site_lang') || 'en';
-let viewMode = localStorage.getItem('view_mode') || '1'; // '1', '2', '3', or '5'
+let currentLang = storage.get('site_lang', 'en');
+let viewMode = storage.get('view_mode', '1'); // '1', '2', '3', or '5'
 let searchQuery = '';
-let activeFilters = JSON.parse(localStorage.getItem('activeFilters') || '{}'); // { projectType: [], role: [], industry: [], client: [], tools: [] }
-let sortMode = localStorage.getItem('sort_mode') || 'featured'; // featured | latest | oldest
-let toolsShowAll = localStorage.getItem('tools_show_all') === 'true';
+let activeFilters = safeJsonParse(storage.get('activeFilters', '{}'), {}); // { projectType: [], role: [], industry: [], client: [], tools: [] }
+let sortMode = storage.get('sort_mode', 'featured'); // featured | latest | oldest
+let toolsShowAll = storage.get('tools_show_all', 'false') === 'true';
 // Default filter visibility: Hidden on mobile (<1024), Visible on desktop
-let filterVisible = localStorage.getItem('filterVisible') === null
+const filterVisibleStored = storage.get('filterVisible', null);
+let filterVisible = filterVisibleStored === null
   ? (window.innerWidth >= 1024)
-  : (localStorage.getItem('filterVisible') !== 'false');
+  : (filterVisibleStored !== 'false');
 
 document.documentElement.dataset.lang = currentLang;
 document.body.classList.toggle('lang-en', currentLang === 'en');
@@ -191,7 +230,9 @@ const TOOL_ALIASES = new Map([
   ["DALL·E (OpenAI)", "DALL·E"],
   ["Sora(OpenAI)", "Sora"],
   ["Sora (OpenAI)", "Sora"],
-  ["3D Max", "3ds Max"]
+  ["3D Max", "3ds Max"],
+  ["Adobe Illustrator", "Illustrator"],
+  ["Adobe Photoshop", "Photoshop"]
 ]);
 
 const TOOL_FILTER_EXCLUDES = new Set([
@@ -240,7 +281,7 @@ const sanitizeFilters = (filters) => {
 };
 
 activeFilters = sanitizeFilters(activeFilters);
-localStorage.setItem('activeFilters', JSON.stringify(activeFilters));
+storage.set('activeFilters', JSON.stringify(activeFilters));
 if (!SORT_MODES.includes(sortMode)) {
   sortMode = "featured";
 }
@@ -689,9 +730,9 @@ function updateLayoutMode() {
   }
 
   if (!isMobile) {
-    const desktopDefaultSet = localStorage.getItem('view_mode_initialized') === '1';
+    const desktopDefaultSet = storage.get('view_mode_initialized', '0') === '1';
     if (!desktopDefaultSet) {
-      localStorage.setItem('view_mode_initialized', '1');
+      storage.set('view_mode_initialized', '1');
       if (viewMode !== '1') {
         setViewMode('1');
       }
@@ -895,7 +936,7 @@ const sortProjects = (items) => {
 };
 
 // Helper to track collapsed states
-let collapsedSections = JSON.parse(localStorage.getItem('collapsedSections') || '{}');
+let collapsedSections = safeJsonParse(storage.get('collapsedSections', '{}'), {});
 
 // Generate filter menu HTML
 function filterMenuHTML() {
@@ -1119,6 +1160,11 @@ function initThumbRollers() {
     const prevBtn = roller.querySelector('[data-thumb-slider="prev"]');
     const nextBtn = roller.querySelector('[data-thumb-slider="next"]');
     let index = 0;
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let didSwipe = false;
+    let suppressClick = false;
+    let lastTouchX = 0;
     const setActive = (nextIndex) => {
       index = (nextIndex + slides.length) % slides.length;
       track.style.transform = `translateX(-${index * 100}%)`;
@@ -1137,6 +1183,52 @@ function initThumbRollers() {
         setActive(index + 1);
       });
     }
+
+    const handleTouchStart = (e) => {
+      if (!e.touches || e.touches.length === 0) return;
+      const touch = e.touches[0];
+      touchStartX = touch.clientX;
+      touchStartY = touch.clientY;
+      didSwipe = false;
+      lastTouchX = touchStartX;
+    };
+
+    const handleTouchMove = (e) => {
+      if (!e.touches || e.touches.length === 0) return;
+      const touch = e.touches[0];
+      const deltaX = touch.clientX - touchStartX;
+      const deltaY = touch.clientY - touchStartY;
+      lastTouchX = touch.clientX;
+      if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 12) {
+        didSwipe = true;
+        e.preventDefault();
+      }
+    };
+
+    const handleTouchEnd = () => {
+      if (!didSwipe) return;
+      const swipeDistance = touchStartX - lastTouchX;
+      if (Math.abs(swipeDistance) > 40) {
+        if (swipeDistance > 0) {
+          setActive(index + 1);
+        } else {
+          setActive(index - 1);
+        }
+        suppressClick = true;
+      }
+      didSwipe = false;
+    };
+
+    roller.addEventListener('touchstart', handleTouchStart, { passive: true });
+    roller.addEventListener('touchmove', handleTouchMove, { passive: false });
+    roller.addEventListener('touchend', handleTouchEnd);
+    roller.addEventListener('click', (e) => {
+      if (suppressClick) {
+        e.preventDefault();
+        e.stopPropagation();
+        suppressClick = false;
+      }
+    });
   });
 }
 
@@ -1218,7 +1310,7 @@ function updateStaticText() {
 function setLanguage(lang) {
   if (!lang) return;
   currentLang = lang;
-  localStorage.setItem('site_lang', lang);
+  storage.set('site_lang', lang);
   document.documentElement.dataset.lang = lang;
   document.body.classList.toggle('lang-en', lang === 'en');
   document.body.classList.toggle('lang-ko', lang === 'ko');
@@ -1322,7 +1414,9 @@ window.addEventListener('keydown', (e) => {
 
 // init
 const brandLink = document.getElementById('brandLink');
-brandLink.innerHTML = '<img src="assets/icons/1.png" alt="" class="w-[60px] h-[60px] lg:w-12 lg:h-12 inline-block mr-3 align-middle -mt-[24px] lg:mt-[-14px]" />Design Persona';
+if (brandLink && !brandLink.innerHTML.trim()) {
+  brandLink.innerHTML = '<img src="assets/icons/1.png" alt="" class="w-[60px] h-[60px] lg:w-12 lg:h-12 inline-block mr-3 align-middle -mt-[24px] lg:mt-[-14px]" />Design Persona';
+}
 
 /** Brand Link Navigation & Smooth Scroll */
 brandLink.addEventListener('click', (e) => {
@@ -1420,7 +1514,7 @@ const updateMobileViewDropdown = () => {
 function setViewMode(nextMode, { render = true, closeMobileDropdown = false } = {}) {
   if (!nextMode || nextMode === viewMode) return;
   viewMode = nextMode;
-  localStorage.setItem('view_mode', viewMode);
+  storage.set('view_mode', viewMode);
   updateViewToggleButtons();
   updateMobileViewDropdown();
   if (closeMobileDropdown && mobileViewDropdown) {
@@ -1455,7 +1549,7 @@ if (desktopSortSelect) {
     const nextMode = e.target.value;
     if (!SORT_MODES.includes(nextMode) || sortMode === nextMode) return;
     sortMode = nextMode;
-    localStorage.setItem('sort_mode', sortMode);
+    storage.set('sort_mode', sortMode);
     if (location.hash === '#/' || location.hash === '') {
       renderHome();
     } else if (filterMenuContent) {
@@ -1473,7 +1567,7 @@ if (mobileSortSelect) {
     const nextMode = e.target.value;
     if (!SORT_MODES.includes(nextMode) || sortMode === nextMode) return;
     sortMode = nextMode;
-    localStorage.setItem('sort_mode', sortMode);
+    storage.set('sort_mode', sortMode);
     if (location.hash === '#/' || location.hash === '') {
       renderHome();
     } else if (filterMenuContent) {
@@ -1627,7 +1721,7 @@ function setupViewToggle() {
   if (toggleFilterBtn) {
     toggleFilterBtn.addEventListener('click', () => {
       filterVisible = !filterVisible;
-      localStorage.setItem('filterVisible', filterVisible);
+      storage.set('filterVisible', filterVisible);
       updateFilterVisibility();
       updateFilterToggleButton();
     });
@@ -1740,7 +1834,7 @@ function setupFilterListeners() {
       const isCollapsed = section.classList.toggle('collapsed');
 
       collapsedSections[filterType] = isCollapsed;
-      localStorage.setItem('collapsedSections', JSON.stringify(collapsedSections));
+      storage.set('collapsedSections', JSON.stringify(collapsedSections));
     });
   });
 
@@ -1765,7 +1859,7 @@ function setupFilterListeners() {
       const nextMode = e.currentTarget.dataset.sort;
       if (!SORT_MODES.includes(nextMode) || sortMode === nextMode) return;
       sortMode = nextMode;
-      localStorage.setItem('sort_mode', sortMode);
+      storage.set('sort_mode', sortMode);
 
       if (location.hash === '#/' || location.hash === '') {
         renderHome();
@@ -1784,7 +1878,7 @@ function setupFilterListeners() {
     toolsToggleBtn.dataset.bound = 'true';
     toolsToggleBtn.addEventListener('click', () => {
       toolsShowAll = !toolsShowAll;
-      localStorage.setItem('tools_show_all', toolsShowAll);
+      storage.set('tools_show_all', toolsShowAll);
       if (filterMenuContent) {
         filterMenuContent.innerHTML = filterMenuHTML();
         setupFilterListeners();
@@ -1800,7 +1894,7 @@ function setupFilterListeners() {
     clearBtn.dataset.bound = 'true';
     clearBtn.addEventListener('click', () => {
       activeFilters = {};
-      localStorage.setItem('activeFilters', JSON.stringify(activeFilters));
+      storage.set('activeFilters', JSON.stringify(activeFilters));
       if (location.hash === '#/' || location.hash === '') {
         renderHome();
       } else {
@@ -1826,7 +1920,7 @@ function updateFilterSelection(filterType, filterValue, isChecked) {
     activeFilters[filterType] = activeFilters[filterType].filter(v => v !== filterValue);
   }
 
-  localStorage.setItem('activeFilters', JSON.stringify(activeFilters));
+  storage.set('activeFilters', JSON.stringify(activeFilters));
 
   // Re-render home if we're on home page
   if (location.hash === '#/' || location.hash === '') {
@@ -1857,7 +1951,7 @@ function bindMobileFilterDelegation() {
       const filterType = section.dataset.filterType;
       const isCollapsed = section.classList.toggle('collapsed');
       collapsedSections[filterType] = isCollapsed;
-      localStorage.setItem('collapsedSections', JSON.stringify(collapsedSections));
+      storage.set('collapsedSections', JSON.stringify(collapsedSections));
       return;
     }
 
@@ -1866,7 +1960,7 @@ function bindMobileFilterDelegation() {
       const nextMode = sortOption.dataset.sort;
       if (!SORT_MODES.includes(nextMode) || sortMode === nextMode) return;
       sortMode = nextMode;
-      localStorage.setItem('sort_mode', sortMode);
+      storage.set('sort_mode', sortMode);
       if (location.hash === '#/' || location.hash === '') {
         renderHome();
       } else if (filterMenuContent) {
@@ -1880,7 +1974,7 @@ function bindMobileFilterDelegation() {
     const toolsToggle = e.target.closest('#toolsToggleBtn');
     if (toolsToggle) {
       toolsShowAll = !toolsShowAll;
-      localStorage.setItem('tools_show_all', toolsShowAll);
+      storage.set('tools_show_all', toolsShowAll);
       if (filterMenuContent) {
         filterMenuContent.innerHTML = filterMenuHTML();
         setupFilterListeners();
@@ -1892,7 +1986,7 @@ function bindMobileFilterDelegation() {
     const clearBtn = e.target.closest('#clearFiltersBtn');
     if (clearBtn) {
       activeFilters = {};
-      localStorage.setItem('activeFilters', JSON.stringify(activeFilters));
+      storage.set('activeFilters', JSON.stringify(activeFilters));
       if (location.hash === '#/' || location.hash === '') {
         renderHome();
       } else if (filterMenuContent) {
