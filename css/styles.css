@@ -131,8 +131,8 @@ figcaption {
   right: 24px;
   width: 48px;
   height: 48px;
-  background: #e5e5e5;
-  color: #666;
+  background: var(--accent-orange);
+  color: #fff;
   border: none;
   border-radius: 50%;
   cursor: pointer;
@@ -1213,6 +1213,11 @@ body.header-collapsed #topBar {
 
 #searchInput::placeholder {
   color: #999;
+}
+
+#mobileResultCount:empty,
+#desktopResultCount:empty {
+  visibility: hidden;
 }
 
 #searchInput:hover,
