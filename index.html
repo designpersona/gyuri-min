@@ -126,20 +126,20 @@
       class="hidden lg:flex fixed left-0 right-0 z-45 bg-neutral-100 border-b border-neutral-200 items-center justify-end px-4 md:px-6 lg:px-8">
       <span id="desktopResultCount" class="text-[11px] font-medium text-neutral-600 hidden"></span>
       <div class="flex items-center gap-6">
-        <button id="toggleFilterBtn" class="view-toggle-text flex items-center gap-2" aria-label="Hide/Show Filter">
+        <button id="toggleFilterBtn" class="view-toggle-text flex items-center gap-2 i18n-pending" aria-label="Hide/Show Filter">
           <img src="./assets/icons/Filter.png" alt="" class="w-4 h-4 object-contain">
           <span id="filterToggleLabel">Hide Filter</span>
         </button>
         <div class="flex items-center gap-3">
-          <span id="desktopSortLabel" class="view-toggle-label">Sort</span>
-          <select id="desktopSortSelect" class="sort-select" aria-label="Sort">
-          <option id="desktopSortFeatured" value="featured">Random</option>
+          <span id="desktopSortLabel" class="view-toggle-label i18n-pending">Sort</span>
+          <select id="desktopSortSelect" class="sort-select i18n-pending" aria-label="Sort">
+            <option id="desktopSortFeatured" value="featured">Random</option>
             <option id="desktopSortLatest" value="latest">Latest</option>
             <option id="desktopSortOldest" value="oldest">Oldest</option>
           </select>
         </div>
         <div class="flex items-center gap-4 ml-2 -mr-3">
-          <span class="view-toggle-label">View</span>
+          <span id="desktopViewLabel" class="view-toggle-label">View</span>
           <button id="viewToggle1" class="view-toggle-text" data-view="1" aria-label="1개씩 보기">1</button>
           <button id="viewToggle3" class="view-toggle-text" data-view="3" aria-label="3개씩 보기">3</button>
           <button id="viewToggle5" class="view-toggle-text" data-view="5" aria-label="5개씩 보기">5</button>
@@ -148,19 +148,19 @@
     </div>
 
     <!-- Mobile View & Filter Bar -->
-    <div id="mobileTopBar" class="lg:hidden sticky left-0 right-0 bg-white border-b border-neutral-200 flex items-center gap-3 px-4 py-2.5 z-[60]">
+    <div id="mobileTopBar" class="lg:hidden sticky left-0 right-0 bg-white border-b border-neutral-200 flex items-center gap-3 px-4 py-2.5 z-[60] i18n-pending">
       <span id="mobileResultCount" class="text-xs font-medium text-neutral-600"></span>
       <div class="ml-auto flex items-center gap-3">
-        <button id="mobileFilterOpenBtn" class="flex items-center gap-2 text-sm font-medium text-neutral-900 hover:text-[var(--accent-orange)] transition-colors" aria-label="Open filter">
+        <button id="mobileFilterOpenBtn" class="flex items-center gap-2 text-sm font-medium text-neutral-900 hover:text-[var(--accent-orange)] transition-colors i18n-pending" aria-label="Open filter">
           <img src="./assets/icons/Filter.png" alt="" class="w-4 h-4 object-contain">
           <span id="mobileFilterLabel">Filter</span>
         </button>
-        <select id="mobileSortSelect" class="sort-select" aria-label="Sort">
+        <select id="mobileSortSelect" class="sort-select i18n-pending" aria-label="Sort">
           <option id="mobileSortFeatured" value="featured">Random</option>
           <option id="mobileSortLatest" value="latest">Latest</option>
           <option id="mobileSortOldest" value="oldest">Oldest</option>
         </select>
-        <select id="mobileViewSelect" class="sort-select" aria-label="View">
+        <select id="mobileViewSelect" class="sort-select i18n-pending" aria-label="View">
           <option id="mobileViewMagazine" value="1">Magazine</option>
           <option id="mobileViewThumbnail" value="2">Thumbnail</option>
         </select>
@@ -185,6 +185,8 @@
             filter: 'Filter',
             hideFilter: 'Hide Filter',
             showFilter: 'Show Filter',
+            sort: 'Sort',
+            view: 'View',
             random: 'Random',
             magazine: 'Magazine',
             thumbnail: 'Thumbnail'
@@ -193,6 +195,8 @@
             filter: '필터',
             hideFilter: '필터 숨기기',
             showFilter: '필터 보이기',
+            sort: '정렬',
+            view: '보기',
             random: '무작위',
             magazine: '매거진',
             thumbnail: '썸네일'
@@ -202,6 +206,10 @@
         var isVisible = filterVisible === null ? true : filterVisible !== 'false';
         var filterToggleLabel = document.getElementById('filterToggleLabel');
         if (filterToggleLabel) filterToggleLabel.textContent = isVisible ? t.hideFilter : t.showFilter;
+        var desktopSortLabel = document.getElementById('desktopSortLabel');
+        if (desktopSortLabel) desktopSortLabel.textContent = t.sort;
+        var desktopViewLabel = document.getElementById('desktopViewLabel');
+        if (desktopViewLabel) desktopViewLabel.textContent = t.view;
         var mobileFilterLabel = document.getElementById('mobileFilterLabel');
         if (mobileFilterLabel) mobileFilterLabel.textContent = t.filter;
         var mobileFilterTitle = document.querySelector('#mobileFilterDrawer h3');
@@ -213,9 +221,33 @@
         var desktopSortSelect = document.getElementById('desktopSortSelect');
         if (desktopSortSelect) desktopSortSelect.value = sortMode;
         var mobileSortSelect = document.getElementById('mobileSortSelect');
-        if (mobileSortSelect) mobileSortSelect.value = sortMode;
+        if (mobileSortSelect) {
+          mobileSortSelect.value = sortMode;
+          mobileSortSelect.classList.remove('i18n-pending');
+        }
+        var desktopSortLabel = document.getElementById('desktopSortLabel');
+        if (desktopSortLabel) desktopSortLabel.classList.remove('i18n-pending');
+        var desktopSortSelect = document.getElementById('desktopSortSelect');
+        if (desktopSortSelect) desktopSortSelect.classList.remove('i18n-pending');
+        var filterToggleBtn = document.getElementById('toggleFilterBtn');
+        if (filterToggleBtn) filterToggleBtn.classList.remove('i18n-pending');
+        var viewToggleBar = document.getElementById('viewToggleBar');
+        if (viewToggleBar) viewToggleBar.classList.remove('i18n-pending');
+        var mobileTopBar = document.getElementById('mobileTopBar');
+        if (mobileTopBar) mobileTopBar.classList.remove('i18n-pending');
+        var mobileFilterOpenBtn = document.getElementById('mobileFilterOpenBtn');
+        if (mobileFilterOpenBtn) mobileFilterOpenBtn.classList.remove('i18n-pending');
+        var desktopViewLabel = document.getElementById('desktopViewLabel');
+        if (desktopViewLabel) desktopViewLabel.classList.remove('i18n-pending');
+        ['viewToggle1', 'viewToggle3', 'viewToggle5'].forEach(function (id) {
+          var btn = document.getElementById(id);
+          if (btn) btn.classList.remove('i18n-pending');
+        });
         var mobileViewSelect = document.getElementById('mobileViewSelect');
-        if (mobileViewSelect) mobileViewSelect.value = viewMode === '1' ? '1' : '2';
+        if (mobileViewSelect) {
+          mobileViewSelect.value = viewMode === '1' ? '1' : '2';
+          mobileViewSelect.classList.remove('i18n-pending');
+        }
         var mobileViewMagazine = document.getElementById('mobileViewMagazine');
         if (mobileViewMagazine) mobileViewMagazine.textContent = t.magazine;
         var mobileViewThumbnail = document.getElementById('mobileViewThumbnail');
