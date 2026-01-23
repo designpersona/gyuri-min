@@ -755,9 +755,7 @@ const mobileFilterContent = document.getElementById('mobileFilterContent');
 const mobileFilterOpenBtn = document.getElementById('mobileFilterOpenBtn');
 const mobileFilterDrawer = document.getElementById('mobileFilterDrawer');
 const mobileFilterClose = document.getElementById('mobileFilterClose');
-const mobileViewDropdownBtn = document.getElementById('mobileViewDropdownBtn');
-const mobileViewDropdownLabel = document.getElementById('mobileViewDropdownLabel');
-const mobileViewDropdown = document.getElementById('mobileViewDropdown');
+const mobileViewSelect = document.getElementById('mobileViewSelect');
 const mobileResultCount = document.getElementById('mobileResultCount');
 
 function clearThumbRollers() {
@@ -1357,14 +1355,10 @@ function updateStaticText() {
   if (mobileSortFeatured) mobileSortFeatured.textContent = t('featured');
   if (mobileSortLatest) mobileSortLatest.textContent = t('latest');
   if (mobileSortOldest) mobileSortOldest.textContent = t('oldest');
-  document.querySelectorAll('.mobile-view-option').forEach((option) => {
-    const nextView = option.dataset.view;
-    if (nextView === '1') {
-      option.textContent = t('magazineView');
-    } else if (nextView === '2') {
-      option.textContent = t('thumbnailView');
-    }
-  });
+  const mobileViewMagazine = document.getElementById('mobileViewMagazine');
+  if (mobileViewMagazine) mobileViewMagazine.textContent = t('magazineView');
+  const mobileViewThumbnail = document.getElementById('mobileViewThumbnail');
+  if (mobileViewThumbnail) mobileViewThumbnail.textContent = t('thumbnailView');
 
 
 
@@ -1593,21 +1587,16 @@ if (mobileFilterDrawer) {
 }
 
 const updateMobileViewDropdown = () => {
-  if (!mobileViewDropdownLabel) return;
-  const isMagazine = viewMode === '1';
-  mobileViewDropdownLabel.textContent = isMagazine ? t('magazineView') : t('thumbnailView');
+  if (!mobileViewSelect) return;
+  mobileViewSelect.value = viewMode === '1' ? '1' : '2';
 };
 
-function setViewMode(nextMode, { render = true, closeMobileDropdown = false } = {}) {
+function setViewMode(nextMode, { render = true } = {}) {
   if (!nextMode || nextMode === viewMode) return;
   viewMode = nextMode;
   storage.set('view_mode', viewMode);
   updateViewToggleButtons();
   updateMobileViewDropdown();
-  if (closeMobileDropdown && mobileViewDropdown) {
-    mobileViewDropdown.classList.add('hidden');
-    mobileViewDropdownBtn?.setAttribute('aria-expanded', 'false');
-  }
   if (render && (location.hash === '#/' || location.hash === '')) {
     renderHome();
   }
@@ -1666,41 +1655,23 @@ if (mobileSortSelect) {
   });
 }
 
-if (mobileViewDropdownBtn && mobileViewDropdown) {
-  if (mobileViewDropdownBtn.dataset.bound !== 'true') {
-    mobileViewDropdownBtn.dataset.bound = 'true';
-    mobileViewDropdownBtn.addEventListener('click', () => {
-      const isOpen = !mobileViewDropdown.classList.contains('hidden');
-      mobileViewDropdown.classList.toggle('hidden', isOpen);
-      mobileViewDropdownBtn.setAttribute('aria-expanded', (!isOpen).toString());
+if (mobileViewSelect) {
+  if (mobileViewSelect.dataset.bound !== 'true') {
+    mobileViewSelect.dataset.bound = 'true';
+    mobileViewSelect.addEventListener('change', (e) => {
+      const nextView = e.target.value;
+      if (!nextView) return;
+      setViewMode(nextView);
     });
   }
 }
-
-document.querySelectorAll('.mobile-view-option').forEach((option) => {
-  if (option.dataset.bound === 'true') return;
-  option.dataset.bound = 'true';
-  option.addEventListener('click', () => {
-    const nextView = option.dataset.view;
-    if (!nextView) return;
-    setViewMode(nextView, { closeMobileDropdown: true });
-  });
-});
-
-window.addEventListener('click', (e) => {
-  if (!mobileViewDropdown || !mobileViewDropdownBtn) return;
-  if (mobileViewDropdown.contains(e.target) || mobileViewDropdownBtn.contains(e.target)) return;
-  if (!mobileViewDropdown.classList.contains('hidden')) {
-    mobileViewDropdown.classList.add('hidden');
-    mobileViewDropdownBtn.setAttribute('aria-expanded', 'false');
-  }
-});
 
 // Search functionality
 const searchInput = document.getElementById('searchInput');
 const mobileSearchBtn = document.getElementById('mobileSearchBtn');
 const mobileSearchInput = document.getElementById('mobileSearchInput');
 const mobileSearchModal = document.getElementById('mobileSearchModal');
+const mobileSearchBox = document.getElementById('mobileSearchBox');
 const mobileSearchClose = document.getElementById('mobileSearchClose');
 if (searchInput) {
   searchInput.addEventListener('input', (e) => {
@@ -1764,7 +1735,13 @@ if (mobileSearchClose) {
 
 if (mobileSearchModal) {
   mobileSearchModal.addEventListener('click', (e) => {
-    if (e.target === mobileSearchModal) closeMobileSearch();
+    if (e.target === mobileSearchModal) {
+      closeMobileSearch();
+      return;
+    }
+    if (mobileSearchBox && !mobileSearchBox.contains(e.target)) {
+      closeMobileSearch();
+    }
   });
 }
 
