@@ -349,7 +349,7 @@ body.mobile-mode aside {
   border: none;
   color: #666;
   font-size: 14px;
-  font-weight: 400;
+  font-weight: 500;
   cursor: pointer;
   transition: color 0.2s ease;
   padding: 0;
@@ -362,8 +362,10 @@ body.mobile-mode aside {
 
 .view-toggle-text.active {
   color: var(--accent-orange);
-  font-weight: 600;
-}/* View Toggle Bar - Fixed below header */
+  font-weight: 500;
+}
+
+/* View Toggle Bar - Fixed below header */
 #viewToggleBar {
   display: none !important;
   /* Hidden on mobile by default */
@@ -961,7 +963,7 @@ body.header-collapsed #topBar {
 
 .mobile-view-toggle.active {
   color: var(--accent-orange);
-  font-weight: 600;
+  font-weight: 500;
 }
 
 #mobileFilterOpenBtn {
@@ -1188,6 +1190,27 @@ body.header-collapsed #topBar {
   color: black;
 }
 
+.desktop-search {
+  gap: 6px;
+  color: #111;
+}
+
+.desktop-search-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: translateX(-8px);
+  transition: opacity 0.2s ease, transform 0.25s ease;
+  pointer-events: none;
+}
+
+.desktop-search:hover .desktop-search-icon,
+.desktop-search:focus-within .desktop-search-icon {
+  opacity: 1;
+  transform: translateX(0);
+}
+
 #searchInput::placeholder {
   color: #999;
 }
@@ -1382,9 +1405,7 @@ body.about-page-active #pane {
   body > div.w-full.px-4 {
     padding-left: 0 !important;
     padding-right: 0 !important;
-  }
-
-  main.filter-visible #pane,
+  }  main.filter-visible #pane,
   main.filter-hidden #pane,
   #pane {
     padding-left: 1rem !important;
