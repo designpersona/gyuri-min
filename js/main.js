@@ -6,6 +6,19 @@ const DATA = window.PROJECT_DATA;
 const state = { site: DATA.site, projects: DATA.projects };
 let pendingSlug = null;
 let currentLang = localStorage.getItem('site_lang') || 'en';
+let viewMode = localStorage.getItem('view_mode') || '2'; // '1', '2', '3', or '5'
+let searchQuery = '';
+let activeFilters = JSON.parse(localStorage.getItem('activeFilters') || '{}'); // { projectType: [], role: [], industry: [], client: [], tools: [] }
+let sortMode = localStorage.getItem('sort_mode') || 'featured'; // featured | latest | oldest
+let toolsShowAll = localStorage.getItem('tools_show_all') === 'true';
+// Default filter visibility: Hidden on mobile (<1024), Visible on desktop
+let filterVisible = localStorage.getItem('filterVisible') === null
+  ? (window.innerWidth >= 1024)
+  : (localStorage.getItem('filterVisible') !== 'false');
+
+document.documentElement.dataset.lang = currentLang;
+document.body.classList.toggle('lang-en', currentLang === 'en');
+document.body.classList.toggle('lang-ko', currentLang === 'ko');
 
 // Translations for static text
 const I18N = {
@@ -21,8 +34,20 @@ const I18N = {
     year: "Year",
     client: "Client",
     role: "Role",
+    projectType: "Project Type",
+    industry: "Industry",
     tools: "Tools",
-    langLabel: "Language",
+    clearFilters: "Clear all filters",
+    hideFilter: "Hide Filter",
+    showFilter: "Show Filter",
+    sort: "Sort",
+    featured: "Featured",
+    latest: "Latest",
+    oldest: "Oldest",
+    moreTools: "+ More",
+    lessTools: "Show less",
+    langLabel: "EN",
+    viewLabel: "View",
     // About Page
     aboutRole: "Brand Designer",
     aboutTagline: "Brand Architect.<br />Visual Strategist.<br />Experience Builder.<br />Creative Connector.",
@@ -64,8 +89,20 @@ const I18N = {
     year: "Year",
     client: "Client",
     role: "Role",
+    projectType: "Project Type",
+    industry: "산업",
     tools: "Tools",
-    langLabel: "Language",
+    clearFilters: "모든 필터 지우기",
+    hideFilter: "필터 숨기기",
+    showFilter: "필터 보이기",
+    sort: "정렬",
+    featured: "Featured",
+    latest: "Latest",
+    oldest: "Oldest",
+    moreTools: "+ 더보기",
+    lessTools: "접기",
+    langLabel: "KO",
+    viewLabel: "보기",
     // About Page
     aboutRole: "브랜드 디자이너",
     aboutTagline: "브랜드 아키텍트.<br />비주얼 스트래티지스트.<br />익스피리언스 빌더.<br />크리에이티브 커넥터.",
@@ -97,6 +134,109 @@ const I18N = {
   }
 };
 
+const FILTER_CONFIG = {
+  projectType: [
+    "Brand Experience",
+    "Digital Product",
+    "Campaign",
+    "Character IP",
+    "Personal Work"
+  ],
+  role: [
+    "Brand Designer",
+    "Brand Experience Designer",
+    "Art Director",
+    "Graphic Designer",
+    "Web Designer",
+    "Illustrator",
+    "3D Artist"
+  ],
+  industry: [
+    "Beauty",
+    "Food",
+    "Healthcare",
+    "Retail",
+    "Public Sector",
+    "Technology"
+  ],
+  client: [
+    "AID",
+    "KOTRA",
+    "NongHyup (Chungnam)",
+    "Shinan-gun",
+    "Café Terrabite",
+    "Korea Stationery Industry Cooperative",
+    "Petit-ours (Collaboration)",
+    "Personal Project",
+    "27 Red Brick"
+  ],
+  tools: {
+    primary: ["Figma", "Illustrator", "Photoshop", "3ds Max", "KeyShot"],
+    more: ["After Effects", "ChatGPT", "Cursor", "DALL·E", "Sora", "VS Code"]
+  }
+};
+
+const TOOL_ALIASES = new Map([
+  ["ChatGPT(Codex)", "ChatGPT"],
+  ["ChatGPT (Codex)", "ChatGPT"],
+  ["DALL·E(OpenAI)", "DALL·E"],
+  ["DALL·E (OpenAI)", "DALL·E"],
+  ["Sora(OpenAI)", "Sora"],
+  ["Sora (OpenAI)", "Sora"],
+  ["3D Max", "3ds Max"]
+]);
+
+const TOOL_FILTER_EXCLUDES = new Set([
+  "Adobe",
+  "Dreamweaver",
+  "Antigravity",
+  "Acrylic Paint",
+  "Sculpey"
+]);
+
+const normalizeToolName = (tool) => {
+  if (!tool) return "";
+  const fixed = tool.replace(/OpenAl/g, "OpenAI").trim();
+  return TOOL_ALIASES.get(fixed) || fixed;
+};
+
+const getProjectTools = (project) => {
+  if (!project?.tools) return [];
+  return project.tools
+    .split(",")
+    .map((tool) => normalizeToolName(tool))
+    .map((tool) => tool.trim())
+    .filter((tool) => tool && !TOOL_FILTER_EXCLUDES.has(tool));
+};
+
+const FILTER_KEYS = ["projectType", "role", "industry", "client", "tools"];
+const SORT_MODES = ["featured", "latest", "oldest"];
+
+const sanitizeFilters = (filters) => {
+  const clean = {};
+  const toolsAllowed = new Set([...FILTER_CONFIG.tools.primary, ...FILTER_CONFIG.tools.more]);
+  const allowedValues = {
+    projectType: new Set(FILTER_CONFIG.projectType),
+    role: new Set(FILTER_CONFIG.role),
+    industry: new Set(FILTER_CONFIG.industry),
+    client: new Set(FILTER_CONFIG.client),
+    tools: toolsAllowed
+  };
+
+  FILTER_KEYS.forEach((key) => {
+    const values = Array.isArray(filters?.[key]) ? filters[key] : [];
+    clean[key] = values.filter((value) => allowedValues[key].has(value));
+  });
+
+  return clean;
+};
+
+activeFilters = sanitizeFilters(activeFilters);
+localStorage.setItem('activeFilters', JSON.stringify(activeFilters));
+if (!SORT_MODES.includes(sortMode)) {
+  sortMode = "featured";
+}
+
 const esc = (s = '') => (s ?? '').toString();
 
 /** Helper: Get localized text */
@@ -124,26 +264,55 @@ const listHTML = (items, activeSlug = null) =>
     .join('') +
   `</ul>`;
 
-const gridHTML = (items) =>
+const gridHTML = (items) => {
+  // Determine grid classes based on view mode
+  const isDesktop = window.innerWidth >= 1024;
+  let gridClasses;
 
-  `<div class="grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">` +
-  items
-    .map(
-      (p) => {
-        const thumb = esc(p.thumbnail);
-        const isVideo = /\.(mp4|webm|mov)$/i.test(thumb);
+  if (isDesktop) {
+    if (viewMode === '1') {
+      gridClasses = 'grid-cols-1 gap-y-12';
+    } else if (viewMode === '2') {
+      gridClasses = 'grid-cols-2 gap-x-6 gap-y-6';
+    } else if (viewMode === '3') {
+      gridClasses = 'grid-cols-3 gap-x-6 gap-y-6';
+    } else if (viewMode === '5') {
+      gridClasses = 'grid-cols-5 gap-x-4 gap-y-4';
+    } else {
+      gridClasses = 'grid-cols-3 gap-x-6 gap-y-6';
+    }
+  } else {
+    // Mobile/Tablet: Respect 1-column if selected, else default to 2
+    if (viewMode === '1') {
+      gridClasses = 'grid-cols-1 gap-y-8';
+    } else {
+      gridClasses = 'grid-cols-2 gap-x-4 gap-y-6';
+    }
+  }
 
-        let mediaHtml;
-        if (isVideo) {
-          mediaHtml = `<video class="aspect-square w-full object-cover transition-transform duration-500 group-hover:scale-105" src="${thumb}" autoplay muted loop playsinline></video>`;
-        } else {
-          const isGif = thumb.toLowerCase().endsWith('.gif');
-          mediaHtml = `<img loading="lazy" decoding="async" ${isGif ? 'style="will-change: transform;"' : ''} class="aspect-square w-full object-cover transition-transform duration-500 group-hover:scale-105" src="${thumb}" alt="${esc(getText(p.title))} thumbnail" />`;
-        }
+  return `<div class="grid ${gridClasses}">` +
+    items
+      .map(
+        (p) => {
+          const thumb = esc(p.thumbnail);
+          const isVideo = /\.(mp4|webm|mov)$/i.test(thumb);
+          const isWideView = viewMode === '1'; // Now applies to mobile too
 
-        return `
-        <article class="relative group">
-          <a href="#/${p.slug}" class="block overflow-hidden relative rounded-lg" style="text-decoration:none">
+          let mediaHtml;
+          if (isVideo) {
+            // For videos, use a more natural wide aspect ratio
+            const aspectClass = isWideView ? 'aspect-[16/9]' : 'aspect-square';
+            mediaHtml = `<video class="${aspectClass} w-full object-cover transition-transform duration-500 group-hover:scale-105" src="${thumb}" autoplay muted loop playsinline></video>`;
+          } else {
+            const isGif = thumb.toLowerCase().endsWith('.gif');
+            // For images, use a more natural wide aspect ratio that fits most thumbnails
+            const aspectClass = isWideView ? 'aspect-[16/9]' : 'aspect-square';
+            mediaHtml = `<img loading="lazy" decoding="async" ${isGif ? 'style="will-change: transform;"' : ''} class="${aspectClass} w-full object-cover transition-transform duration-500 group-hover:scale-105" src="${thumb}" alt="${esc(getText(p.title))} thumbnail" />`;
+          }
+
+          return `
+        <article class="relative group ${isWideView ? 'w-full max-w-full' : ''}">
+          <a href="#/${p.slug}" class="block overflow-hidden relative" style="text-decoration:none">
             ${mediaHtml}
             ${p.locked ? `<div class="absolute top-0 right-0 bg-black/10 text-white text-[10px] px-3 py-1 uppercase tracking-wider font-medium">${t('restricted')}</div>` : ''}
           </a>
@@ -152,10 +321,11 @@ const gridHTML = (items) =>
             <p class="text-[13px] text-neutral-500">${esc(getText(p.caption))}</p>
           </div>
         </article>`;
-      }
-    )
-    .join('') +
-  `</div>`;
+        }
+      )
+      .join('') +
+    `</div>`;
+};
 
 function detailHTML(p) {
   const gallery = (p.gallery || [])
@@ -194,11 +364,15 @@ function detailHTML(p) {
   const hasLinks = p.links && Array.isArray(p.links) && p.links.length > 0;
   const year = getText(p.year);
   const client = getText(p.client);
+  const clientDetail = getText(p.client_detail);
+  const clientDisplay = clientDetail ? `${client} (${clientDetail})` : client;
   const role = getText(p.role);
+  const projectType = getText(p.projectType);
+  const industry = getText(p.industry);
   const tools = getText(p.tools); // Tools usually shared but just in case
   const description = getText(p.description); // Array or String
 
-  const hasLeftContent = year || client || role || tools;
+  const hasLeftContent = year || client || role || projectType || industry || tools;
   const hasRightContent = description || hasLinks;
 
   let infoSection = '';
@@ -220,7 +394,7 @@ function detailHTML(p) {
                   ${client
           ? `<div>
                       <span class="text-[13px] text-neutral-500">${t('client')}</span>
-                      <div class="text-[15px] mt-1">${esc(client)}</div>
+                      <div class="text-[15px] mt-1">${esc(clientDisplay)}</div>
                     </div>`
           : ''
         }
@@ -228,6 +402,20 @@ function detailHTML(p) {
           ? `<div>
                       <span class="text-[13px] text-neutral-500">${t('role')}</span>
                       <div class="text-[15px] mt-1">${esc(role)}</div>
+                    </div>`
+          : ''
+        }
+                  ${projectType
+          ? `<div>
+                      <span class="text-[13px] text-neutral-500">${t('projectType')}</span>
+                      <div class="text-[15px] mt-1">${esc(projectType)}</div>
+                    </div>`
+          : ''
+        }
+                  ${industry
+          ? `<div>
+                      <span class="text-[13px] text-neutral-500">${t('industry')}</span>
+                      <div class="text-[15px] mt-1">${esc(industry)}</div>
                     </div>`
           : ''
         }
@@ -416,11 +604,26 @@ function aboutHTML() {
 const pane = document.getElementById('pane');
 const desktopList = document.getElementById('projectListDesktop');
 const menuBtn = document.getElementById('menuBtn');
+const desktopMenuBtn = document.getElementById('desktopMenuBtn');
 const menuEl = document.getElementById('mobileMenu');
+const desktopMenuEl = document.getElementById('desktopMenu');
 const drawerPanel = document.getElementById('drawerPanel');
+const desktopDrawerPanel = document.getElementById('desktopDrawerPanel');
 const menuBackdrop = document.getElementById('menuBackdrop');
+const desktopMenuBackdrop = document.getElementById('desktopMenuBackdrop');
 const menuClose = document.getElementById('menuClose');
+const desktopMenuClose = document.getElementById('desktopMenuClose');
 const mobileProjectList = document.getElementById('mobileProjectList');
+const desktopProjectListNav = document.getElementById('desktopProjectListNav');
+const filterMenuContent = document.getElementById('filterMenuContent');
+const mobileFilterContent = document.getElementById('mobileFilterContent');
+const mobileFilterOpenBtn = document.getElementById('mobileFilterOpenBtn');
+const mobileFilterDrawer = document.getElementById('mobileFilterDrawer');
+const mobileFilterClose = document.getElementById('mobileFilterClose');
+const mobileViewDropdownBtn = document.getElementById('mobileViewDropdownBtn');
+const mobileViewDropdownLabel = document.getElementById('mobileViewDropdownLabel');
+const mobileViewDropdown = document.getElementById('mobileViewDropdown');
+const mobileResultCount = document.getElementById('mobileResultCount');
 
 // Language Elements
 const desktopLangBtn = document.getElementById('desktopLangBtn');
@@ -429,12 +632,21 @@ const currentLangLabel = document.getElementById('currentLangLabel');
 /** Layout Logic: Mobile vs Desktop */
 function updateLayoutMode() {
   // Update layout mode based on window width
-  // < 768px: Mobile mode behaviors
-  // >= 768px: Desktop/Split-view behaviors (including iPad Portrait)
-  if (window.innerWidth < 768) {
+  // < 1024px: Mobile mode behaviors (includes iPad)
+  // >= 1024px: Desktop behaviors
+  const isMobile = window.innerWidth < 1024;
+  if (isMobile) {
     document.body.classList.add('mobile-mode');
   } else {
     document.body.classList.remove('mobile-mode');
+  }
+
+  if (isMobile && viewMode !== '2') {
+    setViewMode('2');
+  }
+
+  if (!isMobile && viewMode === '2') {
+    setViewMode('3');
   }
 }
 window.addEventListener('resize', updateLayoutMode);
@@ -461,25 +673,315 @@ function openMenu() {
   });
 
   menuEl.classList.remove('hidden');
-  drawerPanel.classList.add('open');
-  menuBtn?.setAttribute('aria-expanded', 'true');
+  // Small delay to ensure transition works after removing 'hidden'
+  requestAnimationFrame(() => {
+    drawerPanel.classList.add('open');
+    menuBtn?.setAttribute('aria-expanded', 'true');
+    // Change icon to X or similar if needed - currently using internal X
+  });
+}
+
+function toggleMenu() {
+  const isOpen = drawerPanel?.classList.contains('open');
+  if (isOpen) {
+    closeMenu();
+  } else {
+    openMenu();
+  }
 }
 
 function closeMenu() {
+  if (!drawerPanel.classList.contains('open')) return;
   drawerPanel.classList.remove('open');
   menuBtn?.setAttribute('aria-expanded', 'false');
-  setTimeout(() => menuEl.classList.add('hidden'), 250);
+  setTimeout(() => {
+    if (!drawerPanel.classList.contains('open')) {
+      menuEl.classList.add('hidden');
+    }
+  }, 300); // matching transition .25s + buffer
+}
+
+// Extract unique filter values from projects
+function getFilterOptions() {
+  const options = {
+    projectType: new Set(),
+    client: new Set(),
+    role: new Set(),
+    industry: new Set(),
+    tools: new Set()
+  };
+
+  state.projects.forEach((p) => {
+    const projectType = getText(p.projectType);
+    if (projectType) options.projectType.add(projectType);
+
+    const client = getText(p.client);
+    if (client) options.client.add(client);
+
+    const role = getText(p.role);
+    if (role) options.role.add(role);
+
+    const industry = getText(p.industry);
+    if (industry) options.industry.add(industry);
+
+    getProjectTools(p).forEach((tool) => options.tools.add(tool));
+  });
+
+  const filterByUsed = (list, usedSet) => list.filter((value) => usedSet.has(value));
+  const toolsAllowed = [...FILTER_CONFIG.tools.primary, ...FILTER_CONFIG.tools.more];
+
+  return {
+    projectType: filterByUsed(FILTER_CONFIG.projectType, options.projectType),
+    client: filterByUsed(FILTER_CONFIG.client, options.client),
+    role: filterByUsed(FILTER_CONFIG.role, options.role),
+    industry: filterByUsed(FILTER_CONFIG.industry, options.industry),
+    tools: filterByUsed(toolsAllowed, options.tools)
+  };
+}
+
+// Filter projects based on active filters and search query
+function filterProjects() {
+  let filtered = state.projects;
+
+  // Apply search filter first
+  if (searchQuery && searchQuery.trim() !== '') {
+    const query = searchQuery.toLowerCase().trim();
+    filtered = filtered.filter(p => {
+      const title = getText(p.title).toLowerCase();
+      const caption = getText(p.caption).toLowerCase();
+      const summary = getText(p.summary || '').toLowerCase();
+      return title.includes(query) || caption.includes(query) || summary.includes(query);
+    });
+  }
+
+  // Apply other filters
+  if (!activeFilters || Object.keys(activeFilters).length === 0 ||
+    Object.values(activeFilters).every(arr => !arr || arr.length === 0)) {
+    return filtered;
+  }
+
+  return filtered.filter(p => {
+    // Client filter
+    if (activeFilters.client && activeFilters.client.length > 0) {
+      const client = getText(p.client);
+      if (!client || !activeFilters.client.includes(client)) return false;
+    }
+
+    // Role filter
+    if (activeFilters.role && activeFilters.role.length > 0) {
+      const role = getText(p.role);
+      if (!role || !activeFilters.role.includes(role)) return false;
+    }
+
+    // Project Type filter
+    if (activeFilters.projectType && activeFilters.projectType.length > 0) {
+      const projectType = getText(p.projectType);
+      if (!projectType || !activeFilters.projectType.includes(projectType)) return false;
+    }
+
+    // Industry filter
+    if (activeFilters.industry && activeFilters.industry.length > 0) {
+      const industry = getText(p.industry);
+      if (!industry || !activeFilters.industry.includes(industry)) return false;
+    }
+
+    // Tools filter
+    if (activeFilters.tools && activeFilters.tools.length > 0) {
+      const toolsList = getProjectTools(p);
+      const hasMatchingTool = activeFilters.tools.some(t => toolsList.includes(t));
+      if (!hasMatchingTool) return false;
+    }
+
+    return true;
+  });
+}
+
+const getYearRange = (yearValue) => {
+  const matches = `${yearValue || ''}`.match(/\d{4}/g) || [];
+  if (matches.length === 0) return { start: 0, end: 0 };
+  const start = parseInt(matches[0], 10) || 0;
+  const end = parseInt(matches[matches.length - 1], 10) || start;
+  return { start, end };
+};
+
+const sortProjects = (items) => {
+  const sorted = [...items];
+  sorted.sort((a, b) => {
+    const yearA = getYearRange(getText(a.year));
+    const yearB = getYearRange(getText(b.year));
+
+    if (sortMode === 'featured') {
+      const featuredDiff = (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
+      if (featuredDiff !== 0) return featuredDiff;
+      return yearB.end - yearA.end;
+    }
+
+    if (sortMode === 'oldest') {
+      return yearA.start - yearB.start;
+    }
+
+    return yearB.end - yearA.end;
+  });
+
+  return sorted;
+};
+
+// Helper to track collapsed states
+let collapsedSections = JSON.parse(localStorage.getItem('collapsedSections') || '{}');
+
+// Generate filter menu HTML
+function filterMenuHTML() {
+  const options = getFilterOptions();
+  const filterLabels = {
+    client: t('client'),
+    role: t('role'),
+    projectType: t('projectType'),
+    industry: t('industry'),
+    tools: t('tools')
+  };
+
+  let html = '<div class="filter-menu-sections">';
+
+  const sortCollapsed = collapsedSections.sort || false;
+  html += `
+      <div class="filter-section ${sortCollapsed ? 'collapsed' : ''}" data-filter-type="sort">
+        <h3 class="filter-section-title">
+          ${t('sort')}
+          <svg class="filter-toggle-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </h3>
+        <div class="filter-options-wrapper">
+          <div class="filter-options-container space-y-2">
+            ${SORT_MODES.map((mode) => {
+    const labelKey = mode === 'featured' ? 'featured' : mode === 'latest' ? 'latest' : 'oldest';
+    const isActive = sortMode === mode;
+    return `
+              <button type="button" class="sort-option ${isActive ? 'active' : ''}" data-sort="${mode}">
+                ${t(labelKey)}
+              </button>`;
+  }).join('')}
+          </div>
+        </div>
+      </div>
+    `;
+
+  ['projectType', 'role', 'industry', 'client', 'tools'].forEach(filterType => {
+    const filterValues = options[filterType];
+    if (filterValues.length === 0) return;
+
+    const isCollapsed = collapsedSections[filterType] || false;
+    const isTools = filterType === 'tools';
+    let toolsMore = [];
+    let toolsPrimary = [];
+    if (isTools) {
+      const usedTools = new Set(filterValues);
+      toolsPrimary = FILTER_CONFIG.tools.primary.filter((tool) => usedTools.has(tool));
+      toolsMore = FILTER_CONFIG.tools.more.filter((tool) => usedTools.has(tool));
+    }
+
+    html += `
+      <div class="filter-section ${isCollapsed ? 'collapsed' : ''}" data-filter-type="${filterType}">
+        <h3 class="filter-section-title">
+          ${filterLabels[filterType]}
+          <svg class="filter-toggle-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </h3>
+        <div class="filter-options-wrapper">
+          <div class="filter-options-container space-y-2">
+    `;
+
+    const visibleValues = isTools && !toolsShowAll ? toolsPrimary : filterValues;
+
+    visibleValues.forEach(value => {
+      const isActive = activeFilters[filterType] && activeFilters[filterType].includes(value);
+      html += `
+        <label class="flex items-center gap-2 cursor-pointer group">
+          <input type="checkbox" 
+                 class="filter-checkbox" 
+                 data-filter-type="${filterType}" 
+                 data-filter-value="${esc(value)}"
+                 ${isActive ? 'checked' : ''}>
+          <span class="text-[13px] text-neutral-600 group-hover:text-neutral-900 transition-colors">${esc(value)}</span>
+        </label>
+      `;
+    });
+
+    if (isTools && toolsMore.length > 0) {
+      html += `
+          <button type="button" id="toolsToggleBtn" class="text-[12px] text-neutral-500 hover:text-neutral-900 transition-colors underline mt-2">
+            ${toolsShowAll ? t('lessTools') : t('moreTools')}
+          </button>
+      `;
+    }
+
+    html += `
+          </div>
+        </div>
+      </div>
+    `;
+  });
+
+  // Clear filters button
+  const hasActiveFilters = Object.values(activeFilters).some(arr => arr && arr.length > 0);
+  if (hasActiveFilters) {
+    html += `
+      <div class="pt-4 border-t border-neutral-200">
+        <button id="clearFiltersBtn" class="text-[12px] text-neutral-500 hover:text-neutral-900 transition-colors underline">
+          ${t('clearFilters')}
+        </button>
+      </div>
+    `;
+  }
+
+  html += '</div>';
+  return html;
 }
 
 function renderHome() {
-  const items = state.projects;
-  pane.innerHTML = `
-        ${gridHTML(items)}
-      `;
+  document.body.classList.remove('about-page-active');
+  const filteredItems = sortProjects(filterProjects());
 
-  if (desktopList) desktopList.innerHTML = listHTML(items);
+  // Show filter menu on home page - respect filterVisible state
+  const filterMenu = document.getElementById('desktopFilterMenu');
+  const main = document.querySelector('main');
 
-  if (mobileProjectList) mobileProjectList.innerHTML = listHTML(items);
+  if (filterMenu) {
+    if (filterVisible && window.innerWidth >= 1024) {
+      filterMenu.classList.remove('hidden');
+    }
+  }
+
+  // Just update visibility state on main based on the actual state
+  if (main) {
+    if (filterVisible) {
+      main.classList.add('filter-visible');
+      main.classList.remove('filter-hidden');
+    } else {
+      main.classList.add('filter-hidden');
+      main.classList.remove('filter-visible');
+    }
+  }
+
+  // View toggle bar is now a fixed element in HTML, just update its state
+  updateViewToggleBar();
+
+  pane.innerHTML = gridHTML(filteredItems);
+  updateMobileViewDropdown();
+  updateMobileResultCount();
+
+  // Render filter menu
+  if (filterMenuContent) {
+    filterMenuContent.innerHTML = filterMenuHTML();
+    setupFilterListeners();
+    syncMobileFilterContent();
+  }
+
+  // Update filter visibility
+  updateFilterVisibility();
+
+  if (mobileProjectList) mobileProjectList.innerHTML = listHTML(state.projects);
   toggleMobileHamburger(true);
   updateStaticText();
 
@@ -490,14 +992,31 @@ function renderHome() {
 }
 
 function renderAbout() {
+  document.body.classList.add('about-page-active');
   // Use JS rendering instead of template
   pane.innerHTML = aboutHTML();
 
-  if (desktopList) desktopList.innerHTML = listHTML(state.projects);
+  // Hide filter menu on about page
+  if (filterMenuContent) {
+    filterMenuContent.innerHTML = '';
+  }
+
+  // Hide filter menu visually
+  const filterMenu = document.getElementById('desktopFilterMenu');
+  if (filterMenu) {
+    filterMenu.classList.add('hidden');
+  }
+
+  // Adjust main layout for about page (no filter)
+  const main = document.querySelector('main');
+  if (main) {
+    main.classList.remove('filter-visible', 'filter-hidden');
+  }
 
   if (mobileProjectList) mobileProjectList.innerHTML = listHTML(state.projects);
   toggleMobileHamburger(true);
   updateStaticText();
+  updateMobileResultCount();
 
   if (document.body.classList.contains('mobile-mode')) {
     requestAnimationFrame(() => window.scrollTo(0, 0));
@@ -507,16 +1026,26 @@ function renderAbout() {
 }
 
 function renderDetail(slug) {
+  document.body.classList.remove('about-page-active');
   const p = state.projects.find((x) => x.slug === slug);
   pane.innerHTML = p
     ? detailHTML(p)
     : `<p class="text-sm text-neutral-500">Not found.</p>`;
 
-  if (desktopList) desktopList.innerHTML = listHTML(state.projects, slug);
+  // Render filter menu (even on detail page)
+  if (filterMenuContent) {
+    filterMenuContent.innerHTML = filterMenuHTML();
+    setupFilterListeners();
+    syncMobileFilterContent();
+  }
+
+  // Update filter visibility
+  updateFilterVisibility();
 
   if (mobileProjectList) mobileProjectList.innerHTML = listHTML(state.projects, slug);
   toggleMobileHamburger(true);
   updateStaticText();
+  updateMobileResultCount();
 
 
   // Scroll Reset
@@ -541,6 +1070,8 @@ function updateStaticText() {
 
   // Language Label
   if (currentLangLabel) currentLangLabel.textContent = t('langLabel');
+  const topBarLangLabel = document.getElementById('topBarLangLabel');
+  if (topBarLangLabel) topBarLangLabel.textContent = t('langLabel');
 
 
 
@@ -550,6 +1081,16 @@ function updateStaticText() {
       btn.classList.add('bg-neutral-50', 'font-semibold');
     } else {
       btn.classList.remove('bg-neutral-50', 'font-semibold');
+    }
+  });
+  // Top Bar Language Option Styles
+  document.querySelectorAll('.topbar-lang-option').forEach(btn => {
+    if (btn.dataset.lang === currentLang) {
+      btn.classList.add('bg-neutral-50', 'font-semibold', 'active');
+      btn.setAttribute('aria-pressed', 'true');
+    } else {
+      btn.classList.remove('bg-neutral-50', 'font-semibold', 'active');
+      btn.setAttribute('aria-pressed', 'false');
     }
   });
 
@@ -564,8 +1105,15 @@ function setLanguage(lang) {
   if (!lang) return;
   currentLang = lang;
   localStorage.setItem('site_lang', lang);
+  document.documentElement.dataset.lang = lang;
+  document.body.classList.toggle('lang-en', lang === 'en');
+  document.body.classList.toggle('lang-ko', lang === 'ko');
   // document.documentElement.lang = lang; // optional
   router(); // re-render current view
+  // Update filter toggle button text if on home page
+  if (location.hash === '#/' || location.hash === '') {
+    updateFilterToggleButton();
+  }
 }
 
 function router() {
@@ -660,7 +1208,7 @@ window.addEventListener('keydown', (e) => {
 
 // init
 const brandLink = document.getElementById('brandLink');
-brandLink.innerHTML = '<img src="assets/icons/1.png" alt="" class="w-[30px] h-[30px] lg:w-6 lg:h-6 inline-block mr-1.5 align-middle -mt-[12px] lg:mt-[-7px]" />Design Persona';
+brandLink.innerHTML = '<img src="assets/icons/1.png" alt="" class="w-[60px] h-[60px] lg:w-12 lg:h-12 inline-block mr-3 align-middle -mt-[24px] lg:mt-[-14px]" />Design Persona';
 
 /** Brand Link Navigation & Smooth Scroll */
 brandLink.addEventListener('click', (e) => {
@@ -679,22 +1227,17 @@ brandLink.addEventListener('click', (e) => {
   }, 30);
 });
 const s = state.site.social || {};
-(document.getElementById('snsLinkedIn') || {}).href = s.linkedin || '#';
-(document.getElementById('snsX') || {}).href = s.x || '#';
-(document.getElementById('snsBehance') || {}).href = s.behance || '#';
 
-// Footer Social Links
-(document.getElementById('fLinkedIn') || {}).href = s.linkedin || '#';
-(document.getElementById('fX') || {}).href = s.x || '#';
-(document.getElementById('fBehance') || {}).href = s.behance || '#';
-
-// Desktop Footer Social Links
-(document.getElementById('dLinkedIn') || {}).href = s.linkedin || '#';
-(document.getElementById('dX') || {}).href = s.x || '#';
-(document.getElementById('dBehance') || {}).href = s.behance || '#';
+// Top Bar Social Links
+(document.getElementById('topBarLinkedIn') || {}).href = s.linkedin || '#';
 
 // Language Event Listeners
 document.querySelectorAll('.lang-option').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    setLanguage(e.target.dataset.lang);
+  });
+});
+document.querySelectorAll('.topbar-lang-option').forEach(btn => {
   btn.addEventListener('click', (e) => {
     setLanguage(e.target.dataset.lang);
   });
@@ -705,27 +1248,548 @@ document.querySelectorAll('.lang-toggle').forEach(btn => {
   });
 });
 
-if (desktopList) desktopList.innerHTML = listHTML(state.projects);
 if (mobileProjectList) mobileProjectList.innerHTML = listHTML(state.projects);
 
 updateLayoutMode(); // Ensure mode is set on init
 
-const mobileAboutLink = document.getElementById('mobileAboutLink');
+// Initialize filter visibility on page load
+updateFilterVisibility();
 
-menuBtn?.addEventListener('click', openMenu);
+const mobileAboutLink = document.getElementById('mobileAboutLink');
+const desktopAboutLink = document.getElementById('desktopAboutLink');
+
+menuBtn?.addEventListener('click', toggleMenu);
 menuBackdrop?.addEventListener('click', closeMenu);
 menuClose?.addEventListener('click', closeMenu);
 mobileAboutLink?.addEventListener('click', closeMenu);
 
+desktopMenuBtn?.addEventListener('click', toggleDesktopMenu);
+desktopMenuBackdrop?.addEventListener('click', closeDesktopMenu);
+desktopMenuClose?.addEventListener('click', closeDesktopMenu);
+desktopAboutLink?.addEventListener('click', closeDesktopMenu);
+
+if (mobileFilterOpenBtn && mobileFilterDrawer) {
+  if (mobileFilterOpenBtn.dataset.bound !== 'true') {
+    mobileFilterOpenBtn.dataset.bound = 'true';
+    mobileFilterOpenBtn.addEventListener('click', () => {
+      mobileFilterDrawer.classList.add('open');
+    });
+  }
+}
+
+if (mobileFilterClose && mobileFilterDrawer) {
+  if (mobileFilterClose.dataset.bound !== 'true') {
+    mobileFilterClose.dataset.bound = 'true';
+    mobileFilterClose.addEventListener('click', () => {
+      mobileFilterDrawer.classList.remove('open');
+    });
+  }
+}
+
+if (mobileFilterDrawer) {
+  if (mobileFilterDrawer.dataset.bound !== 'true') {
+    mobileFilterDrawer.dataset.bound = 'true';
+    mobileFilterDrawer.addEventListener('click', (e) => {
+      if (e.target === mobileFilterDrawer) {
+        mobileFilterDrawer.classList.remove('open');
+      }
+    });
+  }
+}
+
+const updateMobileViewDropdown = () => {
+  if (!mobileViewDropdownLabel) return;
+  const isMagazine = viewMode === '1';
+  mobileViewDropdownLabel.textContent = isMagazine ? 'Magazine View' : 'Thumbnail View';
+};
+
+function setViewMode(nextMode, { render = true, closeMobileDropdown = false } = {}) {
+  if (!nextMode || nextMode === viewMode) return;
+  viewMode = nextMode;
+  localStorage.setItem('view_mode', viewMode);
+  updateViewToggleButtons();
+  updateMobileViewDropdown();
+  if (closeMobileDropdown && mobileViewDropdown) {
+    mobileViewDropdown.classList.add('hidden');
+    mobileViewDropdownBtn?.setAttribute('aria-expanded', 'false');
+  }
+  if (render && (location.hash === '#/' || location.hash === '')) {
+    renderHome();
+  }
+}
+
+const updateMobileResultCount = () => {
+  if (!mobileResultCount) return;
+  const count = filterProjects().length;
+  mobileResultCount.textContent = `${count} Results`;
+};
+
+if (mobileViewDropdownBtn && mobileViewDropdown) {
+  if (mobileViewDropdownBtn.dataset.bound !== 'true') {
+    mobileViewDropdownBtn.dataset.bound = 'true';
+    mobileViewDropdownBtn.addEventListener('click', () => {
+      const isOpen = !mobileViewDropdown.classList.contains('hidden');
+      mobileViewDropdown.classList.toggle('hidden', isOpen);
+      mobileViewDropdownBtn.setAttribute('aria-expanded', (!isOpen).toString());
+    });
+  }
+}
+
+document.querySelectorAll('.mobile-view-option').forEach((option) => {
+  if (option.dataset.bound === 'true') return;
+  option.dataset.bound = 'true';
+  option.addEventListener('click', () => {
+    const nextView = option.dataset.view;
+    if (!nextView) return;
+    setViewMode(nextView, { closeMobileDropdown: true });
+  });
+});
+
+window.addEventListener('click', (e) => {
+  if (!mobileViewDropdown || !mobileViewDropdownBtn) return;
+  if (mobileViewDropdown.contains(e.target) || mobileViewDropdownBtn.contains(e.target)) return;
+  if (!mobileViewDropdown.classList.contains('hidden')) {
+    mobileViewDropdown.classList.add('hidden');
+    mobileViewDropdownBtn.setAttribute('aria-expanded', 'false');
+  }
+});
+
+// Search functionality
+const searchInput = document.getElementById('searchInput');
+const mobileSearchBtn = document.getElementById('mobileSearchBtn');
+const mobileSearchInput = document.getElementById('mobileSearchInput');
+const mobileSearchModal = document.getElementById('mobileSearchModal');
+const mobileSearchClose = document.getElementById('mobileSearchClose');
+if (searchInput) {
+  searchInput.addEventListener('input', (e) => {
+    searchQuery = e.target.value;
+    if (location.hash === '#/' || location.hash === '') {
+      renderHome();
+    }
+  });
+
+  searchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (location.hash !== '#/' && location.hash !== '') {
+        location.hash = '#/';
+        setTimeout(() => renderHome(), 100);
+      }
+    }
+  });
+}
+
+const openMobileSearch = () => {
+  if (!mobileSearchModal || !mobileSearchInput) return;
+  mobileSearchModal.classList.remove('hidden');
+  setTimeout(() => mobileSearchInput.focus(), 0);
+};
+
+const closeMobileSearch = () => {
+  if (!mobileSearchModal || !mobileSearchInput) return;
+  mobileSearchModal.classList.add('hidden');
+  mobileSearchInput.value = '';
+  searchQuery = '';
+  if (location.hash === '#/' || location.hash === '') renderHome();
+};
+
+if (mobileSearchBtn && mobileSearchInput) {
+  mobileSearchBtn.addEventListener('click', () => {
+    openMobileSearch();
+  });
+
+  mobileSearchInput.addEventListener('input', (e) => {
+    searchQuery = e.target.value;
+    if (location.hash === '#/' || location.hash === '') {
+      renderHome();
+    }
+  });
+
+  mobileSearchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (location.hash !== '#/' && location.hash !== '') {
+        location.hash = '#/';
+        setTimeout(() => renderHome(), 100);
+      }
+    }
+  });
+}
+
+if (mobileSearchClose) {
+  mobileSearchClose.addEventListener('click', closeMobileSearch);
+}
+
+if (mobileSearchModal) {
+  mobileSearchModal.addEventListener('click', (e) => {
+    if (e.target === mobileSearchModal) closeMobileSearch();
+  });
+}
+
 window.addEventListener('hashchange', router);
 // Resize listener merged into updateLayoutMode
 router();
+setupViewToggle(); // Initialize fixed view toggle bar event listeners
+
+/** View Toggle Functionality */
+function setupViewToggle() {
+  const toggle1 = document.getElementById('viewToggle1');
+  const toggle2 = document.getElementById('viewToggle2');
+  const toggle3 = document.getElementById('viewToggle3');
+  const toggle5 = document.getElementById('viewToggle5');
+  const toggleFilterBtn = document.getElementById('toggleFilterBtn');
+
+  if (toggle1) {
+    toggle1.addEventListener('click', () => {
+      setViewMode('1');
+    });
+  }
+
+  if (toggle2) {
+    toggle2.addEventListener('click', () => {
+      setViewMode('2');
+    });
+  }
+
+  if (toggle3) {
+    toggle3.addEventListener('click', () => {
+      setViewMode('3');
+    });
+  }
+
+  if (toggle5) {
+    toggle5.addEventListener('click', () => {
+      setViewMode('5');
+    });
+  }
+
+  if (toggleFilterBtn) {
+    toggleFilterBtn.addEventListener('click', () => {
+      filterVisible = !filterVisible;
+      localStorage.setItem('filterVisible', filterVisible);
+      updateFilterVisibility();
+      updateFilterToggleButton();
+    });
+  }
+}
+
+function updateViewToggleButtons() {
+  const toggle1 = document.getElementById('viewToggle1');
+  const toggle2 = document.getElementById('viewToggle2');
+  const toggle3 = document.getElementById('viewToggle3');
+  const toggle5 = document.getElementById('viewToggle5');
+
+  document.body.classList.remove('view-mode-1', 'view-mode-2', 'view-mode-3', 'view-mode-5');
+  document.body.classList.add(`view-mode-${viewMode}`);
+
+  [toggle1, toggle2, toggle3, toggle5].forEach(toggle => {
+    if (toggle) {
+      toggle.classList.remove('active');
+    }
+  });
+
+  const activeToggle = document.getElementById(`viewToggle${viewMode}`);
+  if (activeToggle) {
+    activeToggle.classList.add('active');
+  }
+}
+
+/** Update the fixed view toggle bar state */
+function updateViewToggleBar() {
+  // Update button states
+  updateViewToggleButtons();
+  updateFilterToggleButton();
+
+  // Show/hide the bar based on page
+  const viewToggleBar = document.getElementById('viewToggleBar');
+  if (viewToggleBar) {
+    if (document.body.classList.contains('about-page-active')) {
+      viewToggleBar.classList.add('hidden');
+      viewToggleBar.classList.remove('lg:flex');
+    } else {
+      viewToggleBar.classList.remove('hidden');
+      viewToggleBar.classList.add('lg:flex');
+    }
+  }
+}
+
+function updateFilterToggleButton() {
+  const filterToggleLabel = document.getElementById('filterToggleLabel');
+  if (filterToggleLabel) {
+    filterToggleLabel.textContent = filterVisible ? t('hideFilter') : t('showFilter');
+  }
+}
+
+function updateFilterVisibility() {
+  const filterMenu = document.getElementById('desktopFilterMenu');
+  const main = document.querySelector('main');
+
+  if (filterMenu) {
+    if (filterVisible) {
+      filterMenu.classList.remove('filter-hidden');
+      filterMenu.classList.add('filter-visible');
+      if (window.innerWidth >= 1024) {
+        filterMenu.classList.remove('hidden');
+      }
+    } else {
+      filterMenu.classList.remove('filter-visible');
+      filterMenu.classList.add('filter-hidden');
+    }
+  }
+
+  if (main) {
+    if (filterVisible) {
+      main.classList.remove('filter-hidden');
+      main.classList.add('filter-visible');
+    } else {
+      main.classList.remove('filter-visible');
+      main.classList.add('filter-hidden');
+    }
+  }
+}
+
+/** Filter Functionality */
+function setupFilterListeners() {
+  // Collapsible sections
+  document.querySelectorAll('.filter-section-title').forEach(title => {
+    if (title.dataset.bound === 'true') return;
+    title.dataset.bound = 'true';
+    title.addEventListener('click', (e) => {
+      const section = e.currentTarget.closest('.filter-section');
+      const filterType = section.dataset.filterType;
+      const isCollapsed = section.classList.toggle('collapsed');
+
+      collapsedSections[filterType] = isCollapsed;
+      localStorage.setItem('collapsedSections', JSON.stringify(collapsedSections));
+    });
+  });
+
+  // Filter checkboxes
+  document.querySelectorAll('.filter-checkbox').forEach(checkbox => {
+    if (checkbox.dataset.bound === 'true') return;
+    checkbox.dataset.bound = 'true';
+    checkbox.addEventListener('change', (e) => {
+      const filterType = e.target.dataset.filterType;
+      const filterValue = e.target.dataset.filterValue;
+      const isChecked = e.target.checked;
+
+      updateFilterSelection(filterType, filterValue, isChecked);
+    });
+  });
+
+  // Sort options
+  document.querySelectorAll('.sort-option').forEach(option => {
+    if (option.dataset.bound === 'true') return;
+    option.dataset.bound = 'true';
+    option.addEventListener('click', (e) => {
+      const nextMode = e.currentTarget.dataset.sort;
+      if (!SORT_MODES.includes(nextMode) || sortMode === nextMode) return;
+      sortMode = nextMode;
+      localStorage.setItem('sort_mode', sortMode);
+
+      if (location.hash === '#/' || location.hash === '') {
+        renderHome();
+      } else {
+        if (filterMenuContent) {
+          filterMenuContent.innerHTML = filterMenuHTML();
+          setupFilterListeners();
+        }
+      }
+    });
+  });
+
+  const toolsToggleBtn = document.getElementById('toolsToggleBtn');
+  if (toolsToggleBtn) {
+    if (toolsToggleBtn.dataset.bound === 'true') return;
+    toolsToggleBtn.dataset.bound = 'true';
+    toolsToggleBtn.addEventListener('click', () => {
+      toolsShowAll = !toolsShowAll;
+      localStorage.setItem('tools_show_all', toolsShowAll);
+      if (filterMenuContent) {
+        filterMenuContent.innerHTML = filterMenuHTML();
+        setupFilterListeners();
+        syncMobileFilterContent();
+      }
+    });
+  }
+
+  // Clear filters button
+  const clearBtn = document.getElementById('clearFiltersBtn');
+  if (clearBtn) {
+    if (clearBtn.dataset.bound === 'true') return;
+    clearBtn.dataset.bound = 'true';
+    clearBtn.addEventListener('click', () => {
+      activeFilters = {};
+      localStorage.setItem('activeFilters', JSON.stringify(activeFilters));
+      if (location.hash === '#/' || location.hash === '') {
+        renderHome();
+      } else {
+        if (filterMenuContent) {
+          filterMenuContent.innerHTML = filterMenuHTML();
+          setupFilterListeners();
+        }
+      }
+    });
+  }
+}
+
+function updateFilterSelection(filterType, filterValue, isChecked) {
+  if (!activeFilters[filterType]) {
+    activeFilters[filterType] = [];
+  }
+
+  if (isChecked) {
+    if (!activeFilters[filterType].includes(filterValue)) {
+      activeFilters[filterType].push(filterValue);
+    }
+  } else {
+    activeFilters[filterType] = activeFilters[filterType].filter(v => v !== filterValue);
+  }
+
+  localStorage.setItem('activeFilters', JSON.stringify(activeFilters));
+
+  // Re-render home if we're on home page
+  if (location.hash === '#/' || location.hash === '') {
+    renderHome();
+  } else {
+    // Just update filter menu
+    if (filterMenuContent) {
+      filterMenuContent.innerHTML = filterMenuHTML();
+      setupFilterListeners();
+      syncMobileFilterContent();
+    }
+  }
+}
+
+function bindMobileFilterDelegation() {
+  if (!mobileFilterContent || mobileFilterContent.dataset.bound === 'true') return;
+  mobileFilterContent.dataset.bound = 'true';
+  mobileFilterContent.addEventListener('change', (e) => {
+    const target = e.target;
+    if (!target.classList.contains('filter-checkbox')) return;
+    updateFilterSelection(target.dataset.filterType, target.dataset.filterValue, target.checked);
+  });
+  mobileFilterContent.addEventListener('click', (e) => {
+    const title = e.target.closest('.filter-section-title');
+    if (title) {
+      const section = title.closest('.filter-section');
+      if (!section) return;
+      const filterType = section.dataset.filterType;
+      const isCollapsed = section.classList.toggle('collapsed');
+      collapsedSections[filterType] = isCollapsed;
+      localStorage.setItem('collapsedSections', JSON.stringify(collapsedSections));
+      return;
+    }
+
+    const sortOption = e.target.closest('.sort-option');
+    if (sortOption) {
+      const nextMode = sortOption.dataset.sort;
+      if (!SORT_MODES.includes(nextMode) || sortMode === nextMode) return;
+      sortMode = nextMode;
+      localStorage.setItem('sort_mode', sortMode);
+      if (location.hash === '#/' || location.hash === '') {
+        renderHome();
+      } else if (filterMenuContent) {
+        filterMenuContent.innerHTML = filterMenuHTML();
+        setupFilterListeners();
+        syncMobileFilterContent();
+      }
+      return;
+    }
+
+    const toolsToggle = e.target.closest('#toolsToggleBtn');
+    if (toolsToggle) {
+      toolsShowAll = !toolsShowAll;
+      localStorage.setItem('tools_show_all', toolsShowAll);
+      if (filterMenuContent) {
+        filterMenuContent.innerHTML = filterMenuHTML();
+        setupFilterListeners();
+        syncMobileFilterContent();
+      }
+      return;
+    }
+
+    const clearBtn = e.target.closest('#clearFiltersBtn');
+    if (clearBtn) {
+      activeFilters = {};
+      localStorage.setItem('activeFilters', JSON.stringify(activeFilters));
+      if (location.hash === '#/' || location.hash === '') {
+        renderHome();
+      } else if (filterMenuContent) {
+        filterMenuContent.innerHTML = filterMenuHTML();
+        setupFilterListeners();
+        syncMobileFilterContent();
+      }
+    }
+  });
+}
+
+/** Desktop Menu Functionality */
+function openDesktopMenu() {
+  if (desktopMenuEl && desktopDrawerPanel) {
+    desktopMenuEl.classList.remove('hidden');
+    desktopDrawerPanel.classList.add('open');
+    desktopMenuBtn?.setAttribute('aria-expanded', 'true');
+    if (desktopProjectListNav) {
+      desktopProjectListNav.innerHTML = listHTML(state.projects);
+    }
+  }
+}
+
+function toggleDesktopMenu() {
+  const isOpen = desktopDrawerPanel?.classList.contains('open');
+  if (isOpen) {
+    closeDesktopMenu();
+  } else {
+    openDesktopMenu();
+  }
+}
+
+function closeDesktopMenu() {
+  if (!desktopDrawerPanel.classList.contains('open')) return;
+  desktopDrawerPanel.classList.remove('open');
+  desktopMenuBtn?.setAttribute('aria-expanded', 'false');
+  setTimeout(() => {
+    if (!desktopDrawerPanel.classList.contains('open')) {
+      if (desktopMenuEl) desktopMenuEl.classList.add('hidden');
+    }
+  }, 300);
+}
 
 /** Feature: Scroll to Top Button (Mobile) */
 const scrollTopBtn = document.getElementById('scrollTopBtn');
 
 let lastScrollY = window.scrollY;
 const mainHeader = document.getElementById('mainHeader');
+const topBar = document.getElementById('topBar');
+const viewToggleBar = document.getElementById('viewToggleBar');
+
+function getOuterHeight(el) {
+  if (!el) return 0;
+  const rect = el.getBoundingClientRect();
+  const styles = window.getComputedStyle(el);
+  const marginTop = parseFloat(styles.marginTop) || 0;
+  const marginBottom = parseFloat(styles.marginBottom) || 0;
+  return rect.height + marginTop + marginBottom;
+}
+
+function updateDesktopHeaderVars() {
+  if (window.innerWidth < 1024) return;
+  const headerStack = getOuterHeight(topBar) + getOuterHeight(mainHeader);
+  const viewToggleHeight = getOuterHeight(viewToggleBar);
+  document.documentElement.style.setProperty('--desktop-header-stack', `${Math.round(headerStack)}px`);
+  if (viewToggleHeight) {
+    document.documentElement.style.setProperty('--desktop-view-toggle', `${Math.round(viewToggleHeight)}px`);
+  }
+  const isCollapsed = document.body.classList.contains('header-collapsed');
+  const offset = isCollapsed ? 0 : headerStack;
+  document.documentElement.style.setProperty('--desktop-header-offset', `${Math.round(offset)}px`);
+  if (viewToggleBar) {
+    const viewBottom = viewToggleBar.getBoundingClientRect().bottom;
+    const contentHeight = Math.max(0, window.innerHeight - viewBottom);
+    document.documentElement.style.setProperty('--desktop-content-height', `${Math.round(contentHeight)}px`);
+  }
+}
 
 // 1. Scroll Position Restoration
 window.onbeforeunload = function () {
@@ -746,17 +1810,14 @@ let ticking = false;
 
 function updateHeader() {
   const currentY = window.scrollY;
-  if (mainHeader) {
-    // Logic: Hide on Down, Show on Up (Immediate)
-    if (currentY > lastY && currentY > 10) {
-      // Scroll Down -> Hide
-      // Use translate3d for GPU
-      mainHeader.style.transform = "translate3d(0, -100%, 0)";
-    } else {
-      // Scroll Up -> Show
-      mainHeader.style.transform = "translate3d(0, 0, 0)";
-    }
+
+  // Header collapse effect
+  if (currentY > 50) {
+    document.body.classList.add('header-collapsed');
+  } else {
+    document.body.classList.remove('header-collapsed');
   }
+  updateDesktopHeaderVars();
 
   // Scroll Top Button Logic
   if (currentY > 300) {
@@ -776,10 +1837,25 @@ window.addEventListener("scroll", () => {
   }
 }, { passive: true });
 
+window.addEventListener('resize', () => {
+  updateDesktopHeaderVars();
+});
+
+window.addEventListener('load', () => {
+  updateDesktopHeaderVars();
+});
+
 // Add scroll listener
 
 if (scrollTopBtn) {
   scrollTopBtn.addEventListener('click', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
+}
+function syncMobileFilterContent() {
+  if (!filterMenuContent || !mobileFilterContent) return;
+  if (!filterMenuContent.innerHTML) return;
+  mobileFilterContent.innerHTML = filterMenuContent.innerHTML;
+  setupFilterListeners();
+  bindMobileFilterDelegation();
 }
