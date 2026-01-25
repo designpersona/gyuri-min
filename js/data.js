@@ -15,13 +15,14 @@ window.PROJECT_DATA = {
         {
             "slug": "chatlog",
             "featured": true,
+            "locked": false,
             "title": {
-                "en": "ChatLog",
-                "ko": "챗로그"
+                "en": "Chat Book",
+                "ko": "Chat Book"
             },
             "caption": {
-                "en": "Data tracker & analyzer",
-                "ko": "데이터 추적 및 분석"
+                "en": "Product Design",
+                "ko": "프로덕트 디자인"
             },
             "summary": {
                 "en": "Product service analyzing personal interests through chat histories.",
@@ -31,18 +32,20 @@ window.PROJECT_DATA = {
             "thumbnail": "assets/projects/ChatLog/thumbnail.jpg",
             "year": "2026",
             "client": "Personal Work",
-            "role": "Web Designer",
+            "role": "Product Designer",
             "projectType": "Digital Product",
             "industry": "Technology",
-            "tools": "ChatGPT, Cursor, Figma",
+            "tools": "Antigravity, Codex, VS Code, Cursor",
             "description": {
                 "en": [
-                    "ChatLog is a service designed to track and analyze personal interests and usage frequency by managing chat histories.",
-                    "Currently in the early draft stage as a website service, it aims to provide deep insights into user behavior and digital habits through data visualization."
+                    "Chat Book is a service designed to track and analyze personal interests and usage frequency by managing chat histories.",
+                    "Currently in the early draft stage as a website service, it aims to provide deep insights into user behavior and digital habits through data visualization.",
+                    "<span class='text-neutral-400 text-[13px] mt-2 block'>* Detailed content is under development and will be released soon.</span>"
                 ],
                 "ko": [
-                    "챗로그는 채팅 기록 관리를 통해 개인의 사용 빈도와 관심사를 추적하고 분석하는 서비스 프로젝트입니다.",
-                    "현재 웹사이트 형태의 초안 단계로, 데이터 시각화를 통해 사용자의 디지털 습관과 관심사에 대한 통찰을 제공하는 것을 제안하고 있습니다."
+                    "챗북은 채팅 기록 관리를 통해 사용 빈도와 관심사를 추적하고 분석하는 서비스입니다.",
+                    "데이터 시각화를 통해 사용자의 디지털 습관과 관심사에 대한 통찰을 제공 합니다.",
+                    "<span class='text-neutral-400 text-[13px] mt-2 block'>* 상세 내용은 현재 개발 중이며 곧 공개될 예정입니다.</span>"
                 ]
             },
             "links": [],
