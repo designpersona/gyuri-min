@@ -13,6 +13,42 @@ window.PROJECT_DATA = {
     },
     "projects": [
         {
+            "slug": "chatlog",
+            "featured": true,
+            "title": {
+                "en": "ChatLog",
+                "ko": "챗로그"
+            },
+            "caption": {
+                "en": "Data tracker & analyzer",
+                "ko": "데이터 추적 및 분석"
+            },
+            "summary": {
+                "en": "Product service analyzing personal interests through chat histories.",
+                "ko": "채팅 기록을 통한 개인 관심사 분석 데이터 추적 서비스"
+            },
+            "cover": "assets/projects/ChatLog/cover.png",
+            "thumbnail": "assets/projects/ChatLog/thumbnail.png",
+            "year": "2026",
+            "client": "Personal Work",
+            "role": "Web Designer",
+            "projectType": "Digital Product",
+            "industry": "Technology",
+            "tools": "ChatGPT, Cursor, Figma",
+            "description": {
+                "en": [
+                    "ChatLog is a service designed to track and analyze personal interests and usage frequency by managing chat histories.",
+                    "Currently in the early draft stage as a website service, it aims to provide deep insights into user behavior and digital habits through data visualization."
+                ],
+                "ko": [
+                    "챗로그는 채팅 기록 관리를 통해 개인의 사용 빈도와 관심사를 추적하고 분석하는 서비스 프로젝트입니다.",
+                    "현재 웹사이트 형태의 초안 단계로, 데이터 시각화를 통해 사용자의 디지털 습관과 관심사에 대한 통찰을 제공하는 것을 제안하고 있습니다."
+                ]
+            },
+            "links": [],
+            "gallery": []
+        },
+        {
             "slug": "gm-portfolio",
             "locked": false,
             "featured": false,
@@ -1019,50 +1055,50 @@ window.PROJECT_DATA = {
             "tool_notes": "Other tools: Sculpey, Acrylic Paint"
         },
         {
-            "slug": "ai-robots",
+            "slug": "eye-makeup",
             "featured": false,
             "title": {
-                "en": "The Next Generation of AI Robots",
-                "ko": "차세대 AI 로봇"
+                "en": "Visual Design for Eye Makeup Brand",
+                "ko": "아이 메이크업 브랜드 그래픽 디자인"
             },
             "caption": {
-                "en": "3D Character Design",
-                "ko": "3D 캐릭터 디자인"
+                "en": "Graphic Identity & Packaging Design",
+                "ko": "그래픽 아이덴티티 및 패키지 디자인"
             },
             "summary": {
-                "en": "Personality-Driven Robotics",
-                "ko": "퍼스널리티 중심의 로보틱스"
+                "en": "Visual Identity System for Eye Makeup Brand",
+                "ko": "아이 메이크업 브랜드 시각 아이덴티티 시스템 구축"
             },
-            "cover": "assets/projects/AI-Robots/cover.jpg",
-            "thumbnail": "assets/projects/AI-Robots/thumbnail.jpg",
-            "year": "2013",
-            "client": "Personal Work",
-            "role": "3D Artist",
-            "projectType": "Character IP",
-            "industry": "Technology",
-            "tools": "3ds Max, KeyShot, Adobe Photoshop",
+            "cover": "assets/projects/Eye-Makeup/cover.jpg",
+            "thumbnail": "assets/projects/Eye-Makeup/thumbnail.jpg",
+            "year": "2018",
+            "client": "Pias Corporation",
+            "role": "Graphic Designer",
+            "projectType": "Brand Experience",
+            "industry": "Beauty",
+            "tools": "Adobe Illustrator, Adobe Photoshop, InDesign",
             "description": {
                 "en": [
-                    "In the future, the advancement of Artificial Intelligence will allow robots to develop distinct personalities and interact with people in unique ways. Influenced by the game 'Portal', this project involved creating 3D models of robots, each with a different personality, based on the foundation of the human eye."
+                    "Focused on maintaining and evolving the visual identity for a leading Japanese eye makeup brand. I specialized in developing precise packaging layouts for mascara and eyeliner lines, ensuring that complex product information was organized with high legibility. My role involved meticulous color management and graphic optimization to align with the brand’s high-performance image and stringent global production standards."
                 ],
                 "ko": [
-                    "인공지능의 발전으로 로봇이 각기 다른 성격을 갖고 인간과 독특하게 상호작용할 미래를 상상하며, 게임 '포탈'에서 영감을 받아 인간의 눈을 모티프로 한 서로 다른 성격의 로봇 3D 모델을 제작했습니다."
+                    "일본을 대표하는 아이 메이크업 브랜드의 시각적 아이덴티티 유지 및 발전을 담당했습니다. 마스카라와 아이라이너 라인의 정밀한 패키지 레이아웃 개발을 수행했으며, 복잡한 제품 정보를 높은 가독성으로 구조화하는 데 집중했습니다. 브랜드의 고기능성 이미지와 엄격한 글로벌 생산 기준에 부합하도록 세밀한 컬러 매니지먼트 및 그래픽 최적화 작업을 진행하여 제품의 시장 경쟁력을 강화했습니다."
                 ]
             },
             "links": [],
             "gallery": [
                 {
-                    "src": "assets/projects/AI-Robots/1.jpg",
+                    "src": "assets/projects/Eye-Makeup/1.jpg",
                     "caption": {
-                        "en": "The Mechanic",
-                        "ko": "메카닉"
+                        "en": " ",
+                        "ko": " "
                     }
                 },
                 {
-                    "src": "assets/projects/AI-Robots/2.jpg",
+                    "src": "assets/projects/Eye-Makeup/2.jpg",
                     "caption": {
-                        "en": "The Observer",
-                        "ko": "옵저버"
+                        "en": " ",
+                        "ko": " "
                     }
                 }
             ]
