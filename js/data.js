@@ -27,8 +27,8 @@ window.PROJECT_DATA = {
                 "en": "Product service analyzing personal interests through chat histories.",
                 "ko": "채팅 기록을 통한 개인 관심사 분석 데이터 추적 서비스"
             },
-            "cover": "assets/projects/ChatLog/cover.png",
-            "thumbnail": "assets/projects/ChatLog/thumbnail.png",
+            "cover": "assets/projects/ChatLog/cover.jpg",
+            "thumbnail": "assets/projects/ChatLog/thumbnail.jpg",
             "year": "2026",
             "client": "Personal Work",
             "role": "Web Designer",
