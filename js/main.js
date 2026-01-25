@@ -115,7 +115,7 @@ const I18N = {
     aboutLink: "ABOUT ME",
     mobileAboutLink: "ABOUT ME",
     back: "← Back to Archive",
-    restricted: "Restricted",
+    restricted: "COMING SOON",
     lockedTitle: "Protected Project",
     lockedDesc: "Enter password to view details",
     unlock: "Unlock",
@@ -175,7 +175,7 @@ const I18N = {
     aboutLink: "about me",
     mobileAboutLink: "about me",
     back: "← 목록으로",
-    restricted: "비공개",
+    restricted: "준비 중",
     lockedTitle: "비공개 프로젝트",
     lockedDesc: "비밀번호를 입력하여 상세 내용을 확인하세요",
     unlock: "확인",
@@ -243,6 +243,7 @@ const FILTER_CONFIG = {
   role: [
     "Brand Designer",
     "Brand Experience Designer",
+    "Product Designer",
     "Art Director",
     "Graphic Designer",
     "Web Designer",
@@ -408,7 +409,7 @@ const gridHTML = (items) => {
           const isCoverVideo = /\.(mp4|webm|mov)$/i.test(coverSrc);
 
           let mediaHtml;
-          if (isWideView && (galleryImages.length || isVideo || isCoverImage || isCoverVideo)) {
+          if (isWideView && (isVideo || isCoverImage || isCoverVideo)) {
             const slides = [];
             if (isCoverVideo) {
               slides.push(`
@@ -421,34 +422,50 @@ const gridHTML = (items) => {
                 <img loading="lazy" decoding="async" class="w-full h-full object-cover" src="${coverSrc}" alt="${esc(getText(p.title))} cover" />
               </div>`);
             }
-            slides.push(
-              ...galleryImages.map(
-                (src) => `
-              <div class="thumb-roller-slide">
-                <img loading="lazy" decoding="async" class="w-full h-full object-cover" src="${src}" alt="${esc(getText(p.title))} slide" />
-              </div>`
-              )
-            );
-            if (isVideo && thumb !== coverSrc) {
-              slides.push(`
-              <div class="thumb-roller-slide">
-                <video class="w-full h-full object-cover" src="${thumb}" autoplay muted loop playsinline></video>
-              </div>`);
+
+            // Include thumbnail if different from cover
+            if (thumb && thumb !== coverSrc) {
+              if (isVideo) {
+                slides.push(`
+                <div class="thumb-roller-slide">
+                  <video class="w-full h-full object-cover" src="${thumb}" autoplay muted loop playsinline></video>
+                </div>`);
+              } else {
+                slides.push(`
+                <div class="thumb-roller-slide">
+                  <img loading="lazy" decoding="async" class="w-full h-full object-cover" src="${thumb}" alt="${esc(getText(p.title))} thumbnail" />
+                </div>`);
+              }
             }
-            const slidesHtml = slides.join('');
-            mediaHtml = `
-            <div class="thumb-roller ${aspectClass} w-full" data-slide-count="${slides.length}">
-              <button class="thumb-roller-btn thumb-roller-prev" type="button" aria-label="Previous thumbnail" data-thumb-slider="prev">‹</button>
-              <div class="thumb-roller-track">
-                ${slidesHtml}
-              </div>
-              <button class="thumb-roller-btn thumb-roller-next" type="button" aria-label="Next thumbnail" data-thumb-slider="next">›</button>
-            </div>`;
-          } else if (isVideo) {
-            mediaHtml = `<video class="${aspectClass} w-full object-cover thumb-media" src="${thumb}" autoplay muted loop playsinline></video>`;
+
+            if (slides.length > 1) {
+              const slidesHtml = slides.join('');
+              mediaHtml = `
+              <div class="thumb-roller ${aspectClass} w-full" data-slide-count="${slides.length}">
+                <button class="thumb-roller-btn thumb-roller-prev" type="button" aria-label="Previous thumbnail" data-thumb-slider="prev">‹</button>
+                <div class="thumb-roller-track">
+                  ${slidesHtml}
+                </div>
+                <button class="thumb-roller-btn thumb-roller-next" type="button" aria-label="Next thumbnail" data-thumb-slider="next">›</button>
+              </div>`;
+            } else if (isCoverVideo || (isVideo && thumb === coverSrc)) {
+              mediaHtml = `<video class="${aspectClass} w-full object-cover thumb-media" src="${isCoverVideo ? coverSrc : thumb}" autoplay muted loop playsinline></video>`;
+            } else {
+              const staticSrc = isCoverImage ? coverSrc : thumb;
+              const isGif = staticSrc.toLowerCase().endsWith('.gif');
+              mediaHtml = `<img loading="lazy" decoding="async" ${isGif ? 'style="will-change: transform;"' : ''} class="${aspectClass} w-full object-cover thumb-media" src="${staticSrc}" alt="${esc(getText(p.title))} thumbnail" />`;
+            }
           } else {
-            const isGif = thumb.toLowerCase().endsWith('.gif');
-            mediaHtml = `<img loading="lazy" decoding="async" ${isGif ? 'style="will-change: transform;"' : ''} class="${aspectClass} w-full object-cover thumb-media" src="${thumb}" alt="${esc(getText(p.title))} thumbnail" />`;
+            // Static thumbnail (Grid view): Always use thumbnail if available, then cover.
+            // Randomization of the image itself is removed here to keep the grid stable as requested.
+            const selectedThumb = thumb || coverSrc;
+
+            if (isVideo && thumb === selectedThumb) {
+              mediaHtml = `<video class="${aspectClass} w-full object-cover thumb-media" src="${thumb}" autoplay muted loop playsinline></video>`;
+            } else {
+              const isGif = selectedThumb.toLowerCase().endsWith('.gif');
+              mediaHtml = `<img loading="lazy" decoding="async" ${isGif ? 'style="will-change: transform;"' : ''} class="${aspectClass} w-full object-cover thumb-media" src="${selectedThumb}" alt="${esc(getText(p.title))} thumbnail" />`;
+            }
           }
 
           return `
@@ -981,9 +998,7 @@ const shuffleArray = (items) => {
 
 const sortProjects = (items) => {
   if (sortMode === 'featured') {
-    const featuredItems = items.filter((item) => item.featured);
-    const normalItems = items.filter((item) => !item.featured);
-    return [...shuffleArray(featuredItems), ...shuffleArray(normalItems)];
+    return shuffleArray(items);
   }
 
   const sorted = [...items];
@@ -1236,6 +1251,7 @@ function initThumbRollers() {
       index = (nextIndex + slides.length) % slides.length;
       track.style.transform = `translateX(-${index * 100}%)`;
     };
+    // No initial random offset anymore
     if (prevBtn) {
       prevBtn.addEventListener('click', (e) => {
         e.preventDefault();
@@ -1871,29 +1887,29 @@ function updateFilterVisibility() {
       filterMenu.classList.add('hidden');
       filterMenu.classList.remove('filter-visible', 'filter-hidden');
     } else
-    if (filterVisible) {
-      filterMenu.classList.remove('filter-hidden');
-      filterMenu.classList.add('filter-visible');
-      if (window.innerWidth >= 1024) {
-        filterMenu.classList.remove('hidden');
+      if (filterVisible) {
+        filterMenu.classList.remove('filter-hidden');
+        filterMenu.classList.add('filter-visible');
+        if (window.innerWidth >= 1024) {
+          filterMenu.classList.remove('hidden');
+        }
+      } else {
+        filterMenu.classList.remove('filter-visible');
+        filterMenu.classList.add('filter-hidden');
       }
-    } else {
-      filterMenu.classList.remove('filter-visible');
-      filterMenu.classList.add('filter-hidden');
-    }
   }
 
   if (main) {
     if (isDetailPage) {
       main.classList.remove('filter-visible', 'filter-hidden');
     } else
-    if (filterVisible) {
-      main.classList.remove('filter-hidden');
-      main.classList.add('filter-visible');
-    } else {
-      main.classList.remove('filter-visible');
-      main.classList.add('filter-hidden');
-    }
+      if (filterVisible) {
+        main.classList.remove('filter-hidden');
+        main.classList.add('filter-visible');
+      } else {
+        main.classList.remove('filter-visible');
+        main.classList.add('filter-hidden');
+      }
   }
 }
 
