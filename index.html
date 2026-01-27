@@ -5,9 +5,21 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#ff6a00">
-  <title>Gyuri Min</title>
+  <title>Gyuri Min | Portfolio</title>
   <link rel="icon" href="./assets/icons/favicon2.png" sizes="any" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --font-outfit: 'Outfit', sans-serif;
+    }
+
+    body {
+      font-family: var(--font-outfit);
+    }
+  </style>
   <link rel="stylesheet" href="css/styles.css" />
 
   <!-- Analytics & Tracking (Clarity) -->
@@ -72,7 +84,9 @@
           <div class="flex items-center gap-4">
             <a href="#/" id="brandLink"
               class="font-semibold tracking-tight toplink text-[44px] leading-tight text-neutral-900 lg:text-[36px]">
-              <img src="assets/icons/1.png" alt="" class="w-[60px] h-[60px] lg:w-12 lg:h-12 inline-block mr-3 align-middle -mt-[24px] lg:mt-[-14px]" />Design Persona
+              <img src="assets/icons/1.png" alt=""
+                class="w-[60px] h-[60px] lg:w-12 lg:h-12 inline-block mr-3 align-middle -mt-[24px] lg:mt-[-14px]" />Design
+              Persona
             </a>
           </div>
 
@@ -90,8 +104,7 @@
             </div>
             <!-- Mobile Search -->
             <div class="lg:hidden flex items-center gap-2">
-              <button id="mobileSearchBtn"
-                class="inline-flex items-center justify-center w-11 h-11 text-black"
+              <button id="mobileSearchBtn" class="inline-flex items-center justify-center w-11 h-11 text-black"
                 aria-label="Open search">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                   <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.5"></circle>
@@ -123,10 +136,11 @@
 
     <!-- View Toggle Menu Bar (Desktop only) -->
     <div id="viewToggleBar"
-      class="hidden lg:flex fixed left-0 right-0 z-45 bg-neutral-100 border-b border-neutral-200 items-center justify-end px-4 md:px-6 lg:px-8">
+      class="hidden fixed left-0 right-0 z-45 bg-neutral-100 border-b border-neutral-200 items-center justify-end px-4 md:px-6 lg:px-8">
       <span id="desktopResultCount" class="text-[11px] font-medium text-neutral-600 hidden"></span>
       <div class="flex items-center gap-6">
-        <button id="toggleFilterBtn" class="view-toggle-text flex items-center gap-2 i18n-pending" aria-label="Hide/Show Filter">
+        <button id="toggleFilterBtn" class="view-toggle-text flex items-center gap-2 i18n-pending"
+          aria-label="Hide/Show Filter">
           <img src="./assets/icons/Filter.png" alt="" class="w-4 h-4 object-contain">
           <span id="filterToggleLabel">Hide Filter</span>
         </button>
@@ -148,10 +162,13 @@
     </div>
 
     <!-- Mobile View & Filter Bar -->
-    <div id="mobileTopBar" class="lg:hidden sticky left-0 right-0 bg-white border-b border-neutral-200 flex items-center gap-3 px-4 py-2.5 z-[60] i18n-pending">
+    <div id="mobileTopBar"
+      class="lg:hidden sticky left-0 right-0 bg-white border-b border-neutral-200 flex items-center gap-3 px-4 py-2.5 z-[60] i18n-pending">
       <span id="mobileResultCount" class="text-xs font-medium text-neutral-600"></span>
       <div class="ml-auto flex items-center gap-3">
-        <button id="mobileFilterOpenBtn" class="flex items-center gap-2 text-sm font-medium text-neutral-900 hover:text-[var(--accent-orange)] transition-colors i18n-pending" aria-label="Open filter">
+        <button id="mobileFilterOpenBtn"
+          class="flex items-center gap-2 text-sm font-medium text-neutral-900 hover:text-[var(--accent-orange)] transition-colors i18n-pending"
+          aria-label="Open filter">
           <img src="./assets/icons/Filter.png" alt="" class="w-4 h-4 object-contain">
           <span id="mobileFilterLabel">Filter</span>
         </button>
@@ -257,57 +274,125 @@
       })();
     </script>
 
-    <main class="flex flex-col lg:flex-row filter-visible w-full">
-      <!-- Left Pane: Desktop Filter Menu (Visible on lg+ screens) -->
-      <aside id="desktopFilterMenu"
-        class="hidden lg:block pb-24 lg:sticky lg:top-[149px] lg:h-[calc(100vh-149px)] lg:overflow-y-auto filter-visible">
-        <div class="flex h-full flex-col">
-          <!-- Fixed width wrapper to prevent content reflow during animation -->
-          <div class="w-[240px]">
-            <div id="filterMenuContent" class="flex-1 pb-24"></div>
+    <!-- Desktop Scroll Area (Restores the fixed UI feel) -->
+    <div id="desktopScroller" class="flex flex-col w-full overflow-y-auto">
+      <main class="flex flex-row filter-visible w-full">
+        <!-- Left Pane: Desktop Filter Menu -->
+        <aside id="desktopFilterMenu" class="pb-24 sticky top-0 h-[calc(100vh-158px)] overflow-y-auto filter-visible">
+          <div class="flex h-full flex-col">
+            <div class="w-[240px]">
+              <div id="filterMenuContent" class="flex-1 pb-24"></div>
+            </div>
           </div>
-        </div>
-      </aside>
+        </aside>
 
-      <!-- Mobile Filter Drawer (Only visible on mobile) -->
-    <div id="mobileFilterDrawer"
-        class="lg:hidden fixed inset-0 z-[40] bg-black/40"
-        role="dialog" aria-modal="true">
-        <div class="absolute right-0 top-0 h-full w-[85%] max-w-sm bg-white px-5 pt-4 pb-2 overflow-y-auto drawer shadow-xl" style="padding-top: 16px;">
-          <div class="flex items-center justify-between pb-4 mb-4 border-b border-neutral-200">
-            <h3 class="text-[16px] font-semibold text-neutral-900">Filter</h3>
-            <button id="mobileFilterClose"
-              class="inline-flex items-center justify-center w-10 h-10 text-black hover:bg-neutral-100 rounded-full transition-colors leading-none"
-              aria-label="Close filter">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M6 6l12 12M18 6l-12 12" stroke="currentColor" stroke-width="2" />
-              </svg>
-            </button>
-          </div>
-          <!-- Filter content dynamically populated by JS -->
-          <div id="mobileFilterContent" class="space-y-6"></div>
-        </div>
-      </div>
+        <!-- Right Pane: Main Content & Gallery -->
+        <section id="pane" class="flex-1 min-w-0" aria-live="polite"></section>
+      </main>
 
-      <!-- Right Pane: Main Content & Gallery -->
-      <section id="pane" class="pb-24 w-full" aria-live="polite"></section>
-    </main>
+      <!-- Desktop Footer (At the end of the list, centered across full width) -->
+      <footer class="desktop-footer hidden lg:block w-full bg-white border-t border-neutral-200 py-16 mt-auto">
+        <div class="w-full flex items-center justify-center">
+          <span id="desktopCopyright" class="text-[12px] text-neutral-500"></span>
+        </div>
+      </footer>
+    </div>
   </div>
 
-  <!-- Mobile Footer -->
+  <!-- Mobile Filter Drawer (Only visible on mobile) -->
+  <div id="mobileFilterDrawer" class="lg:hidden fixed inset-0 z-[40] bg-black/40" role="dialog" aria-modal="true">
+    <div class="absolute right-0 top-0 h-full w-[85%] max-w-sm bg-white px-5 pt-4 pb-2 overflow-y-auto drawer shadow-xl"
+      style="padding-top: 16px;">
+      <div class="flex items-center justify-between pb-4 mb-4 border-b border-neutral-200">
+        <h3 class="text-[16px] font-semibold text-neutral-900">Filter</h3>
+        <button id="mobileFilterClose"
+          class="inline-flex items-center justify-center w-10 h-10 text-black hover:bg-neutral-100 rounded-full transition-colors leading-none"
+          aria-label="Close filter">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M6 6l12 12M18 6l-12 12" stroke="currentColor" stroke-width="2" />
+          </svg>
+        </button>
+      </div>
+      <!-- Filter content dynamically populated by JS -->
+      <div id="mobileFilterContent" class="space-y-6"></div>
+    </div>
+  </div>
+
+  <!-- Template: About Page Content -->
+  <template id="infoTpl">
+    <article class="max-w-none">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
+        <div>
+          <h1 class="text-[34px] md:text-[34px] font-semibold tracking-tight">Gyuri Min</h1>
+          <h1 class="text-[34px] md:text-[34px] font-semibold tracking-tight text-[var(--accent-orange)] -mt-2">Brand
+            Designer</h1>
+        </div>
+        <div class="text-right">
+          <h1 class="text-[34px] md:text-[34px] tracking-tight">
+            Brand Architect.<br />Visual Strategist.<br />Experience Builder.<br />Creative Connector.
+          </h1>
+        </div>
+      </div>
+      <hr class="my-6 border-neutral-300" />
+      <section class="mb-8">
+        <h2 class="text-xl font-bold tracking-tight mb-4">Expertise</h2>
+        <div class="text-base leading-relaxed text-neutral-700 space-y-3">
+          <p><span class="font-semibold">Brand Strategy & Design:</span> End-to-end identity, packaging, and campaign
+            execution</p>
+          <p><span class="font-semibold">B2G & Public Sector:</span> RFP response, MOU negotiation, and funding
+            acquisition</p>
+          <p><span class="font-semibold">Global Market Launch:</span> B2B/B2C expertise with distribution partnerships
+            across Southeast Asia and India</p>
+        </div>
+      </section>
+      <hr class="my-8 border-neutral-300" />
+      <section class="mb-8">
+        <h2 class="text-xl font-bold tracking-tight mb-4">Recognition</h2>
+        <div class="text-base leading-relaxed text-neutral-700 space-y-2">
+          <p>Korea Angel Investment Association President's Award <span
+              class="text-[11px] align-top text-neutral-400 font-mono">2025</span></p>
+          <p>Edison Awards Bronze Medal <span class="text-neutral-500">(AID, BX Team)</span> <span
+              class="text-[11px] align-top text-neutral-400 font-mono">2023</span></p>
+          <p>National University Student Design Contest <span
+              class="text-[11px] align-top text-neutral-400 font-mono">2012</span></p>
+          <p>46th GG National Design Competition <span
+              class="text-[11px] align-top text-neutral-400 font-mono">2010</span></p>
+        </div>
+      </section>
+      <hr class="my-8 border-neutral-300" />
+      <section class="mb-8">
+        <h2 class="text-xl font-bold tracking-tight mb-4">Education</h2>
+        <div class="text-base leading-relaxed text-neutral-700 space-y-2">
+          <p>Dankook University, Visual Communication Design</p>
+          <p>The University of Waikato Pathways College</p>
+        </div>
+      </section>
+      <hr class="my-8 border-neutral-300" />
+      <section class="mb-8">
+        <h2 class="text-xl font-bold tracking-tight mb-4">Credentials</h2>
+        <div class="text-base leading-relaxed text-neutral-700 space-y-2">
+          <p>Gangnam-gu Venture Startup Academy <span
+              class="text-[11px] align-top text-neutral-400 font-mono">2025</span></p>
+          <p>Craftsman Computer Graphics Operator <span
+              class="text-[11px] align-top text-neutral-400 font-mono">2021</span></p>
+          <p>Design Teacher Certificate <span class="text-[11px] align-top text-neutral-400 font-mono">2013</span></p>
+        </div>
+      </section>
+      <section class="mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 text-[34px]">
+          <div><span class="text-neutral-500">Get in touch →</span></div>
+          <div class="text-right"><a href="mailto:designpersona.kr@gmail.com"
+              class="text-[var(--accent-orange)] font-medium">designpersona.kr@gmail.com</a></div>
+        </div>
+      </section>
+    </article>
+  </template>
+
+  <!-- Mobile Footer (Remains outside) -->
   <footer class="mobile-footer lg:hidden w-full bg-white/95 backdrop-blur px-5 pt-8 border-t border-neutral-200 pb-safe"
     style="padding-bottom: calc(env(safe-area-inset-bottom) + 40px); margin-bottom: 0;">
     <div class="mx-auto max-w-screen-sm flex flex-col gap-4">
-      <!-- 1. Copyright Information -->
       <div class="text-center text-[12px] text-neutral-500" id="mobileCopyright"></div>
-    </div>
-  </footer>
-
-  <!-- Desktop Footer -->
-  <footer class="desktop-footer hidden lg:block w-full bg-white border-t border-neutral-200 py-3 px-8">
-    <div class="w-full flex items-center justify-center px-4">
-      <!-- Center: Copyright -->
-      <span id="desktopCopyright" class="text-[12px] text-neutral-500"></span>
     </div>
   </footer>
 
@@ -340,15 +425,15 @@
     <div class="flex items-center justify-center h-full px-4">
       <div id="mobileSearchBox" class="w-full max-w-sm bg-white px-4 pt-4 pb-5 shadow-sm">
         <div class="flex items-center gap-2">
-        <input type="text" id="mobileSearchInput" placeholder="Search..."
-          class="w-full text-[15px] border-b border-neutral-900 bg-transparent focus:outline-none" />
-        <button id="mobileSearchClose"
-          class="inline-flex items-center justify-center w-10 h-10 text-black hover:bg-neutral-100 rounded-full transition-colors"
-          aria-label="Close search">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M6 6l12 12M18 6l-12 12" stroke="currentColor" stroke-width="2" />
-          </svg>
-        </button>
+          <input type="text" id="mobileSearchInput" placeholder="Search..."
+            class="w-full text-[15px] border-b border-neutral-900 bg-transparent focus:outline-none" />
+          <button id="mobileSearchClose"
+            class="inline-flex items-center justify-center w-10 h-10 text-black hover:bg-neutral-100 rounded-full transition-colors"
+            aria-label="Close search">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M6 6l12 12M18 6l-12 12" stroke="currentColor" stroke-width="2" />
+            </svg>
+          </button>
         </div>
       </div>
     </div>
@@ -510,8 +595,8 @@
             <span class="text-neutral-500">Get in touch →</span>
           </div>
           <div class="text-right">
-            <a href="mailto:kimashe@naver.com" class="text-[var(--accent-orange)] font-medium">
-              kimashe@naver.com
+            <a href="mailto:designpersona.kr@gmail.com" class="text-[var(--accent-orange)] font-medium">
+              designpersona.kr@gmail.com
             </a>
           </div>
         </div>
