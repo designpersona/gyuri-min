@@ -1,5 +1,7 @@
 :root {
-  --accent-orange: #ff6a00;
+  --accent-orange: #FF5A00;
+  --bg-glass: rgba(255, 255, 255, 0.7);
+  --bg-blur: blur(20px);
   /* Z-Index Hierarchy */
   --z-modal: 500;
   --z-menu: 400;
@@ -15,8 +17,8 @@
   /* Inside header but needs to popup? No, dropdown is in header context */
   --z-sidebar: 50;
   --z-scrolltop: 40;
-  --desktop-header-stack: 120px;
-  --desktop-header-offset: 120px;
+  --desktop-header-stack: 96px;
+  --desktop-header-offset: 96px;
   --desktop-view-toggle: 38px;
   --desktop-content-height: calc(100vh - var(--desktop-header-offset) - var(--desktop-view-toggle));
 }
@@ -27,6 +29,7 @@ html {
   overscroll-behavior-y: auto !important;
   /* Force native bounce */
   overflow-x: hidden;
+  height: 100%;
 }
 
 body {
@@ -36,6 +39,14 @@ body {
   /* Prevent horizontal scroll on all devices */
   background-color: white;
   color: #171717;
+  height: 100%;
+}
+
+@media (min-width: 1024px) {
+  body:not(.mobile-mode) {
+    overflow: hidden !important;
+    height: 100vh;
+  }
 }
 
 .hover-accent:hover {
@@ -93,9 +104,30 @@ figure {
 }
 
 figcaption {
-  font-size: 12.5px;
-  color: #666;
-  margin-top: 6px;
+  font-size: 11px;
+  color: #888;
+  margin-top: 8px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.thumb-frame {
+  /* box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); */
+  box-shadow: none !important;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.thumb-frame:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: none !important;
+}
+
+article h3 {
+  transition: color 0.3s ease;
+}
+
+article:hover h3 {
+  color: var(--accent-orange);
 }
 
 /* 스크롤바 숨김 (스크롤은 작동) */
@@ -162,7 +194,8 @@ figcaption {
 
 @media (min-width: 1024px) {
   #scrollTopBtn {
-    display: none;
+    bottom: 40px;
+    right: 40px;
   }
 }
 
@@ -189,17 +222,20 @@ figcaption {
 
 /* Header - Always visible, no hide on scroll */
 header#mainHeader {
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s ease;
   width: 100% !important;
   left: 0;
   right: 0;
   margin-left: 0;
   padding-left: env(safe-area-inset-left);
   padding-right: env(safe-area-inset-right);
-  background-color: white;
+  background-color: var(--bg-glass) !important;
+  backdrop-filter: var(--bg-blur);
+  -webkit-backdrop-filter: var(--bg-blur);
   transform: translate3d(0, 0, 0);
   top: 32px !important;
   z-index: var(--z-header);
+  border-bottom: none !important;
 }
 
 #brandLink {
@@ -209,7 +245,8 @@ header#mainHeader {
 }
 
 /* Mobile menu button - ensure 44px min touch area */
-#menuBtn, #desktopMenuBtn {
+#menuBtn,
+#desktopMenuBtn {
   min-width: 44px !important;
   min-height: 44px !important;
   width: 44px !important;
@@ -386,7 +423,7 @@ body.mobile-mode aside {
     display: flex !important;
   }
 
-  body.view-mode-5 #pane article > .mt-3 {
+  body.view-mode-5 #pane article>.mt-3 {
     display: none !important;
   }
 
@@ -494,7 +531,7 @@ main {
 
 /* Mobile: Hide sidebar, optimize for 1-column */
 @media (max-width: 1023px) {
-  body > div.w-full.px-4 {
+  body>div.w-full.px-4 {
     padding-left: 0 !important;
     padding-right: 0 !important;
   }
@@ -556,16 +593,16 @@ main {
     margin-top: -15px !important;
   }
 
-  header#mainHeader > div > div {
+  header#mainHeader>div>div {
     justify-content: space-between;
   }
 
-  header#mainHeader .relative.flex > .flex.items-center.gap-4 {
+  header#mainHeader .relative.flex>.flex.items-center.gap-4 {
     width: auto;
     justify-content: flex-start;
   }
 
-  header#mainHeader .relative.flex > .ml-auto {
+  header#mainHeader .relative.flex>.ml-auto {
     display: flex !important;
   }
 
@@ -576,7 +613,9 @@ main {
   /* Ensure 1-column grid on mobile */
   #pane .grid {
     gap: 1rem !important;
-  }  /* Card optimization for mobile */
+  }
+
+  /* Card optimization for mobile */
   #pane article {
     width: 100% !important;
     margin: 0 !important;
@@ -588,16 +627,42 @@ main {
     flex-direction: row;
     padding-top: 0;
     padding-bottom: 0;
-    height: auto;
-    overflow: visible !important;
-    align-items: stretch;
-    min-height: calc(var(--desktop-content-height) + var(--desktop-view-toggle));
+    min-height: auto;
+  }
+
+  #desktopScroller {
+    height: var(--desktop-content-height);
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    scroll-behavior: smooth;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Hide scroller scrollbar */
+  #desktopScroller::-webkit-scrollbar {
+    display: none;
+  }
+
+  #desktopScroller {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
   }
 }
 
 @media (min-width: 1024px) {
   body.header-collapsed main {
     margin-top: calc(-1 * var(--desktop-header-stack));
+  }
+
+  /* Adjust height when toggle bar is hidden (detail/about pages) */
+  body.detail-page-active #desktopScroller,
+  body.about-page-active #desktopScroller {
+    height: calc(100vh - var(--desktop-header-offset)) !important;
+  }
+
+  .desktop-footer {
+    display: block !important;
   }
 }
 
@@ -613,13 +678,14 @@ main {
   max-width: 240px;
   background-color: white;
   position: sticky !important;
-  top: calc(var(--desktop-header-offset) + var(--desktop-view-toggle)) !important;
+  top: 0 !important;
   height: var(--desktop-content-height) !important;
-  min-height: var(--desktop-content-height);
   overflow-y: auto !important;
   overflow-x: hidden !important;
   align-self: flex-start !important;
   will-change: transform, width, opacity, top;
+  border-right: none !important;
+  display: block;
 }
 
 body.header-collapsed #desktopFilterMenu {
@@ -657,10 +723,15 @@ body.header-collapsed #desktopFilterMenu {
   /* Important for flex child with overflow/grid inside */
   position: relative;
   z-index: 10;
-  min-height: var(--desktop-content-height);
+  min-height: auto;
   transition: padding 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-sizing: border-box;
   overflow-x: hidden;
+}
+
+@media (min-width: 1024px) {
+
+  /* No more internal scroller on content area */
 }
 
 main.filter-hidden #pane {
@@ -739,12 +810,12 @@ main.filter-visible #pane {
 }
 
 @media (min-width: 1024px) {
-  #topBar > .w-full {
+  #topBar>.w-full {
     padding-left: 2rem !important;
     padding-right: 2rem !important;
   }
 
-  header#mainHeader > .w-full {
+  header#mainHeader>.w-full {
     padding-left: 0 !important;
     padding-right: 0 !important;
   }
@@ -794,10 +865,10 @@ body.header-collapsed #topBar {
   }
 }
 
-#topBar > .w-full .topbar-lang-option:hover,
-#topBar > .w-full .topbar-lang-option:focus,
-#topBar > .w-full .topbar-lang-option:active,
-#topBar > .w-full .topbar-lang-option.active {
+#topBar>.w-full .topbar-lang-option:hover,
+#topBar>.w-full .topbar-lang-option:focus,
+#topBar>.w-full .topbar-lang-option:active,
+#topBar>.w-full .topbar-lang-option.active {
   color: #fff !important;
   border-color: rgba(255, 255, 255, 0.7);
 }
@@ -1052,7 +1123,7 @@ body.header-collapsed #topBar {
 }
 
 @media (max-width: 1023px) {
-#mobileFilterDrawer .drawer {
+  #mobileFilterDrawer .drawer {
     width: 100% !important;
     max-width: 100% !important;
     height: 70vh;
@@ -1144,7 +1215,7 @@ body.header-collapsed #topBar {
   padding: 0;
 }
 
-#filterMenuContent .filter-options-container.space-y-2 > * + * {
+#filterMenuContent .filter-options-container.space-y-2>*+* {
   margin-top: 0.2rem !important;
 }
 
@@ -1271,11 +1342,25 @@ body.header-collapsed #topBar {
   outline: none;
 }
 
+/* Footer Adjustments */
+/* Footer Adjustments */
+@media (min-width: 1024px) {
+  .desktop-footer {
+    margin-top: 49px !important;
+    padding-top: 15px !important;
+    padding-bottom: 15px !important;
+    min-height: auto !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
 /* Fix About Page spacing */
 /* Fix spacing between toggle bar and thumbnails */
 #pane {
   padding-top: 0 !important;
-  padding-bottom: 1.5rem !important;
+  padding-bottom: 0 !important;
   height: auto;
   overflow-y: visible !important;
 }
@@ -1325,6 +1410,7 @@ body.about-page-active #pane {
     display: none !important;
   }
 }
+
 /* ===== MOBILE RESPONSIVE IMPROVEMENTS (390-430px) ===== */
 
 /* Mobile Footer: Optimized for touch & safe area */
@@ -1340,9 +1426,8 @@ body.about-page-active #pane {
     padding-bottom: calc(env(safe-area-inset-bottom) + 0.75rem);
   }
 
-  .desktop-footer {
-    display: none !important;
-  }
+  /* .desktop-footer should be hidden ONLY if explicitly needed, but it's needed for mobile-mode on desktop sometimes. 
+     However, we'll let the HTML classes handle it. */
 
   /* Prevent mobile footer from hiding content */
   body {
@@ -1437,7 +1522,7 @@ body.about-page-active #pane {
     gap: 0.75rem !important;
   }
 
-  header#mainHeader > div > div {
+  header#mainHeader>div>div {
     padding: 0.75rem 0 !important;
   }
 
@@ -1451,13 +1536,168 @@ body.about-page-active #pane {
 }
 
 @media (max-width: 1023px) {
-  body > div.w-full.px-4 {
+  body>div.w-full.px-4 {
     padding-left: 0 !important;
     padding-right: 0 !important;
-  }  main.filter-visible #pane,
+  }
+
+  main.filter-visible #pane,
   main.filter-hidden #pane,
   #pane {
     padding-left: 1rem !important;
     padding-right: 1rem !important;
+  }
+}
+
+/* ===== PROJECT DETAIL: SPLIT LAYOUT (Desktop) ===== */
+@media (min-width: 1024px) {
+  body.detail-page-active #desktopScroller {
+    overflow-y: auto !important;
+  }
+
+  .detail-wrapper {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 0 1rem;
+    box-sizing: border-box;
+  }
+
+  .detail-header-row {
+    flex: 0 0 auto;
+    padding: 1.5rem 0;
+    margin-bottom: 0 !important;
+  }
+
+  .detail-split-container {
+    flex: 1;
+    display: flex;
+    gap: 3rem;
+    padding-bottom: 0;
+    overflow: hidden;
+    /* Contains the scrollable children */
+  }
+
+  .detail-gallery-column {
+    flex: 1;
+    min-width: 0;
+    overflow-y: auto;
+    padding-right: 1.5rem;
+    padding-bottom: 120px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .detail-gallery-column::-webkit-scrollbar {
+    display: none;
+  }
+
+  .detail-info-panel {
+    flex: 0 0 280px;
+    position: static;
+    /* Independent scroll pane */
+    height: 100%;
+    max-height: none;
+    overflow-y: auto;
+    border-left: none;
+    padding-left: 0;
+    padding-bottom: 120px;
+    scrollbar-width: thin;
+
+    /* Animation: Right to Left Slide */
+    animation: detailSlideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  @keyframes detailSlideIn {
+    0% {
+      opacity: 0;
+      transform: translateX(40px);
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  /* Thin scrollbar for info panel */
+  .detail-info-panel::-webkit-scrollbar {
+    width: 2px;
+  }
+
+  .detail-info-panel::-webkit-scrollbar-thumb {
+    background: #e5e5e5;
+  }
+}
+
+/* Detail Info Styling */
+.detail-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #a3a3a3;
+  margin-bottom: 0.6rem;
+}
+
+.detail-value {
+  font-size: 14.5px;
+  color: #171717;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+.detail-meta-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+}
+
+.detail-description {
+  font-weight: 400;
+  color: #262626;
+}
+
+.detail-link {
+  font-size: 14px;
+  font-weight: 500;
+  color: #171717;
+  transition: all 0.3s;
+}
+
+/* Gallery Figure Styling */
+.detail-gallery-figure {
+  margin: 0;
+  padding: 0;
+}
+
+.detail-gallery-caption {
+  margin-top: 1.25rem;
+  font-size: 13.5px;
+  color: #737373;
+  text-align: left;
+  line-height: 1.6;
+}
+
+/* Mobile Adjustments for Detail Page */
+@media (max-width: 1023px) {
+  .detail-split-container {
+    display: block;
+  }
+
+  .detail-info-panel {
+    margin-top: 4rem;
+    padding-top: 4rem;
+    border-top: 1px solid #f0f0f0;
+  }
+
+  .detail-meta-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 2rem;
+  }
+
+  .detail-gallery-column article h1 {
+    font-size: 32px !important;
   }
 }
