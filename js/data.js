@@ -1,14 +1,14 @@
 window.PROJECT_DATA = {
     "site": {
-        "name": "GM",
+        "name": "Design Persona",
         "social": {
             "linkedin": "https://www.linkedin.com/in/gyuri-min",
             "x": "https://x.com/kyurimy",
             "behance": "https://www.behance.net/kyurimy"
         },
         "copyright": {
-            "en": "Copyright © Gyuri Min 2013-2026. All Rights Reserved.",
-            "ko": "Copyright © Gyuri Min 2013-2026. All Rights Reserved."
+            "en": "Copyright © Design Persona 2013-2026. All Rights Reserved.",
+            "ko": "Copyright © Design Persona 2013-2026. All Rights Reserved."
         }
     },
     "projects": [
@@ -16,9 +16,10 @@ window.PROJECT_DATA = {
             "slug": "chatlog",
             "featured": true,
             "locked": false,
+            "developing": true,
             "title": {
                 "en": "Chat Book",
-                "ko": "Chat Book"
+                "ko": "챗북"
             },
             "caption": {
                 "en": "Product Design",
@@ -33,8 +34,8 @@ window.PROJECT_DATA = {
             "year": "2026",
             "client": "Personal Work",
             "role": "Product Designer",
-            "projectType": "Digital Product",
-            "industry": "Technology",
+            "projectType": "Product Design",
+            "industry": "Service",
             "tools": "Antigravity, Codex, VS Code, Cursor",
             "description": {
                 "en": [
@@ -72,8 +73,8 @@ window.PROJECT_DATA = {
             "year": "2025",
             "client": "Personal Work",
             "role": "Web Designer",
-            "projectType": "Digital Product",
-            "industry": "Technology",
+            "projectType": "Web Design",
+            "industry": "Service",
             "tools": "ChatGPT, Cursor",
             "description": {
                 "en": [
@@ -105,11 +106,11 @@ window.PROJECT_DATA = {
             "cover": "assets/projects/FP-Deil/cover.jpg",
             "thumbnail": "assets/projects/FP-Deil/thumbnail.jpg",
             "year": "2025",
-            "client": "Petit-ours (Collaboration)",
+            "client": "Petit-ours",
             "role": "Brand Designer",
-            "projectType": "Brand Experience",
+            "projectType": "Brand Design",
             "industry": "Food",
-            "tools": "Adobe Illustrator, Adobe Photoshop, DALL·E",
+            "tools": "Adobe Illustrator, Adobe Photoshop",
             "description": {
                 "en": [
                     "The Farmsplan Deli Cafe Branding project involved collaborating with an external partner to successfully transplant Farmsplan’s brand identity into a physical space, thereby strengthening trust and brand awareness while preserving the existing store's unique atmosphere.",
@@ -157,7 +158,7 @@ window.PROJECT_DATA = {
             "year": "2024",
             "client": "AID",
             "role": "Graphic Designer",
-            "projectType": "Campaign",
+            "projectType": "Graphic Design, Experience Design",
             "industry": "Technology",
             "tools": "Adobe Illustrator, Adobe Photoshop",
             "description": {
@@ -222,7 +223,7 @@ window.PROJECT_DATA = {
             "year": "2024",
             "client": "27 Red Brick",
             "role": "Art Director",
-            "projectType": "Brand Experience",
+            "projectType": "Art Direction",
             "industry": "Food",
             "tools": "Adobe Illustrator, Adobe Photoshop, Sora",
             "description": {
@@ -271,8 +272,8 @@ window.PROJECT_DATA = {
             "year": "2024",
             "client": "AID",
             "role": "Brand Designer",
-            "projectType": "Brand Experience",
-            "industry": "Food",
+            "projectType": "Brand Design, Package Design",
+            "industry": "Agriculture, Distribution",
             "tools": "Adobe Illustrator, Adobe Photoshop",
             "description": {
                 "en": [
@@ -327,7 +328,7 @@ window.PROJECT_DATA = {
             "year": "2023",
             "client": "AID",
             "role": "Brand Designer",
-            "projectType": "Brand Experience",
+            "projectType": "Brand Design",
             "industry": "Technology",
             "tools": "Adobe Illustrator, Adobe Photoshop",
             "description": {
@@ -380,7 +381,7 @@ window.PROJECT_DATA = {
             "year": "2023",
             "client": "Café Terrabite",
             "role": "Brand Designer",
-            "projectType": "Brand Experience",
+            "projectType": "Brand Design, Art Direction",
             "industry": "Food",
             "tools": "Adobe Illustrator, Adobe Photoshop, Sora",
             "description": {
@@ -440,8 +441,8 @@ window.PROJECT_DATA = {
             "year": "2023",
             "client": "Shinan-gun",
             "role": "Brand Designer",
-            "projectType": "Brand Experience",
-            "industry": "Public Sector",
+            "projectType": "Brand Design, Package Design, Experience Design",
+            "industry": "Food, Distribution",
             "tools": "Adobe Illustrator, Adobe Photoshop",
             "description": {
                 "en": [
@@ -508,8 +509,8 @@ window.PROJECT_DATA = {
             "year": "2023",
             "client": "AID",
             "role": "Brand Designer",
-            "projectType": "Brand Experience",
-            "industry": "Food",
+            "projectType": "Brand Design, Package Design, Experience Design",
+            "industry": "Agriculture, Distribution",
             "tools": "Adobe Illustrator, Adobe Photoshop",
             "description": {
                 "en": [
@@ -583,8 +584,8 @@ window.PROJECT_DATA = {
             "year": "2023",
             "client": "AID",
             "role": "Brand Designer",
-            "projectType": "Campaign",
-            "industry": "Food",
+            "projectType": "Brand Design, Package Design, Experience Design",
+            "industry": "Food, Public Sector, Agriculture, Distribution, Technology",
             "tools": "Adobe Illustrator, Adobe Photoshop",
             "description": {
                 "en": [
@@ -668,7 +669,7 @@ window.PROJECT_DATA = {
             "year": "2022",
             "client": "AID",
             "role": "Illustrator",
-            "projectType": "Campaign",
+            "projectType": "Illustration, Character & Illustration",
             "industry": "Technology",
             "tools": "Adobe Illustrator, Adobe Photoshop",
             "description": {
@@ -724,7 +725,7 @@ window.PROJECT_DATA = {
             "year": "2022",
             "client": "AID",
             "role": "Brand Experience Designer",
-            "projectType": "Brand Experience",
+            "projectType": "Brand Design",
             "industry": "Technology",
             "tools": "Adobe Illustrator, Adobe Photoshop",
             "description": {
@@ -787,8 +788,8 @@ window.PROJECT_DATA = {
             "year": "2022",
             "client": "AID",
             "role": "Illustrator",
-            "projectType": "Character IP",
-            "industry": "Food",
+            "projectType": "Character Design, Character & Illustration, Experience Design",
+            "industry": "Distribution",
             "tools": "Adobe Illustrator, Adobe Photoshop",
             "description": {
                 "en": [
@@ -838,8 +839,8 @@ window.PROJECT_DATA = {
             "year": "2021",
             "client": "AID",
             "role": "Graphic Designer",
-            "projectType": "Campaign",
-            "industry": "Technology",
+            "projectType": "Graphic Design",
+            "industry": "Contents",
             "tools": "Adobe Illustrator, Adobe Photoshop, Sora",
             "description": {
                 "en": [
@@ -890,7 +891,7 @@ window.PROJECT_DATA = {
             "client": "NongHyup (Chungnam)",
             "role": "Web Designer",
             "projectType": "Digital Product",
-            "industry": "Public Sector",
+            "industry": "Public Sector, Food, Distribution",
             "tools": "Adobe Photoshop, Adobe Illustrator",
             "description": {
                 "en": [
@@ -933,8 +934,8 @@ window.PROJECT_DATA = {
             "year": "2019",
             "client": "Korea Stationery Industry Cooperative",
             "role": "Brand Experience Designer",
-            "projectType": "Campaign",
-            "industry": "Retail",
+            "projectType": "Brand Design",
+            "industry": "Public Sector",
             "tools": "Adobe Photoshop, Adobe Illustrator",
             "description": {
                 "en": [
@@ -983,11 +984,11 @@ window.PROJECT_DATA = {
             "cover": "assets/projects/News-Letter/cover.jpg",
             "thumbnail": "assets/projects/News-Letter/thumbnail.jpg",
             "year": "2018-2021",
-            "client": "KOTRA",
+            "client": "Trade Expo",
             "role": "Brand Designer",
-            "projectType": "Digital Product",
+            "projectType": "Web Design, Graphic Design",
             "industry": "Public Sector",
-            "tools": "Adobe Photoshop, Adobe Illustrator",
+            "tools": "Adobe Photoshop, Adobe Illustrator, Adobe Dreamweaver",
             "description": {
                 "en": [
                     "This project involved the design and technical implementation of a promotional email campaign aimed at attracting participation for over 200 domestic and international exhibitions, consortia, and industry events.",
@@ -1028,8 +1029,8 @@ window.PROJECT_DATA = {
             "year": "2015",
             "client": "Personal Work",
             "role": "3D Artist",
-            "projectType": "Personal Work",
-            "industry": "Food",
+            "projectType": "Illustration, Character & Illustration",
+            "industry": "Goods",
             "tools": "",
             "description": {
                 "en": [
@@ -1053,7 +1054,21 @@ window.PROJECT_DATA = {
                         "en": "Making Of",
                         "ko": "제작 과정"
                     }
-                }
+                },
+                {
+                    "src": "assets/projects/rabbit/2.jpg",
+                    "caption": {
+                        "en": "Concept Art",
+                        "ko": "컨셉 아트"
+                    }
+                },
+                {
+                    "src": "assets/projects/rabbit/thumbnail.jpg",
+                    "caption": {
+                        "en": "Final Product",
+                        "ko": "최종 제품"
+                    }
+                },
             ],
             "tool_notes": "Other tools: Sculpey, Acrylic Paint"
         },
@@ -1077,7 +1092,7 @@ window.PROJECT_DATA = {
             "year": "2018",
             "client": "Pias Corporation",
             "role": "Graphic Designer",
-            "projectType": "Brand Experience",
+            "projectType": "Graphic Design",
             "industry": "Beauty",
             "tools": "Adobe Illustrator, Adobe Photoshop, InDesign",
             "description": {
