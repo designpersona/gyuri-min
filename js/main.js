@@ -98,6 +98,8 @@ let searchQuery = '';
 let activeFilters = safeJsonParse(storage.get('activeFilters', '{}'), {}); // { projectType: [], role: [], industry: [], client: [], tools: [] }
 let sortMode = storage.get('sort_mode', 'featured'); // featured | latest | oldest
 let toolsShowAll = storage.get('tools_show_all', 'false') === 'true';
+let lastHomeScrollTop = 0;
+window._lastSlug = '';
 // Default filter visibility: Hidden on mobile (<1024), Visible on desktop
 const filterVisibleStored = storage.get('filterVisible', null);
 let filterVisible = filterVisibleStored === null
@@ -114,8 +116,9 @@ const I18N = {
     aboutName: "Gyuri Min",
     aboutLink: "ABOUT ME",
     mobileAboutLink: "ABOUT ME",
-    back: "← Back to Archive",
+    back: "Back to Archive",
     restricted: "COMING SOON",
+    developing: "In Dev.",
     lockedTitle: "Protected Project",
     lockedDesc: "Enter password to view details",
     unlock: "Unlock",
@@ -171,17 +174,18 @@ const I18N = {
     ]
   },
   ko: {
-    aboutName: "민규리",
+    aboutName: "민 규리",
     aboutLink: "about me",
     mobileAboutLink: "about me",
     back: "← 목록으로",
     restricted: "준비 중",
+    developing: "개발중",
     lockedTitle: "비공개 프로젝트",
     lockedDesc: "비밀번호를 입력하여 상세 내용을 확인하세요",
     unlock: "확인",
     cancel: "취소",
     year: "연도",
-    client: "클라이언트",
+    client: "고객사",
     role: "역할",
     projectType: "프로젝트 유형",
     industry: "산업",
@@ -203,7 +207,7 @@ const I18N = {
     thumbnailView: "썸네일",
     // About Page
     aboutRole: "브랜드 디자이너",
-    aboutTagline: "브랜드 설계.<br />시각 전략.<br />경험 빌더.<br />창의적 연결.",
+    aboutTagline: "브랜드 설계.<br />비주얼 전략.<br />경험 건축.<br />창의적 연결.",
     expertise: "전문 분야",
     recognition: "수상 경력",
     education: "학력",
@@ -217,8 +221,8 @@ const I18N = {
     awards: [
       "한국엔젤투자협회장상",
       "에디슨 어워드 동상 <span class=\"text-neutral-500\">(AID, BX팀)</span>",
-      "전국 대학생 디자인 공모전",
-      "제46회 경기미술대전"
+      "2012 디자인대전 제 41회 전국대학생 디자인 공모전",
+      "제 46회 GG 전국디자인공모전"
     ],
     eduList: [
       "단국대학교 시각디자인과",
@@ -227,69 +231,66 @@ const I18N = {
     credList: [
       "강남구 벤처 스타트업 아카데미",
       "컴퓨터그래픽스운용기능사",
-      "디자인 교원 자격증"
+      "실기교사디자인교원자격증"
     ]
   }
 };
 
 const FILTER_CONFIG = {
   projectType: [
-    "Brand Experience",
-    "Digital Product",
-    "Campaign",
-    "Character IP",
-    "Personal Work"
-  ],
-  role: [
-    "Brand Designer",
-    "Brand Experience Designer",
-    "Product Designer",
-    "Art Director",
-    "Graphic Designer",
-    "Web Designer",
-    "Illustrator",
-    "3D Artist"
+    "Art Direction",
+    "Brand Design",
+    "Character & Illustration",
+    "Experience Design",
+    "Graphic Design",
+    "Package Design",
+    "Product Design",
+    "Web Design"
   ],
   industry: [
+    "Agriculture",
     "Beauty",
+    "Contents",
+    "Distribution",
     "Food",
+    "Goods",
     "Healthcare",
-    "Retail",
     "Public Sector",
+    "Service",
     "Technology"
   ],
   client: [
+    "27 Red Brick",
     "AID",
-    "KOTRA",
-    "NongHyup (Chungnam)",
-    "Shinan-gun",
     "Café Terrabite",
     "Korea Stationery Industry Cooperative",
-    "Petit-ours (Collaboration)",
-    "Personal Project",
-    "27 Red Brick"
+    "NongHyup (Chungnam)",
+    "Personal Work",
+    "Petit-ours",
+    "Pias Corporation",
+    "Shinan-gun",
+    "Trade Expo"
   ],
   tools: {
-    primary: ["Figma", "Illustrator", "Photoshop", "3ds Max", "KeyShot"],
-    more: ["After Effects", "ChatGPT", "Cursor", "DALL·E", "Sora", "VS Code"]
+    primary: ["Figma", "Illustrator", "Photoshop", "InDesign", "3ds Max", "KeyShot"],
+    more: ["After Effects", "ChatGPT", "Cursor", "Dreamweaver", "Sora", "VS Code"]
   }
 };
 
 const TOOL_ALIASES = new Map([
   ["ChatGPT(Codex)", "ChatGPT"],
   ["ChatGPT (Codex)", "ChatGPT"],
-  ["DALL·E(OpenAI)", "DALL·E"],
-  ["DALL·E (OpenAI)", "DALL·E"],
   ["Sora(OpenAI)", "Sora"],
   ["Sora (OpenAI)", "Sora"],
   ["3D Max", "3ds Max"],
   ["Adobe Illustrator", "Illustrator"],
-  ["Adobe Photoshop", "Photoshop"]
+  ["Adobe Photoshop", "Photoshop"],
+  ["Adobe InDesign", "InDesign"],
+  ["Adobe Dreamweaver", "Dreamweaver"]
 ]);
 
 const TOOL_FILTER_EXCLUDES = new Set([
   "Adobe",
-  "Dreamweaver",
   "Antigravity",
   "Acrylic Paint",
   "Sculpey"
@@ -310,7 +311,7 @@ const getProjectTools = (project) => {
     .filter((tool) => tool && !TOOL_FILTER_EXCLUDES.has(tool));
 };
 
-const FILTER_KEYS = ["projectType", "role", "industry", "client", "tools"];
+const FILTER_KEYS = ["projectType", "industry", "client", "tools"];
 const SORT_MODES = ["featured", "latest", "oldest"];
 
 const sanitizeFilters = (filters) => {
@@ -318,7 +319,6 @@ const sanitizeFilters = (filters) => {
   const toolsAllowed = new Set([...FILTER_CONFIG.tools.primary, ...FILTER_CONFIG.tools.more]);
   const allowedValues = {
     projectType: new Set(FILTER_CONFIG.projectType),
-    role: new Set(FILTER_CONFIG.role),
     industry: new Set(FILTER_CONFIG.industry),
     client: new Set(FILTER_CONFIG.client),
     tools: toolsAllowed
@@ -400,43 +400,38 @@ const gridHTML = (items) => {
           const isVideo = /\.(mp4|webm|mov)$/i.test(thumb);
           const isWideView = viewMode === '1'; // Now applies to mobile too
           const aspectClass = isWideView ? 'aspect-[16/9]' : 'aspect-square';
-          const galleryImages = (p.gallery || [])
-            .map((g) => esc(g.src))
-            .filter((src) => /\.(png|jpe?g|gif|webp)$/i.test(src))
-            .slice(0, 3);
           const coverSrc = esc(p.cover || '');
-          const isCoverImage = /\.(png|jpe?g|gif|webp)$/i.test(coverSrc);
-          const isCoverVideo = /\.(mp4|webm|mov)$/i.test(coverSrc);
 
           let mediaHtml;
-          if (isWideView && (isVideo || isCoverImage || isCoverVideo)) {
+          if (isWideView) {
             const slides = [];
-            if (isCoverVideo) {
-              slides.push(`
-              <div class="thumb-roller-slide">
-                <video class="w-full h-full object-cover" src="${coverSrc}" autoplay muted loop playsinline></video>
-              </div>`);
-            } else if (isCoverImage) {
-              slides.push(`
-              <div class="thumb-roller-slide">
-                <img loading="lazy" decoding="async" class="w-full h-full object-cover" src="${coverSrc}" alt="${esc(getText(p.title))} cover" />
-              </div>`);
-            }
+            const addedSrcs = new Set();
 
-            // Include thumbnail if different from cover
-            if (thumb && thumb !== coverSrc) {
-              if (isVideo) {
+            const addSlide = (src) => {
+              if (!src || addedSrcs.has(src)) return;
+              const isVid = /\.(mp4|webm|mov)$/i.test(src);
+              const isImg = /\.(png|jpe?g|gif|webp)$/i.test(src);
+              if (!isVid && !isImg) return;
+
+              if (isVid) {
                 slides.push(`
-                <div class="thumb-roller-slide">
-                  <video class="w-full h-full object-cover" src="${thumb}" autoplay muted loop playsinline></video>
-                </div>`);
+                  <div class="thumb-roller-slide">
+                    <video class="w-full h-full object-cover" src="${src}" autoplay muted loop playsinline></video>
+                  </div>`);
               } else {
+                const isGif = src.toLowerCase().endsWith('.gif');
                 slides.push(`
-                <div class="thumb-roller-slide">
-                  <img loading="lazy" decoding="async" class="w-full h-full object-cover" src="${thumb}" alt="${esc(getText(p.title))} thumbnail" />
-                </div>`);
+                  <div class="thumb-roller-slide">
+                    <img loading="lazy" decoding="async" ${isGif ? 'style="will-change: transform;"' : ''} class="w-full h-full object-cover" src="${src}" alt="${esc(getText(p.title))}" />
+                  </div>`);
               }
-            }
+              addedSrcs.add(src);
+            };
+
+            // Order: Cover -> Thumbnail -> Gallery
+            addSlide(coverSrc);
+            addSlide(thumb);
+            (p.gallery || []).forEach(g => addSlide(esc(g.src)));
 
             if (slides.length > 1) {
               const slidesHtml = slides.join('');
@@ -448,20 +443,25 @@ const gridHTML = (items) => {
                 </div>
                 <button class="thumb-roller-btn thumb-roller-next" type="button" aria-label="Next thumbnail" data-thumb-slider="next">›</button>
               </div>`;
-            } else if (isCoverVideo || (isVideo && thumb === coverSrc)) {
-              mediaHtml = `<video class="${aspectClass} w-full object-cover thumb-media" src="${isCoverVideo ? coverSrc : thumb}" autoplay muted loop playsinline></video>`;
+            } else if (slides.length === 1) {
+              const src = Array.from(addedSrcs)[0];
+              const isVid = /\.(mp4|webm|mov)$/i.test(src);
+              if (isVid) {
+                mediaHtml = `<video class="${aspectClass} w-full object-cover thumb-media" src="${src}" autoplay muted loop playsinline></video>`;
+              } else {
+                const isGif = src.toLowerCase().endsWith('.gif');
+                mediaHtml = `<img loading="lazy" decoding="async" ${isGif ? 'style="will-change: transform;"' : ''} class="${aspectClass} w-full object-cover thumb-media" src="${src}" alt="${esc(getText(p.title))} thumbnail" />`;
+              }
             } else {
-              const staticSrc = isCoverImage ? coverSrc : thumb;
-              const isGif = staticSrc.toLowerCase().endsWith('.gif');
-              mediaHtml = `<img loading="lazy" decoding="async" ${isGif ? 'style="will-change: transform;"' : ''} class="${aspectClass} w-full object-cover thumb-media" src="${staticSrc}" alt="${esc(getText(p.title))} thumbnail" />`;
+              // Fallback if somehow no slides
+              mediaHtml = `<div class="${aspectClass} w-full bg-neutral-100"></div>`;
             }
           } else {
-            // Static thumbnail (Grid view): Always use thumbnail if available, then cover.
-            // Randomization of the image itself is removed here to keep the grid stable as requested.
+            // Static thumbnail (Grid view)
             const selectedThumb = thumb || coverSrc;
-
-            if (isVideo && thumb === selectedThumb) {
-              mediaHtml = `<video class="${aspectClass} w-full object-cover thumb-media" src="${thumb}" autoplay muted loop playsinline></video>`;
+            const isVid = /\.(mp4|webm|mov)$/i.test(selectedThumb);
+            if (isVid) {
+              mediaHtml = `<video class="${aspectClass} w-full object-cover thumb-media" src="${selectedThumb}" autoplay muted loop playsinline></video>`;
             } else {
               const isGif = selectedThumb.toLowerCase().endsWith('.gif');
               mediaHtml = `<img loading="lazy" decoding="async" ${isGif ? 'style="will-change: transform;"' : ''} class="${aspectClass} w-full object-cover thumb-media" src="${selectedThumb}" alt="${esc(getText(p.title))} thumbnail" />`;
@@ -473,6 +473,7 @@ const gridHTML = (items) => {
           <a href="#/${p.slug}" class="block overflow-hidden relative thumb-frame" style="text-decoration:none">
             ${mediaHtml}
             ${p.locked ? `<div class="absolute top-0 right-0 bg-black/10 text-white text-[10px] px-3 py-1 uppercase tracking-wider font-medium">${t('restricted')}</div>` : ''}
+            ${p.developing ? `<div class="absolute top-0 right-0 bg-[#7c3aed] text-white text-[10px] px-3 py-1 uppercase tracking-wider font-medium">${t('developing')}</div>` : ''}
           </a>
           <div class="mt-3">
             <h3 class="text-[15px] font-medium">${esc(getText(p.title))}</h3>
@@ -507,9 +508,9 @@ function detailHTML(p) {
       }
 
       return `
-        <figure>
+        <figure class="detail-gallery-figure">
           ${media}
-          ${caption && caption.trim() !== '' ? `<figcaption>${esc(caption)}</figcaption>` : ``}
+          ${caption && caption.trim() !== '' ? `<figcaption class="detail-gallery-caption">${esc(caption)}</figcaption>` : ``}
         </figure>`;
     })
     .join('');
@@ -522,107 +523,8 @@ function detailHTML(p) {
   const role = getText(p.role);
   const projectType = getText(p.projectType);
   const industry = getText(p.industry);
-  const tools = getText(p.tools); // Tools usually shared but just in case
-  const description = getText(p.description); // Array or String
-
-  const hasLeftContent = year || client || role || projectType || industry || tools;
-  const hasRightContent = description || hasLinks;
-
-  let infoSection = '';
-  if (hasLeftContent || hasRightContent) {
-    const gridCols = hasLeftContent && hasRightContent ? 'grid-cols-1 md:grid-cols-[200px_1fr]' : 'grid-cols-1';
-    infoSection = `
-          <section class="mt-8 pt-8 mb-12 border-t border-neutral-200">
-            <div class="grid ${gridCols} gap-8 md:gap-12">
-              ${hasLeftContent
-        ? `<div>
-                <div class="flex flex-col gap-y-4">
-                  ${year
-          ? `<div>
-                      <span class="text-[13px] text-neutral-500">${t('year')}</span>
-                      <div class="text-[15px] mt-1">${esc(year)}</div>
-                    </div>`
-          : ''
-        }
-                  ${client
-          ? `<div>
-                      <span class="text-[13px] text-neutral-500">${t('client')}</span>
-                      <div class="text-[15px] mt-1">${esc(clientDisplay)}</div>
-                    </div>`
-          : ''
-        }
-                  ${role
-          ? `<div>
-                      <span class="text-[13px] text-neutral-500">${t('role')}</span>
-                      <div class="text-[15px] mt-1">${esc(role)}</div>
-                    </div>`
-          : ''
-        }
-                  ${projectType
-          ? `<div>
-                      <span class="text-[13px] text-neutral-500">${t('projectType')}</span>
-                      <div class="text-[15px] mt-1">${esc(projectType)}</div>
-                    </div>`
-          : ''
-        }
-                  ${industry
-          ? `<div>
-                      <span class="text-[13px] text-neutral-500">${t('industry')}</span>
-                      <div class="text-[15px] mt-1">${esc(industry)}</div>
-                    </div>`
-          : ''
-        }
-                  ${tools
-          ? `<div>
-                      <span class="text-[13px] text-neutral-500">${t('tools')}</span>
-                      <div class="text-[15px] mt-1">${esc(tools)}</div>
-                    </div>`
-          : ''
-        }
-                  ${p.country || p.flagImage
-          ? `<div>
-                      <div class="text-[15px] mt-1">
-                        ${p.flagImage
-            ? `<img src="${esc(p.flagImage)}" class="w-[24px] h-[24px] object-contain" alt="flag">`
-            : p.country === 'India' ? '🇮🇳'
-              : p.country === 'Malaysia' ? '🇲🇾'
-                : ''
-          }
-                      </div>
-                    </div>`
-          : ''
-        }
-                </div>
-              </div>`
-        : ''
-      }
-              ${hasRightContent
-        ? `<div class="${hasLeftContent ? '' : 'w-full'}">
-                ${description
-          ? `<div class="text-[15px] leading-[1.7] text-neutral-700 mb-0">${Array.isArray(description) ? description.join('<br>') : esc(description)
-          }</div>`
-          : ''
-        }
-                ${hasLinks
-          ? `<div class="${description ? 'mt-4' : ''} space-y-2">
-                  ${p.links
-            .map(
-              (link) =>
-                `<a href="${esc(link.url)}" target="_blank" rel="noopener" class="text-[14px] text-neutral-600 hover:text-neutral-900" style="text-decoration:underline">${esc(
-                  link.label || link.url
-                )}</a>`
-            )
-            .join('<br>')}
-                </div>`
-          : ''
-        }
-              </div>`
-        : ''
-      }
-            </div>
-          </section>
-        `;
-  }
+  const tools = getText(p.tools);
+  const description = getText(p.description);
 
   const heroSrc = esc(p.cover);
   const isHeroVideo = /\.(mp4|webm|mov)$/i.test(heroSrc);
@@ -633,28 +535,70 @@ function detailHTML(p) {
     heroMedia = `<img class="w-full" src="${heroSrc}" alt="${esc(getText(p.title))} hero" />`;
   }
 
+  const infoSection = `
+    <aside class="detail-info-panel">
+      <div class="flex flex-col gap-y-10">
+        <div class="detail-meta-grid">
+          ${year ? `<div class="detail-meta-item"><span class="detail-label">${t('year')}</span><div class="detail-value">${esc(year)}</div></div>` : ''}
+          ${client ? `<div class="detail-meta-item"><span class="detail-label">${t('client')}</span><div class="detail-value">${esc(clientDisplay)}</div></div>` : ''}
+          ${role ? `<div class="detail-meta-item"><span class="detail-label">${t('role')}</span><div class="detail-value">${esc(role)}</div></div>` : ''}
+          ${industry ? `<div class="detail-meta-item"><span class="detail-label">${t('industry')}</span><div class="detail-value">${esc(industry)}</div></div>` : ''}
+          ${tools && p.slug !== 'gm-portfolio' && p.slug !== 'chatlog' ? `<div class="detail-meta-item"><span class="detail-label">${t('tools')}</span><div class="detail-value">${esc(tools)}</div></div>` : ''}
+        </div>
+
+        <div class="border-t border-neutral-100"></div>
+
+        ${description
+      ? `<div class="detail-description text-[15.5px] leading-[1.8] text-neutral-800">${Array.isArray(description) ? description.join('<br>') : esc(description)}</div>`
+      : ''
+    }
+        
+        ${hasLinks
+      ? `<div class="space-y-4 pt-4 border-t border-neutral-100">
+            ${p.links.map(link => `<a href="${esc(link.url)}" target="_blank" rel="noopener" class="detail-link group flex items-center gap-2">
+              <span class="underline underline-offset-4 decoration-neutral-300 group-hover:decoration-neutral-900 transition-colors">${esc(link.label || link.url)}</span>
+              <svg class="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all text-neutral-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            </a>`).join('')}
+          </div>`
+      : ''
+    }
+      </div>
+    </aside>
+  `;
+
   return `
-        <div class="flex items-center justify-between">
-          <a href="#/" class="text-[14px] text-neutral-600 hover:text-neutral-900" style="text-decoration:none">
-            ${t('back')}
-          </a>
-          <div class="text-[13px] text-neutral-500">${esc(getText(p.caption))}</div>
-        </div>
-        <article class="mt-3">
-          <h1 class="text-[30px] md:text-[40px] font-semibold tracking-tight">${esc(getText(p.title))}</h1>
-          ${p.summary ? `<p class="mt-2 text-[16px] leading-[1.7] text-neutral-700">${esc(getText(p.summary))}</p>` : ``}
-        </article>
-        <div class="flex flex-col">
-          <section class="mt-6 space-y-6">
-            <figure>
+    <div class="detail-wrapper">
+      <div class="detail-header-row flex items-center justify-between mb-8 md:mb-12">
+        <a href="#/" class="back-button-link group flex items-center gap-2 text-[14px] text-neutral-500 hover:text-neutral-900 transition-colors">
+          <svg class="w-4 h-4 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+          <span>${t('back')}</span>
+        </a>
+        <div class="text-[13px] text-neutral-400 font-medium tracking-tight">${esc(getText(p.caption))}</div>
+      </div>
+
+      <div class="detail-split-container">
+        <!-- Left Column: Gallery Content -->
+        <div class="detail-gallery-column">
+          <article class="detail-intro mb-12">
+            <h1 class="text-[36px] md:text-[52px] font-bold tracking-tight leading-[1.1] text-neutral-900">${esc(getText(p.title))}</h1>
+            ${p.summary ? `<p class="mt-6 text-[18px] md:text-[20px] leading-[1.6] text-neutral-500 font-normal max-w-2xl">${esc(getText(p.summary))}</p>` : ``}
+          </article>
+
+          <div class="detail-media-stack space-y-12">
+            <figure class="detail-hero-media">
               ${heroMedia}
-              <!-- Hide caption for cover/hero media -->
             </figure>
-            ${gallery}
-          </section>
-          ${infoSection}
+            <div class="detail-gallery-items space-y-12">
+              ${gallery}
+            </div>
+          </div>
         </div>
-      `;
+
+        <!-- Right Column: Project Info Panel -->
+        ${infoSection}
+      </div>
+    </div>
+  `;
 }
 
 function aboutHTML() {
@@ -684,9 +628,13 @@ function aboutHTML() {
   return `
     <article class="max-w-none">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
-        <div>
-          <h1 class="text-[34px] md:text-[34px] font-semibold tracking-tight">${t('aboutName')}</h1>
-          <h1 class="text-[34px] md:text-[34px] font-semibold tracking-tight text-[var(--accent-orange)] -mt-2">${t('aboutRole')}</h1>
+        <div class="flex flex-row items-start gap-5 md:h-full">
+          <!-- Desktop Image: Matches height of the tagline on the right -->
+          <img src="assets/icons/DesignPersona.png" alt="Design Persona" class="hidden md:block h-full w-auto object-contain max-h-[180px]" />
+          <div>
+            <h1 class="text-[34px] md:text-[34px] font-semibold tracking-tight">${t('aboutName')}</h1>
+            <h1 class="text-[34px] md:text-[34px] font-semibold tracking-tight text-[var(--accent-orange)] -mt-2">${t('aboutRole')}</h1>
+          </div>
         </div>
         <div class="text-right">
           <h1 class="text-[34px] md:text-[34px] tracking-tight">
@@ -741,13 +689,34 @@ function aboutHTML() {
           <div>
             <span class="text-neutral-500">${t('contact')}</span>
           </div>
-          <div class="text-right">
-            <a href="mailto:kimashe@naver.com" class="text-[var(--accent-orange)] font-medium">
-              kimashe@naver.com
+          <div class="text-right flex flex-col items-end">
+            <a href="mailto:designpersona.kr@gmail.com" class="text-[var(--accent-orange)] font-medium">
+              designpersona.kr@gmail.com
             </a>
+            <div class="hidden md:flex items-center gap-5 mt-4">
+              <a href="${esc(state.site.social.linkedin)}" target="_blank" rel="noopener" class="hover:opacity-100 transition-all hover:scale-110 active:scale-95">
+                <img src="assets/icons/LinkedIn.png" alt="LinkedIn" class="w-7 h-7 object-contain opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all" />
+              </a>
+              <a href="${esc(state.site.social.behance)}" target="_blank" rel="noopener" class="hover:opacity-100 transition-all hover:scale-110 active:scale-95">
+                <img src="assets/icons/Behance.png" alt="Behance" class="w-7 h-7 object-contain opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all" />
+              </a>
+            </div>
           </div>
         </div>
       </section>
+
+      <!-- Mobile Footer Image -->
+      <div class="md:hidden mt-16 mb-12 flex flex-col items-center gap-8">
+        <img src="assets/icons/DesignPersona.png" alt="Design Persona" class="w-full h-auto object-contain" />
+        <div class="flex items-center gap-8">
+          <a href="${esc(state.site.social.linkedin)}" target="_blank" rel="noopener" class="hover:opacity-100 transition-all active:scale-90">
+            <img src="assets/icons/LinkedIn.png" alt="LinkedIn" class="w-10 h-10 object-contain opacity-50 grayscale active:grayscale-0 active:opacity-100 transition-all" />
+          </a>
+          <a href="${esc(state.site.social.behance)}" target="_blank" rel="noopener" class="hover:opacity-100 transition-all active:scale-90">
+            <img src="assets/icons/Behance.png" alt="Behance" class="w-10 h-10 object-contain opacity-50 grayscale active:grayscale-0 active:opacity-100 transition-all" />
+          </a>
+        </div>
+      </div>
 
     </article>
   `;
@@ -895,17 +864,20 @@ function getFilterOptions() {
   };
 
   state.projects.forEach((p) => {
-    const projectType = getText(p.projectType);
-    if (projectType) options.projectType.add(projectType);
+    if (p.projectType) {
+      const types = getText(p.projectType).split(',');
+      types.forEach(t => options.projectType.add(t.trim()));
+    }
 
-    const client = getText(p.client);
-    if (client) options.client.add(client);
+    if (p.client) {
+      const clients = getText(p.client).split(',');
+      clients.forEach(c => options.client.add(c.trim()));
+    }
 
-    const role = getText(p.role);
-    if (role) options.role.add(role);
-
-    const industry = getText(p.industry);
-    if (industry) options.industry.add(industry);
+    if (p.industry) {
+      const industries = getText(p.industry).split(',');
+      industries.forEach(i => options.industry.add(i.trim()));
+    }
 
     getProjectTools(p).forEach((tool) => options.tools.add(tool));
   });
@@ -916,7 +888,6 @@ function getFilterOptions() {
   return {
     projectType: filterByUsed(FILTER_CONFIG.projectType, options.projectType),
     client: filterByUsed(FILTER_CONFIG.client, options.client),
-    role: filterByUsed(FILTER_CONFIG.role, options.role),
     industry: filterByUsed(FILTER_CONFIG.industry, options.industry),
     tools: filterByUsed(toolsAllowed, options.tools)
   };
@@ -927,18 +898,25 @@ function filterProjects() {
   let filtered = state.projects;
 
   // Apply search filter first
-  if (searchQuery && searchQuery.trim() !== '') {
-    const query = searchQuery.toLowerCase().trim();
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
     filtered = filtered.filter(p => {
-      const title = getText(p.title).toLowerCase();
-      const caption = getText(p.caption).toLowerCase();
-      const summary = getText(p.summary || '').toLowerCase();
-      return title.includes(query) || caption.includes(query) || summary.includes(query);
+      const text = [
+        getText(p.title),
+        getText(p.summary),
+        getText(p.description),
+        getText(p.client),
+        p.tools,
+        p.year
+      ].join(' ').toLowerCase();
+      return text.includes(q);
     });
   }
 
-  // Apply other filters
-  if (!activeFilters || Object.keys(activeFilters).length === 0 ||
+  // Apply category filters
+  const activeFilters = safeJsonParse(storage.get('activeFilters', '{}'), {});
+
+  if (Object.keys(activeFilters).length === 0 ||
     Object.values(activeFilters).every(arr => !arr || arr.length === 0)) {
     return filtered;
   }
@@ -946,26 +924,23 @@ function filterProjects() {
   return filtered.filter(p => {
     // Client filter
     if (activeFilters.client && activeFilters.client.length > 0) {
-      const client = getText(p.client);
-      if (!client || !activeFilters.client.includes(client)) return false;
+      const pClients = p.client ? getText(p.client).split(',').map(t => t.trim()) : [];
+      const hasMatch = pClients.some(c => activeFilters.client.includes(c));
+      if (!hasMatch) return false;
     }
 
-    // Role filter
-    if (activeFilters.role && activeFilters.role.length > 0) {
-      const role = getText(p.role);
-      if (!role || !activeFilters.role.includes(role)) return false;
-    }
-
-    // Project Type filter
+    // Project Type filter (supports multiple values)
     if (activeFilters.projectType && activeFilters.projectType.length > 0) {
-      const projectType = getText(p.projectType);
-      if (!projectType || !activeFilters.projectType.includes(projectType)) return false;
+      const pTypes = p.projectType ? getText(p.projectType).split(',').map(t => t.trim()) : [];
+      const hasMatch = pTypes.some(pt => activeFilters.projectType.includes(pt));
+      if (!hasMatch) return false;
     }
 
     // Industry filter
     if (activeFilters.industry && activeFilters.industry.length > 0) {
-      const industry = getText(p.industry);
-      if (!industry || !activeFilters.industry.includes(industry)) return false;
+      const pIndustries = p.industry ? getText(p.industry).split(',').map(t => t.trim()) : [];
+      const hasMatch = pIndustries.some(i => activeFilters.industry.includes(i));
+      if (!hasMatch) return false;
     }
 
     // Tools filter
@@ -998,7 +973,23 @@ const shuffleArray = (items) => {
 
 const sortProjects = (items) => {
   if (sortMode === 'featured') {
-    return shuffleArray(items);
+    // Stable shuffle: maintain the same random order within a session
+    if (!window._stableShuffleOrder) {
+      window._stableShuffleOrder = shuffleArray(items.map((_, i) => i));
+    }
+    // Return items in the pre-determined stable random order
+    const shuffled = [];
+    window._stableShuffleOrder.forEach(idx => {
+      if (items[idx]) shuffled.push(items[idx]);
+    });
+    // Add any remaining items (if list changed) or handle filtered subsets
+    const currentSlugs = new Set(shuffled.map(p => p.slug));
+    items.forEach(p => {
+      if (!currentSlugs.has(p.slug)) shuffled.push(p);
+    });
+    // Finally, filter only the items that are actually in the current 'items' list
+    const incomingSlugs = new Set(items.map(p => p.slug));
+    return shuffled.filter(p => incomingSlugs.has(p.slug));
   }
 
   const sorted = [...items];
@@ -1024,7 +1015,6 @@ function filterMenuHTML() {
   const options = getFilterOptions();
   const filterLabels = {
     client: t('client'),
-    role: t('role'),
     projectType: t('projectType'),
     industry: t('industry'),
     tools: t('tools')
@@ -1032,7 +1022,7 @@ function filterMenuHTML() {
 
   let html = '<div class="filter-menu-sections">';
 
-  ['projectType', 'role', 'industry', 'client', 'tools'].forEach(filterType => {
+  ['projectType', 'industry', 'client', 'tools'].forEach(filterType => {
     const filterValues = options[filterType];
     if (filterValues.length === 0) return;
 
@@ -1155,15 +1145,32 @@ function renderHome() {
   toggleMobileHamburger(true);
   updateStaticText();
 
-  // Reset scroll position on view change
-  window.scrollTo({ top: 0, behavior: "smooth" });
-  pane.scrollTo({ top: 0, behavior: "auto" }); // Pane reset instant
+  // Reset scroll position on view change ONLY if requested or significant change
+  const scroller = document.getElementById('desktopScroller');
+  if (scroller) {
+    if (window._preventNextScrollReset) {
+      // Keep current scroll
+    } else if (lastHomeScrollTop > 0) {
+      // Restore scroll
+      const targetPos = lastHomeScrollTop;
+      requestAnimationFrame(() => {
+        scroller.scrollTo({ top: targetPos, behavior: "instant" });
+        lastHomeScrollTop = 0;
+      });
+    } else {
+      scroller.scrollTo({ top: 0, behavior: "smooth" });
+    }
+    window._preventNextScrollReset = false;
+  } else {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
 
 }
 
 function renderAbout() {
   document.body.classList.add('about-page-active');
   document.body.classList.remove('detail-page-active');
+  updateViewToggleBar(); // Ensure bar is hidden
   clearThumbRollers();
   // Use JS rendering instead of template
   pane.innerHTML = aboutHTML();
@@ -1190,10 +1197,12 @@ function renderAbout() {
   updateStaticText();
   updateMobileResultCount();
 
-  if (document.body.classList.contains('mobile-mode')) {
-    requestAnimationFrame(() => window.scrollTo(0, 0));
+  // Reset scroll position on view change
+  const scroller = document.getElementById('desktopScroller');
+  if (scroller) {
+    scroller.scrollTo({ top: 0, behavior: "instant" });
   } else {
-    requestAnimationFrame(() => pane.scrollTo({ top: 0, behavior: 'instant' }));
+    window.scrollTo({ top: 0, behavior: "instant" });
   }
 }
 
@@ -1227,8 +1236,12 @@ function renderDetail(slug) {
 
 
   // Scroll Reset
-  pane.scrollTo({ top: 0, behavior: "auto" });
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  const scroller = document.getElementById('desktopScroller');
+  if (scroller) {
+    scroller.scrollTo({ top: 0, behavior: "smooth" });
+  } else {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
 }
 
 function initThumbRollers() {
@@ -1426,14 +1439,24 @@ function setLanguage(lang) {
   router(); // re-render current view
   // Update filter toggle button text if on home page
   if (location.hash === '#/' || location.hash === '') {
+    window._stableShuffleOrder = null; // Clear shuffle order when explicitly changing language/refreshing home
     updateFilterToggleButton();
   }
 }
 
 function router() {
+
   const raw = location.hash || '#/';
   const m = raw.match(/^#\/(.*)$/);
   const slug = m ? m[1] : '';
+
+  // Save scroll if leaving home
+  const scroller = document.getElementById('desktopScroller');
+  if ((window._lastSlug === '' || window._lastSlug === '/') && slug !== '' && slug !== '/') {
+    if (scroller) lastHomeScrollTop = scroller.scrollTop;
+  }
+  window._lastSlug = slug;
+
   if (!slug) {
     renderHome();
     closeMenu();
@@ -1537,9 +1560,12 @@ brandLink.addEventListener('click', (e) => {
 
   // Force scroll after logic (User requested setTimeout for stability)
   setTimeout(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    const pane = document.getElementById('pane');
-    if (pane) pane.scrollTo({ top: 0, behavior: "smooth" });
+    const scroller = document.getElementById('desktopScroller');
+    if (scroller) {
+      scroller.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   }, 30);
 });
 const s = state.site.social || {};
@@ -2015,6 +2041,7 @@ function updateFilterSelection(filterType, filterValue, isChecked) {
 
   // Re-render home if we're on home page
   if (location.hash === '#/' || location.hash === '') {
+    window._preventNextScrollReset = true; // Prevent jumping to top
     renderHome();
   } else {
     // Just update filter menu
@@ -2172,8 +2199,9 @@ let ticking = false;
 let isHeaderCollapsed = document.body.classList.contains('header-collapsed');
 
 function updateHeader() {
-  const currentY = window.scrollY;
   const isDesktop = window.innerWidth >= 1024;
+  const scroller = document.getElementById('desktopScroller');
+  const currentY = (isDesktop && scroller) ? scroller.scrollTop : window.scrollY;
 
   // Header collapse effect
   if (isDesktop) {
@@ -2202,12 +2230,22 @@ function updateHeader() {
   ticking = false;
 }
 
-window.addEventListener("scroll", () => {
+const handleScroll = () => {
   if (!ticking) {
     window.requestAnimationFrame(updateHeader);
     ticking = true;
   }
-}, { passive: true });
+};
+
+window.addEventListener("scroll", handleScroll, { passive: true });
+
+// Also listen to desktopScroller if it exists
+document.addEventListener('DOMContentLoaded', () => {
+  const scroller = document.getElementById('desktopScroller');
+  if (scroller) {
+    scroller.addEventListener('scroll', handleScroll, { passive: true });
+  }
+});
 
 window.addEventListener('resize', () => {
   updateDesktopHeaderVars();
@@ -2221,7 +2259,13 @@ window.addEventListener('load', () => {
 
 if (scrollTopBtn) {
   scrollTopBtn.addEventListener('click', () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const isDesktop = window.innerWidth >= 1024;
+    const scroller = document.getElementById('desktopScroller');
+    if (isDesktop && scroller) {
+      scroller.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   });
 }
 function syncMobileFilterContent() {
