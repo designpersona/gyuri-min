@@ -340,6 +340,54 @@ if (!SORT_MODES.includes(sortMode)) {
 
 const esc = (s = '') => (s ?? '').toString();
 
+let lazyVideoObserver = null;
+
+function initLazyVideos(root = document) {
+  const videos = root.querySelectorAll('video[data-src]:not([data-lazy-init])');
+  if (!videos.length) return;
+
+  const loadVideo = (video) => {
+    if (!video || video.dataset.loaded === '1') return;
+    const src = video.dataset.src;
+    if (!src) return;
+    video.src = src;
+    video.dataset.loaded = '1';
+    try {
+      video.load();
+      if (video.hasAttribute('autoplay')) {
+        const p = video.play();
+        if (p && typeof p.catch === 'function') p.catch(() => {});
+      }
+    } catch (e) {
+      // Ignore media loading/play failures.
+    }
+  };
+
+  if ('IntersectionObserver' in window) {
+    if (lazyVideoObserver) lazyVideoObserver.disconnect();
+    lazyVideoObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const video = entry.target;
+          loadVideo(video);
+          lazyVideoObserver.unobserve(video);
+        });
+      },
+      { rootMargin: '250px 0px' }
+    );
+    videos.forEach((video) => {
+      video.dataset.lazyInit = '1';
+      lazyVideoObserver.observe(video);
+    });
+  } else {
+    videos.forEach((video) => {
+      video.dataset.lazyInit = '1';
+      loadVideo(video);
+    });
+  }
+}
+
 /** Helper: Get localized text */
 const getText = (obj) => {
   if (!obj) return '';
@@ -416,7 +464,7 @@ const gridHTML = (items) => {
               if (isVid) {
                 slides.push(`
                   <div class="thumb-roller-slide">
-                    <video class="w-full h-full object-cover" src="${src}" autoplay muted loop playsinline></video>
+                    <video class="w-full h-full object-cover" data-src="${src}" preload="none" autoplay muted loop playsinline></video>
                   </div>`);
               } else {
                 const isGif = src.toLowerCase().endsWith('.gif');
@@ -447,7 +495,7 @@ const gridHTML = (items) => {
               const src = Array.from(addedSrcs)[0];
               const isVid = /\.(mp4|webm|mov)$/i.test(src);
               if (isVid) {
-                mediaHtml = `<video class="${aspectClass} w-full object-cover thumb-media" src="${src}" autoplay muted loop playsinline></video>`;
+                mediaHtml = `<video class="${aspectClass} w-full object-cover thumb-media" data-src="${src}" preload="none" autoplay muted loop playsinline></video>`;
               } else {
                 const isGif = src.toLowerCase().endsWith('.gif');
                 mediaHtml = `<img loading="lazy" decoding="async" ${isGif ? 'style="will-change: transform;"' : ''} class="${aspectClass} w-full object-cover thumb-media" src="${src}" alt="${esc(getText(p.title))} thumbnail" />`;
@@ -461,7 +509,7 @@ const gridHTML = (items) => {
             const selectedThumb = thumb || coverSrc;
             const isVid = /\.(mp4|webm|mov)$/i.test(selectedThumb);
             if (isVid) {
-              mediaHtml = `<video class="${aspectClass} w-full object-cover thumb-media" src="${selectedThumb}" autoplay muted loop playsinline></video>`;
+              mediaHtml = `<video class="${aspectClass} w-full object-cover thumb-media" data-src="${selectedThumb}" preload="none" autoplay muted loop playsinline></video>`;
             } else {
               const isGif = selectedThumb.toLowerCase().endsWith('.gif');
               mediaHtml = `<img loading="lazy" decoding="async" ${isGif ? 'style="will-change: transform;"' : ''} class="${aspectClass} w-full object-cover thumb-media" src="${selectedThumb}" alt="${esc(getText(p.title))} thumbnail" />`;
@@ -1127,6 +1175,7 @@ function renderHome() {
 
   pane.innerHTML = gridHTML(filteredItems);
   initThumbRollers();
+  initLazyVideos(pane);
   updateMobileViewDropdown();
   updateMobileResultCount();
   updateDesktopResultCount();
