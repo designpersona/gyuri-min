@@ -93,7 +93,7 @@ try {
 const state = { site: DATA.site, projects: DATA.projects };
 let pendingSlug = null;
 let currentLang = storage.get('site_lang', 'en');
-let viewMode = storage.get('view_mode', '1'); // '1', '2', '3', or '5'
+let viewMode = storage.get('view_mode', '3'); // '1', '2', '3', or '5'
 let searchQuery = '';
 let activeFilters = safeJsonParse(storage.get('activeFilters', '{}'), {}); // { projectType: [], role: [], industry: [], client: [], tools: [] }
 let sortMode = storage.get('sort_mode', 'featured'); // featured | latest | oldest
@@ -767,11 +767,11 @@ function updateLayoutMode() {
   }
 
   if (!isMobile) {
-    const desktopDefaultSet = storage.get('view_mode_initialized', '0') === '1';
+    const desktopDefaultSet = storage.get('view_mode_v2_initialized', '0') === '1';
     if (!desktopDefaultSet) {
-      storage.set('view_mode_initialized', '1');
-      if (viewMode !== '1') {
-        setViewMode('1');
+      storage.set('view_mode_v2_initialized', '1');
+      if (viewMode !== '3') {
+        setViewMode('3');
       }
     }
   }
@@ -787,7 +787,7 @@ function updateLayoutMode() {
   }
 
   if (!isMobile && viewMode === '2') {
-    setViewMode('1');
+    setViewMode('3');
   }
 
   updateViewToggleButtons();
