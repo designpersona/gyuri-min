@@ -56,6 +56,20 @@ body {
 .toplink {
   text-decoration: none !important;
   border-bottom: 0 !important;
+  transition: color 0.3s ease;
+}
+
+#brandLink img {
+  transition: filter 0.3s ease;
+}
+
+#brandLink:hover {
+  color: var(--accent-orange) !important;
+}
+
+#brandLink:hover img {
+  /* This filter approximates #FF5A00 (accent orange) */
+  filter: invert(41%) sepia(85%) saturate(3620%) hue-rotate(1deg) brightness(103%) contrast(106%);
 }
 
 .menu-list li {
