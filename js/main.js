@@ -1640,8 +1640,7 @@ if (mobileFilterDrawer) {
 }
 
 const updateMobileViewDropdown = () => {
-  if (!mobileViewSelect) return;
-  mobileViewSelect.value = viewMode === '1' ? '1' : '2';
+  // No-op for select removed. Handled by updateViewToggleButtons.
 };
 
 function setViewMode(nextMode, { render = true } = {}) {
@@ -1708,16 +1707,7 @@ if (mobileSortSelect) {
   });
 }
 
-if (mobileViewSelect) {
-  if (mobileViewSelect.dataset.bound !== 'true') {
-    mobileViewSelect.dataset.bound = 'true';
-    mobileViewSelect.addEventListener('change', (e) => {
-      const nextView = e.target.value;
-      if (!nextView) return;
-      setViewMode(nextView);
-    });
-  }
-}
+// Mobile view select removed. Handled by button listeners in setupViewToggle.
 
 // Search functionality
 const searchInput = document.getElementById('searchInput');
@@ -1727,6 +1717,13 @@ const mobileSearchModal = document.getElementById('mobileSearchModal');
 const mobileSearchBox = document.getElementById('mobileSearchBox');
 const mobileSearchClose = document.getElementById('mobileSearchClose');
 if (searchInput) {
+  const desktopSearchContainer = document.querySelector('.desktop-search');
+  if (desktopSearchContainer) {
+    desktopSearchContainer.addEventListener('click', () => {
+      searchInput.focus();
+    });
+  }
+
   searchInput.addEventListener('input', (e) => {
     searchQuery = e.target.value;
     if (location.hash === '#/' || location.hash === '') {
@@ -1835,6 +1832,21 @@ function setupViewToggle() {
     });
   }
 
+  const mToggle1 = document.getElementById('mobileViewToggle1');
+  const mToggle2 = document.getElementById('mobileViewToggle2');
+
+  if (mToggle1) {
+    mToggle1.addEventListener('click', () => {
+      setViewMode('1');
+    });
+  }
+
+  if (mToggle2) {
+    mToggle2.addEventListener('click', () => {
+      setViewMode('2');
+    });
+  }
+
   if (toggleFilterBtn) {
     toggleFilterBtn.addEventListener('click', () => {
       filterVisible = !filterVisible;
@@ -1863,6 +1875,16 @@ function updateViewToggleButtons() {
   const activeToggle = document.getElementById(`viewToggle${viewMode}`);
   if (activeToggle) {
     activeToggle.classList.add('active');
+  }
+
+  const mToggleActive1 = document.getElementById('mobileViewToggle1');
+  const mToggleActive2 = document.getElementById('mobileViewToggle2');
+
+  if (mToggleActive1) {
+    mToggleActive1.classList.toggle('active', viewMode === '1');
+  }
+  if (mToggleActive2) {
+    mToggleActive2.classList.toggle('active', viewMode === '2' || (window.innerWidth < 1024 && viewMode !== '1'));
   }
   const desktopSortSelect = document.getElementById('desktopSortSelect');
   if (desktopSortSelect) {
