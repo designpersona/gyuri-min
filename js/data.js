@@ -3,8 +3,8 @@ window.PROJECT_DATA = {
         "name": "Design Persona",
         "social": {
             "linkedin": "https://www.linkedin.com/in/gyuri-min",
-            "x": "https://x.com/kyurimy",
-            "behance": "https://www.behance.net/kyurimy"
+            "x": " ",
+            "behance": "www.behance.net/gyuri_min"
         },
         "copyright": {
             "en": "Copyright © Design Persona 2013-2026. All Rights Reserved.",
