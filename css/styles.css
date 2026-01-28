@@ -380,26 +380,50 @@ body.mobile-mode aside {
   animation: subtlePulse 2s ease-in-out 3 forwards;
 }
 
-/* View Toggle Buttons - Text Only */
-.view-toggle-text {
+/* View Toggle Buttons */
+.view-toggle-text,
+.view-toggle-btn {
   background: none;
   border: none;
   color: #666;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  transition: color 0.2s ease;
+  transition: all 0.2s ease;
   padding: 0;
   text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.view-toggle-text:hover {
+.view-toggle-btn {
+  opacity: 0.4;
+}
+
+.view-toggle-text:hover,
+.view-toggle-btn:hover {
   color: var(--accent-orange);
+  opacity: 1;
 }
 
-.view-toggle-text.active {
+.view-toggle-text.active,
+.view-toggle-btn.active {
   color: var(--accent-orange);
   font-weight: 500;
+  opacity: 1;
+}
+
+.view-toggle-btn svg {
+  transition: transform 0.2s ease;
+}
+
+.view-toggle-btn:hover svg {
+  transform: scale(1.1);
+}
+
+.view-toggle-btn.active svg {
+  transform: scale(1.1);
 }
 
 /* View Toggle Bar - Fixed below header */
@@ -452,11 +476,13 @@ body.header-collapsed #viewToggleBar {
   filter: none;
 }
 
-#viewToggleBar .view-toggle-text {
+#viewToggleBar .view-toggle-text,
+#viewToggleBar .view-toggle-btn {
   color: black;
 }
 
-#viewToggleBar .view-toggle-text.active {
+#viewToggleBar .view-toggle-text.active,
+#viewToggleBar .view-toggle-btn.active {
   color: var(--accent-orange);
 }
 
@@ -1291,35 +1317,64 @@ body.header-collapsed #topBar {
 #searchInput {
   border-radius: 0;
   border: none;
-  border-bottom: 1px solid black;
-  /* Black by default */
   padding-left: 0;
   padding-right: 0;
   background: transparent;
-  width: 180px;
-  transition: border-color 0.3s ease;
+  width: 0;
+  opacity: 0;
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
   color: black;
+  cursor: text;
 }
 
 .desktop-search {
-  gap: 6px;
+  gap: 0;
   color: #111;
+  border-bottom: 1.5px solid transparent;
+  width: 44px;
+  height: 44px;
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+  overflow: hidden;
+  cursor: pointer;
+  display: flex !important;
+  align-items: center;
+  justify-content: flex-end;
+  margin-right: -8px;
+  /* Increased to pull closer to hamburger menu */
+}
+
+.desktop-search:hover,
+.desktop-search:focus-within {
+  width: 220px;
+  border-bottom-color: black;
+}
+
+.desktop-search:focus-within {
+  border-bottom-color: var(--accent-orange);
 }
 
 .desktop-search-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  opacity: 0;
-  transform: translateX(-8px);
-  transition: opacity 0.2s ease, transform 0.25s ease;
-  pointer-events: none;
+  opacity: 1;
+  color: #111;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  transition: color 0.3s ease;
+}
+
+.desktop-search:hover #searchInput,
+.desktop-search:focus-within #searchInput {
+  width: 170px;
+  opacity: 1;
+  padding-left: 12px;
 }
 
 .desktop-search:hover .desktop-search-icon,
 .desktop-search:focus-within .desktop-search-icon {
-  opacity: 1;
-  transform: translateX(0);
+  color: var(--accent-orange);
 }
 
 #searchInput::placeholder {
@@ -1335,10 +1390,7 @@ body.header-collapsed #topBar {
   visibility: hidden;
 }
 
-#searchInput:hover,
 #searchInput:focus {
-  border-bottom-color: var(--accent-orange);
-  /* Orange on hover/focus */
   outline: none;
 }
 
