@@ -207,7 +207,7 @@ const I18N = {
     thumbnailView: "썸네일",
     // About Page
     aboutRole: "브랜드 디자이너",
-    aboutTagline: "브랜드 설계.<br />비주얼 전략.<br />경험 건축.<br />창의적 연결.",
+    aboutTagline: "브랜드 설계자.<br />비주얼 전략가.<br />경험 구축자.<br />창의적 연결자.",
     expertise: "전문 분야",
     recognition: "수상 경력",
     education: "학력",
@@ -690,7 +690,7 @@ function aboutHTML() {
             <span class="text-neutral-500">${t('contact')}</span>
           </div>
           <div class="text-right flex flex-col items-end">
-            <a href="mailto:designpersona.kr@gmail.com" class="text-[var(--accent-orange)] font-medium">
+            <a href="mailto:designpersona.kr@gmail.com" class="text-[var(--accent-orange)] font-medium break-all">
               designpersona.kr@gmail.com
             </a>
             <div class="hidden md:flex items-center gap-5 mt-4">
