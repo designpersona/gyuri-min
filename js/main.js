@@ -1,5 +1,5 @@
 /** Configuration & State */
-const LOCK_PASSWORD = '123412'; // password for protected content
+const LOCK_PASSWORD_HASH = '64054d8092ebdd04ae20aadbe8ef3f168495fa514af6865e12f421470c8f7cb7';
 
 const storage = (() => {
   let available = true;
@@ -38,6 +38,50 @@ const safeJsonParse = (value, fallback) => {
     return fallback;
   }
 };
+
+async function sha256Hex(value) {
+  if (!window.crypto || !window.crypto.subtle) return '';
+  const bytes = new TextEncoder().encode(value);
+  const hash = await window.crypto.subtle.digest('SHA-256', bytes);
+  return Array.from(new Uint8Array(hash))
+    .map((byte) => byte.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+function installContentProtection() {
+  document.body.classList.add('content-protected');
+
+  const allowEditable = (target) => {
+    if (!target || !(target instanceof Element)) return false;
+    return Boolean(target.closest('input, textarea, select, [contenteditable="true"]'));
+  };
+
+  document.addEventListener('contextmenu', (event) => {
+    if (!allowEditable(event.target)) event.preventDefault();
+  }, { capture: true });
+
+  document.addEventListener('dragstart', (event) => {
+    event.preventDefault();
+  }, { capture: true });
+
+  document.addEventListener('selectstart', (event) => {
+    if (!allowEditable(event.target)) event.preventDefault();
+  }, { capture: true });
+
+  document.addEventListener('copy', (event) => {
+    if (!allowEditable(event.target)) event.preventDefault();
+  }, { capture: true });
+
+  document.addEventListener('keydown', (event) => {
+    const key = event.key.toLowerCase();
+    const modifier = event.metaKey || event.ctrlKey;
+    if (modifier && ['a', 'c', 's', 'u', 'p'].includes(key) && !allowEditable(event.target)) {
+      event.preventDefault();
+    }
+  }, { capture: true });
+}
+
+installContentProtection();
 
 // Parse embedded JSON data
 const DATA = window.PROJECT_DATA;
@@ -218,12 +262,11 @@ const I18N = {
     // About Page
     aboutRole: "Brand Designer",
     aboutTagline: "Brand Architect.<br>Visual Strategist.<br>Experience Builder.<br>Creative Connector.",
-    aboutIntro: "A brand designer shaping identity, packaging, content, and campaign systems across digital and physical touchpoints.",
     expertise: "Expertise",
     experience: "Experience",
     recognition: "Recognition",
     education: "Education",
-    credentials: "Credentials",
+    credentials: "Activities & Credentials",
     contact: "Get in touch →",
     competencies: [
       "<span class=\"font-semibold\">Brand Strategy & Design:</span> End-to-end identity, packaging, and campaign execution",
@@ -321,12 +364,11 @@ const I18N = {
     // About Page
     aboutRole: "브랜드 디자이너",
     aboutTagline: "Brand Architect.<br>Visual Strategist.<br>Experience Builder.<br>Creative Connector.",
-    aboutIntro: "아이덴티티, 패키지, 콘텐츠, 캠페인 시스템을 디지털과 오프라인 접점에 맞게 설계하는 브랜드 디자이너입니다.",
     expertise: "전문 분야",
     experience: "경력",
     recognition: "수상 경력",
     education: "학력",
-    credentials: "자격증",
+    credentials: "사회활동 및 자격사항",
     contact: "연락처 →",
     competencies: [
       "<span class=\"font-semibold\">Brand Strategy & Design:</span> 아이덴티티, 패키지, 캠페인의 통합 설계와 실행",
@@ -851,7 +893,7 @@ function detailHTML(p) {
 
       if (ytMatch) {
         media = `<div class="relative w-full aspect-video">
-              <iframe class="absolute inset-0 w-full h-full" src="https://www.youtube.com/embed/${ytMatch[1]}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+              <iframe class="absolute inset-0 w-full h-full" src="https://www.youtube.com/embed/${ytMatch[1]}" title="YouTube video player" frameborder="0" loading="lazy" referrerpolicy="no-referrer" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>`;
       } else if (/\.(mp4|webm|mov)$/i.test(src)) {
         media = `<video class="w-full" controls playsinline preload="metadata">
@@ -909,7 +951,7 @@ function detailHTML(p) {
         
         ${hasLinks
       ? `<div class="space-y-4 pt-4 border-t border-neutral-100">
-            ${p.links.map(link => `<a href="${esc(link.url)}" target="_blank" rel="noopener" class="detail-link group flex items-center gap-2">
+            ${p.links.map(link => `<a href="${esc(link.url)}" target="_blank" rel="noopener noreferrer" class="detail-link group flex items-center gap-2">
               <span class="underline underline-offset-4 decoration-neutral-300 group-hover:decoration-neutral-900 transition-colors">${esc(link.label || link.url)}</span>
               <svg class="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all text-neutral-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
             </a>`).join('')}
@@ -984,7 +1026,6 @@ function aboutHTML() {
         </div>
         <div class="about-summary">
           <p class="about-tagline">${t('aboutTagline')}</p>
-          <p class="about-intro">${t('aboutIntro')}</p>
         </div>
       </section>
 
@@ -1532,7 +1573,7 @@ function landingFeaturedProjectHTML() {
 
   const title = esc(getText(project.title));
   const summary = esc(getText(project.summary));
-  const image = esc(project.cover || project.thumbnail || '');
+  const image = esc(project.thumbnail || project.cover || '');
   const ctaLabel = currentLang === 'ko' ? '자세히 보기' : 'View details';
   const statusLabel = currentLang === 'ko' ? '개발중' : 'In development';
   const ctaHref = '#/chatlog';
@@ -1685,23 +1726,23 @@ function categoryFocusDescription(category) {
     },
     'fnb-retail': {
       en: 'Food, retail, packaging, and offline brand touchpoints.',
-      ko: '푸드, 리테일, 패키지와 오프라인 브랜드 접점.'
+      ko: '푸드, 리테일, 패키지와 오프라인 브랜드 접점 디자인.'
     },
     'packaging': {
       en: 'Package systems, product lines, and sales assets.',
-      ko: '패키지 시스템, 제품 라인, 세일즈 비주얼.'
+      ko: '패키지 시스템, 제품 라인, 세일즈 비주얼 디자인.'
     },
     'campaign-content': {
       en: 'Key visuals, campaigns, and repeatable content.',
-      ko: '키비주얼, 캠페인, 반복 가능한 콘텐츠.'
+      ko: '키비주얼, 캠페인, 반복 가능한 콘텐츠 디자인.'
     },
     'digital-web': {
       en: 'Web, UIUX, catalogues, and digital services.',
-      ko: '웹, UIUX, 카탈로그와 디지털 서비스.'
+      ko: '웹, UIUX, 카탈로그와 디지털 서비스 디자인.'
     },
     'illustration-character': {
       en: 'Characters, illustration assets, and goods visuals.',
-      ko: '캐릭터, 일러스트 에셋, 굿즈 비주얼.'
+      ko: '캐릭터, 일러스트 에셋, 굿즈형 비주얼 작업.'
     }
   };
   const item = copy[category.slug];
@@ -1711,10 +1752,11 @@ function categoryFocusDescription(category) {
 
 function categoryMoreCardHTML() {
   const label = currentLang === 'ko' ? '다른 프로젝트 보기' : 'Other Projects';
+  const displayLabel = currentLang === 'ko' ? '다른 프로젝트\n보기' : 'Other\nProjects';
   return `
         <article class="portfolio-card category-more-card relative group">
           <a href="#/archive" class="category-more-link" style="text-decoration:none" aria-label="${esc(label)}">
-            <span>${esc(label)}</span>
+            <span>${esc(displayLabel).replace(/\n/g, '<br>')}</span>
             <span class="category-more-arrow" aria-hidden="true">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                 <path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
@@ -2146,8 +2188,9 @@ function updateStaticText() {
 
   // Copyright
   const copyText = getText(state.site.copyright);
-  (document.getElementById('desktopCopyright') || {}).textContent = copyText;
-  (document.getElementById('mobileCopyright') || {}).textContent = copyText;
+  const versionedCopyText = `${copyText} · Site v1.0.3`;
+  (document.getElementById('desktopCopyright') || {}).textContent = versionedCopyText;
+  (document.getElementById('mobileCopyright') || {}).textContent = versionedCopyText;
 
   // Language Label
   if (currentLangLabel) currentLangLabel.textContent = t('langLabel');
@@ -2306,10 +2349,11 @@ function hideLockModal() {
   pendingSlug = null;
 }
 
-lockForm.addEventListener('submit', (e) => {
+lockForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const pwd = lockInput.value;
-  if (pwd === LOCK_PASSWORD) {
+  const isValid = (await sha256Hex(pwd)) === LOCK_PASSWORD_HASH;
+  if (isValid) {
     if (pendingSlug) {
       renderDetail(pendingSlug);
     }
