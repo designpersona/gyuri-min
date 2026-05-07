@@ -96,10 +96,47 @@ let currentLang = storage.get('site_lang', 'en');
 let viewMode = storage.get('view_mode', '3'); // '1', '2', '3', or '5'
 let searchQuery = '';
 let activeFilters = safeJsonParse(storage.get('activeFilters', '{}'), {}); // { projectType: [], role: [], industry: [], client: [], tools: [] }
-let sortMode = storage.get('sort_mode', 'featured'); // featured | latest | oldest
+let sortMode = storage.get('sort_mode', 'latest'); // featured | latest | oldest
+let archiveFocusMode = storage.get('archive_focus', '');
+let archiveYearMode = storage.get('archive_year', '');
 let toolsShowAll = storage.get('tools_show_all', 'false') === 'true';
 let lastHomeScrollTop = 0;
 window._lastSlug = '';
+const DETAIL_BACK_ROUTE_KEY = 'detail_back_route_session';
+let detailBackRouteFallback = '#/archive';
+const normalizeDetailBackRoute = (route) => {
+  if (route === '#/archive') return route;
+  if (typeof route === 'string' && route.startsWith('#/category/')) {
+    const categorySlug = route.replace('#/category/', '');
+    if (CATEGORY_CONFIG.some((item) => item.slug === categorySlug)) return route;
+  }
+  return '#/archive';
+};
+const getRawDetailBackRoute = () => {
+  try {
+    return sessionStorage.getItem(DETAIL_BACK_ROUTE_KEY) || detailBackRouteFallback;
+  } catch (err) {
+    return detailBackRouteFallback;
+  }
+};
+const setRawDetailBackRoute = (route) => {
+  detailBackRouteFallback = route;
+  try {
+    sessionStorage.setItem(DETAIL_BACK_ROUTE_KEY, route);
+  } catch (err) {
+    // Ignore storage failures.
+  }
+};
+const getDetailBackHref = () => normalizeDetailBackRoute(getRawDetailBackRoute());
+const rememberDetailBackRoute = (slug) => {
+  if (slug === 'archive') {
+    setRawDetailBackRoute('#/archive');
+    return;
+  }
+  if (typeof slug === 'string' && slug.startsWith('category/')) {
+    setRawDetailBackRoute(`#/${slug}`);
+  }
+};
 // Default filter visibility: Hidden on mobile (<1024), Visible on desktop
 const filterVisibleStored = storage.get('filterVisible', null);
 let filterVisible = filterVisibleStored === null
@@ -134,6 +171,12 @@ const I18N = {
     showFilter: "Show Filter",
     filter: "Filter",
     resultsSuffix: "Results",
+    homeEyebrow: "Selected Portfolio",
+    homeTitle: "Brand systems, content, and experiences built across digital and physical touchpoints.",
+    homeDescription: "A curated archive of identity, packaging, campaign, web, and experience design projects across food, technology, public sector, and consumer brands.",
+    homeChip1: "Brand Identity",
+    homeChip2: "Package & Content",
+    homeChip3: "Experience Design",
     sort: "Sort",
     featured: "Random",
     latest: "Latest",
@@ -144,10 +187,40 @@ const I18N = {
     viewLabel: "View",
     magazineView: "Magazine",
     thumbnailView: "Thumbnail",
+    archive: "Archive",
+    categoryEyebrow: "Choose a focus",
+    categoryTitle: "Explore work by design capability, not by chronology.",
+    categoryDescription: "Start with a focused view, or open the full archive when you want to search and filter every project.",
+    viewProjects: "View projects",
+    openCategory: "Open category",
+    startWith: "Start with",
+    allProjects: "All Projects",
+    featuredRoutes: "Suggested routes",
+    routeBrand: "For brand/BX roles",
+    routeBrandDesc: "Identity systems, guides, and visual consistency cases.",
+    routeRetail: "For F&B / retail roles",
+    routeRetailDesc: "Offline touchpoints, packaging, space, and campaign applications.",
+    routeDigital: "For content / digital roles",
+    routeDigitalDesc: "Web, e-catalogue, campaigns, and repeatable content systems.",
+    lowerOverviewKicker: "Browse by intent",
+    lowerOverviewTitle: "Choose a focused route or open the full archive.",
+    lowerOverviewDesc: "Use the category paths when you already know the kind of work you want to inspect, or jump into the full project archive for broader search and filtering.",
+    contactPrompt: "Need a custom PDF or project deck?",
+    contactAction: "Contact by email",
+    phil1: "Build the brand architecture.",
+    phil2: "Shape the visual strategy.",
+    phil3: "Design the experience.",
+    phil4: "Connect through creativity.",
+    statYears: "Years\nExperience",
+    statProjects: "Selected\nProjects",
+    statArchive: "Design\nArchive",
+    sloganHTML: "Your desire,<br>built with<br><span class=\"highlight\">Design Persona.</span>",
     // About Page
     aboutRole: "Brand Designer",
-    aboutTagline: "Brand Architect.<br />Visual Strategist.<br />Experience Builder.<br />Creative Connector.",
+    aboutTagline: "Brand Architect.<br>Visual Strategist.<br>Experience Builder.<br>Creative Connector.",
+    aboutIntro: "A brand designer shaping identity, packaging, content, and campaign systems across digital and physical touchpoints.",
     expertise: "Expertise",
+    experience: "Experience",
     recognition: "Recognition",
     education: "Education",
     credentials: "Credentials",
@@ -155,7 +228,13 @@ const I18N = {
     competencies: [
       "<span class=\"font-semibold\">Brand Strategy & Design:</span> End-to-end identity, packaging, and campaign execution",
       "<span class=\"font-semibold\">B2G & Public Sector:</span> RFP response, MOU negotiation, and funding acquisition",
-      "<span class=\"font-semibold\">Global Market Launch:</span> B2B/B2C expertise with distribution partnerships across Southeast Asia and India"
+      "<span class=\"font-semibold\">Global Market Launch:</span> B2B/B2C experience with distribution partnerships across Southeast Asia and India"
+    ],
+    experienceList: [
+      { period: "2021.12 — 2025.06", company: "Korea Livestock Data", role: "Senior Manager, Brand Communication Team" },
+      { period: "2018.07 — 2021.03", company: "Trade Expo", role: "Designer / Assistant Manager, Design Strategy Team" },
+      { period: "2017.04 — 2017.12", company: "PIAS Intercosmex Korea", role: "Designer, Sales Department" },
+      { period: "2015.09 — 2015.11", company: "The K Holdings", role: "Designer" }
     ],
     awards: [
       "Korea Angel Investment Association President's Award",
@@ -177,7 +256,7 @@ const I18N = {
     aboutName: "민 규리",
     aboutLink: "about me",
     mobileAboutLink: "about me",
-    back: "← 목록으로",
+    back: "목록으로",
     restricted: "준비 중",
     developing: "개발중",
     lockedTitle: "비공개 프로젝트",
@@ -195,6 +274,12 @@ const I18N = {
     showFilter: "필터 보이기",
     filter: "필터",
     resultsSuffix: "개의 결과",
+    homeEyebrow: "Selected Portfolio",
+    homeTitle: "디지털과 오프라인 접점을 아우르는 브랜드 시스템, 콘텐츠, 경험 디자인.",
+    homeDescription: "푸드, 테크, 공공, 소비재 브랜드를 중심으로 아이덴티티, 패키지, 캠페인, 웹, 경험 디자인 프로젝트를 정리한 포트폴리오입니다.",
+    homeChip1: "Brand Identity",
+    homeChip2: "Package & Content",
+    homeChip3: "Experience Design",
     sort: "정렬",
     featured: "무작위",
     latest: "최근 순",
@@ -205,18 +290,54 @@ const I18N = {
     viewLabel: "보기",
     magazineView: "매거진",
     thumbnailView: "썸네일",
+    archive: "Archive",
+    categoryEyebrow: "Choose a focus",
+    categoryTitle: "연대순보다 역량별로 작업을 탐색할 수 있게 정리했습니다.",
+    categoryDescription: "보고 싶은 디자인 영역을 먼저 선택하거나, 전체 아카이브에서 모든 프로젝트를 검색하고 필터링할 수 있습니다.",
+    viewProjects: "프로젝트 보기",
+    openCategory: "카테고리 열기",
+    startWith: "바로 보기",
+    allProjects: "전체 프로젝트",
+    featuredRoutes: "추천 탐색 경로",
+    routeBrand: "브랜드/BX 직무용",
+    routeBrandDesc: "아이덴티티 시스템, 가이드, 시각 일관성 중심 사례.",
+    routeRetail: "F&B / 리테일 직무용",
+    routeRetailDesc: "오프라인 접점, 패키지, 공간, 캠페인 적용 사례.",
+    routeDigital: "콘텐츠 / 디지털 직무용",
+    routeDigitalDesc: "웹, e-카탈로그, 캠페인, 반복 가능한 콘텐츠 시스템.",
+    lowerOverviewKicker: "Browse by intent",
+    lowerOverviewTitle: "목적에 맞는 경로를 고르거나, 전체 아카이브를 열어보세요.",
+    lowerOverviewDesc: "보고 싶은 작업 유형이 정해져 있다면 추천 경로로 빠르게 들어가고, 더 넓게 비교하고 싶다면 전체 프로젝트에서 검색과 필터를 사용할 수 있습니다.",
+    contactPrompt: "맞춤 PDF나 프로젝트 덱이 필요하신가요?",
+    contactAction: "메일로 문의하기",
+    phil1: "브랜드 건축가가 되어보세요.",
+    phil2: "디자인 전략으로 확장하세요.",
+    phil3: "경험을 설계하고 실행하세요.",
+    phil4: "창작의 즐거움을 느껴 보세요.",
+    statYears: "Years\nExperience",
+    statProjects: "Selected\nProjects",
+    statArchive: "Design\nArchive",
+    sloganHTML: "<span class=\"highlight\">디자인 페르소나,</span><br>당신만의 브랜드를<br>만들어 나가다.",
     // About Page
     aboutRole: "브랜드 디자이너",
-    aboutTagline: "브랜드 설계자.<br />비주얼 전략가.<br />경험 구축자.<br />창의적 연결자.",
+    aboutTagline: "Brand Architect.<br>Visual Strategist.<br>Experience Builder.<br>Creative Connector.",
+    aboutIntro: "아이덴티티, 패키지, 콘텐츠, 캠페인 시스템을 디지털과 오프라인 접점에 맞게 설계하는 브랜드 디자이너입니다.",
     expertise: "전문 분야",
+    experience: "경력",
     recognition: "수상 경력",
     education: "학력",
     credentials: "자격증",
     contact: "연락처 →",
     competencies: [
-      "<span class=\"font-semibold\">브랜드 전략 및 디자인:</span> 아이덴티티, 패키지, 캠페인 실행의 전 과정 수행",
-      "<span class=\"font-semibold\">B2G 및 공공 부문:</span> 제안서(RFP) 작성, MOU 협상 및 자금 확보",
-      "<span class=\"font-semibold\">글로벌 시장 진출:</span> 동남아시아 및 인도를 아우르는 B2B/B2C 유통 파트너십 전문성"
+      "<span class=\"font-semibold\">Brand Strategy & Design:</span> 아이덴티티, 패키지, 캠페인의 통합 설계와 실행",
+      "<span class=\"font-semibold\">B2G & Public Sector:</span> 제안서, MOU, 지원사업 등 공공·B2G 프로젝트 대응",
+      "<span class=\"font-semibold\">Global Market Launch:</span> 동남아·인도 유통 파트너십 기반의 B2B/B2C 시장 진입 경험"
+    ],
+    experienceList: [
+      { period: "2021.12 — 2025.06", company: "한국축산데이터", role: "Brand Communication Team · Senior Manager" },
+      { period: "2018.07 — 2021.03", company: "트레이드엑스포", role: "Design Strategy Team · Designer / Assistant Manager" },
+      { period: "2017.04 — 2017.12", company: "피아스인터코스멕스한국", role: "Sales Department · Designer" },
+      { period: "2015.09 — 2015.11", company: "The K Holdings", role: "Designer" }
     ],
     awards: [
       "한국엔젤투자협회장상",
@@ -273,13 +394,11 @@ const FILTER_CONFIG = {
   ],
   tools: {
     primary: ["Figma", "Illustrator", "Photoshop", "InDesign", "3ds Max", "KeyShot"],
-    more: ["After Effects", "ChatGPT", "Cursor", "Dreamweaver", "Sora", "VS Code"]
+    more: ["After Effects", "ChatGPT", "Dreamweaver", "Sora", "VS Code"]
   }
 };
 
 const TOOL_ALIASES = new Map([
-  ["ChatGPT(Codex)", "ChatGPT"],
-  ["ChatGPT (Codex)", "ChatGPT"],
   ["Sora(OpenAI)", "Sora"],
   ["Sora (OpenAI)", "Sora"],
   ["3D Max", "3ds Max"],
@@ -313,6 +432,149 @@ const getProjectTools = (project) => {
 
 const FILTER_KEYS = ["projectType", "industry", "client", "tools"];
 const SORT_MODES = ["featured", "latest", "oldest"];
+const ARCHIVE_FOCUS_VALUES = ["", "brand-systems", "fnb-retail", "packaging", "campaign-content", "digital-web", "illustration-character"];
+const ARCHIVE_YEAR_VALUES = ["", "2026-2024", "2023-2021", "2020-2018", "older"];
+
+const CATEGORY_CONFIG = [
+  {
+    slug: "brand-systems",
+    accent: "#ffb000",
+    title: "Brand Identity & Systems",
+    shortTitle: "Brand\nSystems",
+    description: "BX·BI, visual systems, brand guidelines, and identity refresh projects.",
+    koDescription: "BX·BI, 시각 시스템, 브랜드 가이드, 아이덴티티 리프레시 중심 작업.",
+    tags: ["BX·BI", "Guideline", "Identity"],
+    slugs: ["aid-rebranding", "fp-brand-identity", "cafe-terrabite", "siso-fair-2020", "gm-portfolio"]
+  },
+  {
+    slug: "fnb-retail",
+    accent: "#FF6A2A",
+    title: "F&B / Retail Experience",
+    shortTitle: "F&B\nRetail",
+    description: "Food, cafe, retail, and offline brand touchpoints that connect products with customers.",
+    koDescription: "푸드, 카페, 리테일, 오프라인 접점에서 고객 경험을 만드는 작업.",
+    tags: ["F&B", "Retail", "Space"],
+    slugs: ["farmsplan-deli-cafe", "27-red-brick", "Farmsplan-Chicken", "record-of-sea-salt", "cafe-terrabite"]
+  },
+  {
+    slug: "packaging",
+    accent: "#1559D1",
+    title: "Packaging & Product Line",
+    shortTitle: "Package\nLine",
+    description: "Package systems, product series, sales kits, and scalable visual assets.",
+    koDescription: "패키지 시스템, 제품 시리즈, 세일즈 키트, 확장 가능한 브랜드 자산.",
+    tags: ["Package", "Series", "Sales Kit"],
+    slugs: ["Farmsplan-Cattle-Feed", "Farmsplan-Swine-Feed", "Farmsplan-Chicken", "record-of-sea-salt", "eye-makeup"]
+  },
+  {
+    slug: "campaign-content",
+    accent: "#BCA3FF",
+    title: "Campaign & Content Design",
+    shortTitle: "Campaign\nContent",
+    description: "Key visuals, event branding, digital content, newsletters, and promotional assets.",
+    koDescription: "키비주얼, 이벤트 브랜딩, 디지털 콘텐츠, 뉴스레터, 프로모션 디자인.",
+    tags: ["Key Visual", "Event", "Content"],
+    slugs: ["openfarm", "deep-dive-campaign", "News-Letter", "fp-brand-film", "fresh-chungnam"]
+  },
+  {
+    slug: "digital-web",
+    accent: "#111111",
+    title: "Digital / Web / Service",
+    shortTitle: "Digital\nService",
+    description: "Websites, e-catalogues, product concepts, and digital service interfaces.",
+    koDescription: "웹사이트, e-카탈로그, 제품 콘셉트, 디지털 서비스 인터페이스.",
+    tags: ["Web", "UI/UX", "Service"],
+    slugs: ["gm-portfolio", "chatlog", "fresh-chungnam", "News-Letter"]
+  },
+  {
+    slug: "illustration-character",
+    accent: "#FFE85B",
+    title: "Illustration & Character",
+    shortTitle: "Illustration\nCharacter",
+    description: "Character systems, illustration assets, brand films, and goods-oriented visuals.",
+    koDescription: "캐릭터 시스템, 일러스트 자산, 브랜드 필름, 굿즈형 비주얼 작업.",
+    tags: ["Character", "Illustration", "Goods"],
+    slugs: ["gullyjumper-universe", "Chabssal-tteogkki", "fp-brand-film"]
+  }
+];
+
+const getCategoryProjects = (category) => {
+  const wanted = new Set(category.slugs);
+  return state.projects.filter((project) => wanted.has(project.slug));
+};
+
+const PROJECT_TAG_OVERRIDES = {
+  chatlog: ["Product", "UIUX", "Dev"],
+  "gm-portfolio": ["Web", "UIUX", "Dev"],
+  "farmsplan-deli-cafe": ["Brand", "Food", "Retail"],
+  openfarm: ["Campaign", "Graphic", "Marketing"],
+  "27-red-brick": ["Direction", "Food", "Brand"],
+  "Farmsplan-Swine-Feed": ["Package", "Food", "Brand"],
+  "aid-rebranding": ["BXBI", "Tech", "Design System"],
+  "cafe-terrabite": ["BXBI", "Logo", "Food"],
+  "record-of-sea-salt": ["Package", "Food", "Brand"],
+  "Farmsplan-Cattle-Feed": ["Package", "Food", "Marketing"],
+  "Farmsplan-Chicken": ["Package", "Food", "Consulting"],
+  "fp-brand-film": ["Video", "Illustration", "Brand"],
+  "fp-brand-identity": ["BXBI", "Tech", "Design System"],
+  "gullyjumper-universe": ["Figure", "Character", "Brand"],
+  "deep-dive-campaign": ["Campaign", "Graphic", "Marketing"],
+  "fresh-chungnam": ["Digital", "Food", "UIUX"],
+  "siso-fair-2020": ["BXBI", "Campaign", "Graphic"],
+  "News-Letter": ["Web", "Graphic", "Digital"],
+  "Chabssal-tteogkki": ["Figure", "Character", "Goods"],
+  "eye-makeup": ["Beauty", "Graphic", "Package"]
+};
+
+const TAG_KEYWORD_RULES = [
+  { tag: "BXBI", match: /\b(bx|bi|brand identity|identity|rebrand|visual system)\b/i },
+  { tag: "Design System", match: /\b(system|guideline|consistency|ia)\b/i },
+  { tag: "Logo", match: /\b(logo|symbol|identity)\b/i },
+  { tag: "Icon", match: /\b(icon)\b/i },
+  { tag: "Campaign", match: /\b(campaign|event|seminar|promotional|newsletter)\b/i },
+  { tag: "Marketing", match: /\b(marketing|sales|launch|promotion|consumer|customer)\b/i },
+  { tag: "Graphic", match: /\b(graphic|key visual|visual|content)\b/i },
+  { tag: "Package", match: /\b(package|packaging|kit|goods|product line)\b/i },
+  { tag: "Food", match: /\b(food|cafe|café|farm|livestock|chicken|swine|cattle|salt|rice cake)\b/i },
+  { tag: "Beauty", match: /\b(beauty|makeup|cosmetic)\b/i },
+  { tag: "Tech", match: /\b(ai|data|technology|tech)\b/i },
+  { tag: "Digital", match: /\b(digital|e-catalog|online|service|product)\b/i },
+  { tag: "Web", match: /\b(web|website|responsive|html|dreamweaver)\b/i },
+  { tag: "UIUX", match: /\b(ui|ux|interface|responsive|ia|service)\b/i },
+  { tag: "Dev", match: /\b(code|vs code|development)\b/i },
+  { tag: "Video", match: /\b(video|film|youtube|mp4|sora)\b/i },
+  { tag: "Photo", match: /\b(photo|photography|image)\b/i },
+  { tag: "3D", match: /\b(3d|sora)\b/i },
+  { tag: "Figure", match: /\b(figure|character|bunny|goods)\b/i },
+  { tag: "Direction", match: /\b(art direction|direction|directing)\b/i },
+  { tag: "Consulting", match: /\b(strategy|consulting|market entry|global market)\b/i },
+  { tag: "Brand", match: /\b(brand|branding)\b/i }
+];
+
+function getProjectCategoryLabels(project) {
+  const override = PROJECT_TAG_OVERRIDES[project.slug];
+  if (override) return override.slice(0, 3);
+
+  const searchable = [
+    getText(project.title),
+    getText(project.summary),
+    getText(project.caption),
+    getText(project.projectType),
+    getText(project.industry),
+    getText(project.tools)
+  ].join(" ");
+
+  const labels = TAG_KEYWORD_RULES
+    .filter((rule) => rule.match.test(searchable))
+    .map((rule) => rule.tag);
+
+  if (labels.length) return [...new Set(labels)].slice(0, 3);
+
+  const projectType = getText(project.projectType);
+  return projectType
+    ? projectType.split(",").map((item) => item.replace(/\s*Design$/i, "").trim()).filter(Boolean).slice(0, 3)
+    : [];
+}
 
 const sanitizeFilters = (filters) => {
   const clean = {};
@@ -335,7 +597,7 @@ const sanitizeFilters = (filters) => {
 activeFilters = sanitizeFilters(activeFilters);
 storage.set('activeFilters', JSON.stringify(activeFilters));
 if (!SORT_MODES.includes(sortMode)) {
-  sortMode = "featured";
+  sortMode = "latest";
 }
 
 const esc = (s = '') => (s ?? '').toString();
@@ -356,7 +618,7 @@ function initLazyVideos(root = document) {
       video.load();
       if (video.hasAttribute('autoplay')) {
         const p = video.play();
-        if (p && typeof p.catch === 'function') p.catch(() => {});
+        if (p && typeof p.catch === 'function') p.catch(() => { });
       }
     } catch (e) {
       // Ignore media loading/play failures.
@@ -400,21 +662,32 @@ const t = (key) => I18N[currentLang][key] || I18N['en'][key] || key;
 
 
 // Restoration of listHTML for mobile menu
-const listHTML = (items, activeSlug = null) =>
-  `<ul class="menu-list text-[30px] leading-[1.2] font-medium">` +
-  items
+const listHTML = (items, activeSlug = null) => {
+  const sortedItems = [...items].sort((a, b) => {
+    const yearA = (a.year || '').toString().slice(-4);
+    const yearB = (b.year || '').toString().slice(-4);
+    return yearB.localeCompare(yearA);
+  });
+
+  return `<ul class="menu-list text-[30px] leading-[1.2] font-medium">` +
+  sortedItems
     .map(
-      (p) => `
+      (p) => {
+        let displayYear = p.year || '';
+        if (p.slug === 'News-Letter') displayYear = '2021';
+        return `
         <li class="py-2 ${p.slug === activeSlug ? 'active' : ''}">
-          <a class="block w-fit pb-1 hover-accent" style="text-decoration:none" href="#/${p.slug}">
-            ${esc(getText(p.title))}
+          <a class="block w-fit pb-1 menu-list-link" style="text-decoration:none" href="#/${p.slug}">
+            ${esc(getText(p.title))}<sup class="menu-year">${displayYear}</sup>
           </a>
-        </li>`
+        </li>`;
+      }
     )
     .join('') +
   `</ul>`;
+};
 
-const gridHTML = (items) => {
+const gridHTML = (items, extraCardHTML = '') => {
   // Determine grid classes based on view mode
   const isDesktop = window.innerWidth >= 1024;
   let gridClasses;
@@ -423,20 +696,20 @@ const gridHTML = (items) => {
     if (viewMode === '1') {
       gridClasses = 'grid-cols-1 gap-y-12';
     } else if (viewMode === '2') {
-      gridClasses = 'grid-cols-2 gap-x-6 gap-y-6';
+      gridClasses = 'grid-cols-2 gap-[1px]';
     } else if (viewMode === '3') {
-      gridClasses = 'grid-cols-3 gap-x-6 gap-y-6';
+      gridClasses = 'grid-cols-4 gap-5';
     } else if (viewMode === '5') {
-      gridClasses = 'grid-cols-5 gap-x-4 gap-y-4';
+      gridClasses = 'grid-cols-5 gap-[1px]';
     } else {
-      gridClasses = 'grid-cols-3 gap-x-6 gap-y-6';
+      gridClasses = 'grid-cols-4 gap-5';
     }
   } else {
     // Mobile/Tablet: Respect 1-column if selected, else default to 2
     if (viewMode === '1') {
       gridClasses = 'grid-cols-1 gap-y-8';
     } else {
-      gridClasses = 'grid-cols-2 gap-x-4 gap-y-6';
+      gridClasses = 'grid-cols-2 gap-[1px]';
     }
   }
 
@@ -516,21 +789,54 @@ const gridHTML = (items) => {
             }
           }
 
+          const title = esc(getText(p.title));
+          const caption = esc(getText(p.caption));
+          const summary = esc(getText(p.summary));
+          const year = esc(getText(p.year));
+          const projectType = esc(getText(p.projectType));
+          const projectCategoryLabels = getProjectCategoryLabels(p);
+          const projectCategoryPills = projectCategoryLabels
+            .map((label) => `<span class="portfolio-hover-kicker">${esc(label)}</span>`)
+            .join('');
+          const hoverTitle = title.length > 22 ? title.split(/\s+/).join('<br>') : title;
+
           return `
-        <article class="relative group ${isWideView ? 'w-full max-w-full' : ''}">
-          <a href="#/${p.slug}" class="block overflow-hidden relative thumb-frame" style="text-decoration:none">
+        <article class="portfolio-card relative group ${isWideView ? 'portfolio-card-wide w-full max-w-full' : ''}">
+          <a href="#/${p.slug}" class="block overflow-hidden relative thumb-frame portfolio-card-media" style="text-decoration:none">
             ${mediaHtml}
+            <div class="portfolio-hover-info" aria-hidden="true">
+              <div class="portfolio-hover-copy">
+                ${projectCategoryPills ? `<div class="portfolio-hover-kickers">${projectCategoryPills}</div>` : ''}
+                <h3 class="portfolio-card-title text-[15px] font-medium">${hoverTitle}</h3>
+                ${summary ? `<p class="portfolio-card-summary text-[13px]">${summary}</p>` : `<p class="portfolio-card-summary text-[13px]">${caption}</p>`}
+              </div>
+              <div class="portfolio-hover-bottom">
+                <div class="portfolio-card-meta flex items-center gap-2 text-[11px] uppercase tracking-[0.08em]">
+                  ${year ? `<span>${year}</span>` : ''}
+                </div>
+                <span class="portfolio-view-product" aria-label="View project">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </span>
+              </div>
+            </div>
             ${p.locked ? `<div class="absolute top-0 right-0 bg-black/10 text-white text-[10px] px-3 py-1 uppercase tracking-wider font-medium">${t('restricted')}</div>` : ''}
             ${p.developing ? `<div class="absolute top-0 right-0 bg-[#7c3aed] text-white text-[10px] px-3 py-1 uppercase tracking-wider font-medium">${t('developing')}</div>` : ''}
           </a>
-          <div class="mt-3">
-            <h3 class="text-[15px] font-medium">${esc(getText(p.title))}</h3>
-            <p class="text-[13px] text-neutral-500">${esc(getText(p.caption))}</p>
+          <div class="portfolio-card-body">
+            <h3 class="portfolio-card-title">${title}</h3>
+            <div class="portfolio-card-meta flex items-center gap-2 text-[11px] uppercase tracking-[0.08em]">
+              ${year ? `<span>${year}</span>` : ''}
+              ${year && projectType ? `<span aria-hidden="true">/</span>` : ''}
+              ${projectType ? `<span>${projectType}</span>` : ''}
+            </div>
           </div>
         </article>`;
         }
       )
       .join('') +
+    extraCardHTML +
     `</div>`;
 };
 
@@ -617,7 +923,7 @@ function detailHTML(p) {
   return `
     <div class="detail-wrapper">
       <div class="detail-header-row flex items-center justify-between mb-8 md:mb-12">
-        <a href="#/" class="back-button-link group flex items-center gap-2 text-[14px] text-neutral-500 hover:text-neutral-900 transition-colors">
+        <a href="${getDetailBackHref()}" class="back-button-link group flex items-center gap-2 text-[14px] text-neutral-500 hover:text-neutral-900 transition-colors">
           <svg class="w-4 h-4 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
           <span>${t('back')}</span>
         </a>
@@ -650,121 +956,72 @@ function detailHTML(p) {
 }
 
 function aboutHTML() {
-  const years = ['2025', '2023', '2012', '2010', '2025', '2021', '2013']; // Just keeping track of years for styling if needed, but they are hardcoded below in loops
-
-  // Helper to get array items
-  const competencies = t('competencies').map(c => `<p>${c}</p>`).join('');
-
-  // Custom logic for awards with years
+  const competencies = t('competencies').map(c => `<div class="about-competency-card">${c}</div>`).join('');
   const awardsData = I18N[currentLang].awards;
   const awardsYears = ['2025', '2023', '2012', '2010'];
   const awardsHTML = awardsData.map((a, i) => `
-    <p>${a} <span class="text-[11px] align-top text-neutral-400 font-mono">${awardsYears[i]}</span></p>
+    <p>${a} <span class="about-log-year">${awardsYears[i]}</span></p>
   `).join('');
 
-  // Education
   const eduData = I18N[currentLang].eduList;
   const eduHTML = eduData.map(e => `<p>${e}</p>`).join('');
 
-  // Credentials
   const credData = I18N[currentLang].credList;
   const credYears = ['2025', '2021', '2013'];
   const credHTML = credData.map((c, i) => `
-    <p>${c} <span class="text-[11px] align-top text-neutral-400 font-mono">${credYears[i]}</span></p>
+    <p>${c} <span class="about-log-year">${credYears[i]}</span></p>
   `).join('');
 
   return `
-    <article class="max-w-none">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
-        <div class="flex flex-row items-start gap-5 md:h-full">
-          <!-- Desktop Image: Matches height of the tagline on the right -->
-          <img src="assets/icons/DesignPersona.png" alt="Design Persona" class="hidden md:block h-full w-auto object-contain max-h-[180px]" />
+    <article class="about-page-content max-w-none">
+      <section class="about-hero">
+        <div class="about-identity flex flex-row items-start gap-5 md:h-full">
+          <img src="assets/icons/DesignPersona.png" alt="Design Persona" class="about-mark hidden md:block h-full w-auto object-contain max-h-[180px]" />
           <div>
-            <h1 class="text-[34px] md:text-[34px] font-semibold tracking-tight">${t('aboutName')}</h1>
-            <h1 class="text-[34px] md:text-[34px] font-semibold tracking-tight text-[var(--accent-orange)] -mt-2">${t('aboutRole')}</h1>
+            <h1 class="about-name">${t('aboutName')}</h1>
+            <h2 class="about-role">${t('aboutRole')}</h2>
           </div>
         </div>
-        <div class="text-right">
-          <h1 class="text-[34px] md:text-[34px] tracking-tight">
-            ${t('aboutTagline')}
-          </h1>
+        <div class="about-summary">
+          <p class="about-tagline">${t('aboutTagline')}</p>
+          <p class="about-intro">${t('aboutIntro')}</p>
         </div>
-      </div>
+      </section>
 
-      <hr class="my-6 border-neutral-300" />
-
-      <!-- Core Competencies -->
-      <section class="mb-8">
-        <h2 class="text-xl font-bold tracking-tight mb-4">${t('expertise')}</h2>
-        <div class="text-base leading-relaxed text-neutral-700 space-y-3">
+      <section class="about-section">
+        <h2>${t('expertise')}</h2>
+        <div class="about-competency-grid">
           ${competencies}
         </div>
       </section>
 
-      <hr class="my-8 border-neutral-300" />
-
-      <!-- Log: Recognition & Awards -->
-      <section class="mb-8">
-        <h2 class="text-xl font-bold tracking-tight mb-4">${t('recognition')}</h2>
-        <div class="text-base leading-relaxed text-neutral-700 space-y-2">
-          ${awardsHTML}
-        </div>
-      </section>
-
-      <hr class="my-8 border-neutral-300" />
-
-      <!-- Education -->
-      <section class="mb-8">
-        <h2 class="text-xl font-bold tracking-tight mb-4">${t('education')}</h2>
-        <div class="text-base leading-relaxed text-neutral-700 space-y-2">
-          ${eduHTML}
-        </div>
-      </section>
-
-      <hr class="my-8 border-neutral-300" />
-
-      <!-- Professional Credentials -->
-      <section class="mb-8">
-        <h2 class="text-xl font-bold tracking-tight mb-4">${t('credentials')}</h2>
-        <div class="text-base leading-relaxed text-neutral-700 space-y-2">
-          ${credHTML}
-        </div>
-      </section>
-
-      <!-- Contact Section -->
-      <section class="mb-8">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 text-[34px]">
-          <div>
-            <span class="text-neutral-500">${t('contact')}</span>
+      <div class="about-log-grid">
+        <section class="about-log-section">
+          <h2>${t('recognition')}</h2>
+          <div class="about-log-list">
+            ${awardsHTML}
           </div>
-          <div class="text-right flex flex-col items-end">
-            <a href="mailto:designpersona.kr@gmail.com" class="text-[var(--accent-orange)] font-medium break-all">
-              designpersona.kr@gmail.com
-            </a>
-            <div class="hidden md:flex items-center gap-5 mt-4">
-              <a href="${esc(state.site.social.linkedin)}" target="_blank" rel="noopener" class="hover:opacity-100 transition-all hover:scale-110 active:scale-95">
-                <img src="assets/icons/LinkedIn.png" alt="LinkedIn" class="w-7 h-7 object-contain opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all" />
-              </a>
-              <a href="${esc(state.site.social.behance)}" target="_blank" rel="noopener" class="hover:opacity-100 transition-all hover:scale-110 active:scale-95">
-                <img src="assets/icons/Behance.png" alt="Behance" class="w-7 h-7 object-contain opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all" />
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
+        </section>
 
-      <!-- Mobile Footer Image -->
-      <div class="md:hidden mt-16 mb-12 flex flex-col items-center gap-8">
-        <img src="assets/icons/DesignPersona.png" alt="Design Persona" class="w-full h-auto object-contain" />
-        <div class="flex items-center gap-8">
-          <a href="${esc(state.site.social.linkedin)}" target="_blank" rel="noopener" class="hover:opacity-100 transition-all active:scale-90">
-            <img src="assets/icons/LinkedIn.png" alt="LinkedIn" class="w-10 h-10 object-contain opacity-50 grayscale active:grayscale-0 active:opacity-100 transition-all" />
-          </a>
-          <a href="${esc(state.site.social.behance)}" target="_blank" rel="noopener" class="hover:opacity-100 transition-all active:scale-90">
-            <img src="assets/icons/Behance.png" alt="Behance" class="w-10 h-10 object-contain opacity-50 grayscale active:grayscale-0 active:opacity-100 transition-all" />
-          </a>
-        </div>
+        <section class="about-log-section">
+          <h2>${t('education')}</h2>
+          <div class="about-log-list">
+            ${eduHTML}
+          </div>
+        </section>
+
+        <section class="about-log-section">
+          <h2>${t('credentials')}</h2>
+          <div class="about-log-list">
+            ${credHTML}
+          </div>
+        </section>
       </div>
+
+      <section class="about-contact">
+        <span>${t('contact')}</span>
+        <a href="mailto:designpersona.kr@gmail.com">designpersona.kr@gmail.com</a>
+      </section>
 
     </article>
   `;
@@ -872,10 +1129,10 @@ function openMenu() {
     }
   });
 
-  menuEl.classList.remove('hidden');
+  if (menuEl) menuEl.classList.remove('hidden');
   // Small delay to ensure transition works after removing 'hidden'
   requestAnimationFrame(() => {
-    drawerPanel.classList.add('open');
+    if (drawerPanel) drawerPanel.classList.add('open');
     menuBtn?.setAttribute('aria-expanded', 'true');
     // Change icon to X or similar if needed - currently using internal X
   });
@@ -891,12 +1148,12 @@ function toggleMenu() {
 }
 
 function closeMenu() {
-  if (!drawerPanel.classList.contains('open')) return;
+  if (!drawerPanel || !drawerPanel.classList.contains('open')) return;
   drawerPanel.classList.remove('open');
   menuBtn?.setAttribute('aria-expanded', 'false');
   setTimeout(() => {
     if (!drawerPanel.classList.contains('open')) {
-      menuEl.classList.add('hidden');
+      if (menuEl) menuEl.classList.add('hidden');
     }
   }, 300); // matching transition .25s + buffer
 }
@@ -1000,6 +1257,33 @@ function filterProjects() {
 
     return true;
   });
+}
+
+function filterArchiveYear(projects) {
+  if (!ARCHIVE_YEAR_VALUES.includes(archiveYearMode) || !archiveYearMode) return projects;
+
+  return projects.filter((project) => {
+    const projectRange = getYearRange(getText(project.year));
+    if (!projectRange.end) return false;
+    if (archiveYearMode === 'older') return projectRange.end <= 2017;
+    const [filterStart, filterEnd] = archiveYearMode.split('-').map((value) => Number(value));
+    if (!Number.isFinite(filterStart) || !Number.isFinite(filterEnd)) return false;
+    return projectRange.start <= filterStart && projectRange.end >= filterEnd;
+  });
+}
+
+function filterArchiveFocus(projects) {
+  if (!ARCHIVE_FOCUS_VALUES.includes(archiveFocusMode) || !archiveFocusMode) return projects;
+
+  const category = CATEGORY_CONFIG.find((item) => item.slug === archiveFocusMode);
+  if (!category) return projects;
+
+  const wanted = new Set(category.slugs);
+  return projects.filter((project) => wanted.has(project.slug));
+}
+
+function getArchiveFilteredProjects() {
+  return filterArchiveYear(filterArchiveFocus(filterProjects()));
 }
 
 const getYearRange = (yearValue) => {
@@ -1143,11 +1427,425 @@ function filterMenuHTML() {
   return html;
 }
 
-function renderHome() {
-  document.body.classList.remove('about-page-active');
-  document.body.classList.remove('detail-page-active');
+function homeIntroHTML(resultCount) {
+  return `
+    <section class="home-intro" aria-label="Portfolio introduction">
+      <div class="home-intro-copy">
+        <p class="home-eyebrow">${t('homeEyebrow')}</p>
+        <h1>${t('homeTitle')}</h1>
+        <p class="home-description">${t('homeDescription')}</p>
+      </div>
+      <div class="home-intro-meta" aria-label="Portfolio focus">
+        <span>${t('homeChip1')}</span>
+        <span>${t('homeChip2')}</span>
+        <span>${t('homeChip3')}</span>
+        <span>${resultCount} ${t('resultsSuffix')}</span>
+      </div>
+    </section>
+  `;
+}
+
+function hideArchiveControls() {
+  const filterMenu = document.getElementById('desktopFilterMenu');
+  const viewToggleBar = document.getElementById('viewToggleBar');
+  const mobileTopBar = document.getElementById('mobileTopBar');
+  const main = document.querySelector('main');
+  if (filterMenu) {
+    filterMenu.classList.add('hidden', 'filter-hidden');
+    filterMenu.classList.remove('filter-visible');
+  }
+  if (viewToggleBar) viewToggleBar.classList.add('hidden');
+  if (mobileTopBar) mobileTopBar.classList.add('hidden');
+  if (main) {
+    main.classList.add('filter-hidden');
+    main.classList.remove('filter-visible');
+  }
+  if (filterMenuContent) filterMenuContent.innerHTML = '';
+}
+
+function categoryCardHTML(category) {
+  const projects = getCategoryProjects(category);
+  const featured = projects.slice(0, 2);
+  const description = currentLang === 'ko' ? category.koDescription : category.description;
+  const index = String(CATEGORY_CONFIG.findIndex((item) => item.slug === category.slug) + 1).padStart(2, '0');
+  const shortTitle = esc(category.shortTitle || category.title).replace(/\\n/g, '<br>');
+  return `
+    <article class="category-panel" style="--category-accent:${esc(category.accent || '#FF5A00')}">
+      <a href="#/category/${category.slug}" class="category-panel-main" style="text-decoration:none" aria-label="${esc(category.title)}">
+        <div class="category-panel-top">
+          <span class="category-index">${index}</span>
+          <span class="category-count">${projects.length} ${t('resultsSuffix')}</span>
+        </div>
+        <h2>${shortTitle}</h2>
+        <p>${esc(description)}</p>
+        <div class="category-tags">
+          ${(category.tags || []).map((tag) => `<span>${esc(tag)}</span>`).join('')}
+        </div>
+      </a>
+      <div class="category-panel-actions">
+        <a href="#/category/${category.slug}" style="text-decoration:none">${t('openCategory')} <span>→</span></a>
+        ${featured.map((project) => `<a href="#/${project.slug}" style="text-decoration:none"><small>${t('startWith')}</small>${esc(getText(project.title))}</a>`).join('')}
+      </div>
+    </article>
+  `;
+}
+
+function dashboardCategoryCellHTML(category) {
+  const projects = getCategoryProjects(category);
+  const index = String(CATEGORY_CONFIG.findIndex((item) => item.slug === category.slug) + 1).padStart(2, '0');
+  const preferredDashboardImages = {
+    'brand-systems': 'fp-brand-identity',
+    'fnb-retail': 'farmsplan-deli-cafe',
+    'packaging': 'record-of-sea-salt',
+    'campaign-content': 'News-Letter',
+    'digital-web': 'gm-portfolio',
+    'illustration-character': 'gullyjumper-universe'
+  };
+  const preferredSlug = preferredDashboardImages[category.slug];
+  const featured = (preferredSlug ? state.projects.find((project) => project.slug === preferredSlug) : null) || projects[0] || {};
+  const image = esc(featured.thumbnail || featured.cover || '');
+  const description = currentLang === 'ko' ? category.koDescription : category.description;
+  const title = esc(category.shortTitle || category.title).replace(/\\n/g, '<br>');
+  return `
+    <a href="#/category/${category.slug}" class="dash-cell dash-category-cell" style="--category-accent:${esc(category.accent || '#FF5A00')}; text-decoration:none" aria-label="${esc(category.title)}">
+      ${image ? `<img class="dash-card-image" src="${image}" alt="" loading="lazy" decoding="async" />` : ''}
+      <span class="dash-details" aria-label="${currentLang === 'ko' ? '자세히 보기' : 'View details'}">
+        <span class="dash-details-number" aria-hidden="true">${index}</span>
+        <svg class="dash-details-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="6" y1="18" x2="18" y2="6"></line>
+          <polyline points="9 6 18 6 18 15"></polyline>
+        </svg>
+      </span>
+      <div class="dash-card-copy">
+        <div class="dash-title-row">
+          <strong>${title}</strong>
+        </div>
+        <p>${esc(description)}</p>
+      </div>
+    </a>
+  `;
+}
+
+function landingFeaturedProjectHTML() {
+  const project = state.projects.find((item) => item.slug === 'chatlog');
+  if (!project) return '';
+
+  const title = esc(getText(project.title));
+  const summary = esc(getText(project.summary));
+  const image = esc(project.cover || project.thumbnail || '');
+  const ctaLabel = currentLang === 'ko' ? '자세히 보기' : 'View details';
+  const statusLabel = currentLang === 'ko' ? '개발중' : 'In development';
+  const ctaHref = '#/chatlog';
+
+  return `
+    <section id="landingFeaturedProject" class="landing-featured-project snap-page" aria-label="${title}">
+      <div class="landing-featured-media" aria-label="${title}">
+        ${image ? `<img src="${image}" alt="${title}" loading="lazy" decoding="async" />` : ''}
+      </div>
+      <div class="landing-featured-copy">
+        <div class="landing-featured-nav" aria-label="${currentLang === 'ko' ? '섹션 이동' : 'Section navigation'}">
+          <button type="button" aria-label="${currentLang === 'ko' ? '이전 블록' : 'Previous section'}" onclick="scrollToLandingStart()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="6 15 12 9 18 15"></polyline>
+            </svg>
+          </button>
+          <button type="button" aria-label="${currentLang === 'ko' ? '다음 블록' : 'Next section'}" onclick="scrollToPhilosophy()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+        </div>
+        <div class="landing-featured-main">
+          <div class="landing-featured-tags" aria-label="Project categories">
+            <span>${statusLabel}</span>
+          </div>
+          <h2 class="landing-featured-logo-title">
+            <img src="assets/logo/ChatBook_Symbol.png" alt="${title}" loading="lazy" decoding="async" />
+          </h2>
+          <p>${summary}</p>
+          <a class="landing-featured-service-cta" href="${ctaHref}">
+            <strong>${ctaLabel}</strong>
+            <span class="landing-featured-cta-arrow" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="6" y1="18" x2="18" y2="6"></line>
+                <polyline points="9 6 18 6 18 15"></polyline>
+              </svg>
+            </span>
+          </a>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+function landingHTML() {
+  return `
+    <section class="dashboard-hero">
+      <div class="hero-band hero-band-top" aria-hidden="true">
+        <div class="hero-band-content" style="justify-content: space-between; display: flex; width: 100%; align-items: center;">
+          <strong>Design Persona</strong>
+          <button class="hero-hamburger-btn" aria-label="Open menu" onclick="window.innerWidth >= 1024 ? toggleDesktopMenu() : toggleMenu()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+              <path d="M3 12h18M3 6h18M3 18h18" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="hero-band hero-band-bottom" aria-hidden="true">
+        <div class="hero-band-content" style="justify-content: space-between; display: flex; width: 100%; align-items: center;">
+          <button class="hero-down-btn" aria-label="Scroll down" onclick="scrollToPhilosophy()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <polyline points="19 12 12 19 5 12"></polyline>
+            </svg>
+          </button>
+          <strong>Build your desire<span class="dot">.</span></strong>
+        </div>
+      </div>
+      <div class="dashboard-category-row">
+        ${CATEGORY_CONFIG.map(dashboardCategoryCellHTML).join('')}
+      </div>
+    </section>
+
+    ${landingFeaturedProjectHTML()}
+
+    <section id="philosophy" class="philosophy-stage" aria-label="Brand philosophy">
+      <div class="philosophy-pin">
+        <div class="philosophy-static-slogan">
+          ${t('sloganHTML')}
+        </div>
+        <ol class="philosophy-list">
+          <li><span>01</span><p>${t('phil1')}</p></li>
+          <li><span>02</span><p>${t('phil2')}</p></li>
+          <li><span>03</span><p>${t('phil3')}</p></li>
+          <li><span>04</span><p>${t('phil4')}</p></li>
+        </ol>
+      </div>
+      <div class="philosophy-nav" aria-label="${currentLang === 'ko' ? '섹션 이동' : 'Section navigation'}">
+        <button type="button" aria-label="${currentLang === 'ko' ? '이전 블록' : 'Previous section'}" onclick="scrollToLandingFeature()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="6 15 12 9 18 15"></polyline>
+          </svg>
+        </button>
+      </div>
+    </section>
+  `;
+}
+
+function renderLanding(skipScroll = false) {
+  document.body.classList.add('landing-page-active');
+  document.body.classList.remove('about-page-active', 'detail-page-active', 'archive-page-active', 'category-page-active');
+  const mainHeader = document.getElementById('mainHeader');
+  const topBar = document.getElementById('topBar');
+  if (mainHeader) {
+    mainHeader.style.backgroundColor = '';
+    mainHeader.style.borderBottom = '';
+    mainHeader.style.boxShadow = '';
+  }
+  if (topBar) topBar.style.display = '';
   clearThumbRollers();
-  const filteredItems = sortProjects(filterProjects());
+  updateViewToggleBar();
+  hideArchiveControls();
+  const newHTML = landingHTML();
+  if (pane.innerHTML !== newHTML) {
+    pane.innerHTML = newHTML;
+  }
+  if (mobileProjectList) mobileProjectList.innerHTML = listHTML(state.projects);
+  toggleMobileHamburger(true);
+  updateStaticText();
+
+  if (!skipScroll) {
+    const scroller = document.getElementById('desktopScroller');
+    if (scroller) scroller.scrollTo({ top: 0, behavior: "smooth" });
+  }
+}
+
+function categoryIntroHTML(category, resultCount) {
+  const description = currentLang === 'ko' ? category.koDescription : category.description;
+  return `
+    <section class="home-intro category-detail-intro">
+      <div class="home-intro-copy">
+        <p class="home-eyebrow">${t('categoryEyebrow')}</p>
+        <h1>${esc(category.title)}</h1>
+        <p class="home-description">${esc(description)}</p>
+      </div>
+      <div class="home-intro-meta">
+        <span>${resultCount} ${t('resultsSuffix')}</span>
+        <a href="#/archive" style="text-decoration:none"><span>${currentLang === 'ko' ? '모든 프로젝트 보기 ↗' : 'See all projects ↗'}</span></a>
+      </div>
+    </section>
+  `;
+}
+
+function categoryFocusDescription(category) {
+  const copy = {
+    'brand-systems': {
+      en: 'Identity systems, guidelines, and brand refresh work.',
+      ko: '아이덴티티 시스템, 가이드라인, 브랜드 리프레시 작업.'
+    },
+    'fnb-retail': {
+      en: 'Food, retail, packaging, and offline brand touchpoints.',
+      ko: '푸드, 리테일, 패키지와 오프라인 브랜드 접점.'
+    },
+    'packaging': {
+      en: 'Package systems, product lines, and sales assets.',
+      ko: '패키지 시스템, 제품 라인, 세일즈 비주얼.'
+    },
+    'campaign-content': {
+      en: 'Key visuals, campaigns, and repeatable content.',
+      ko: '키비주얼, 캠페인, 반복 가능한 콘텐츠.'
+    },
+    'digital-web': {
+      en: 'Web, UIUX, catalogues, and digital services.',
+      ko: '웹, UIUX, 카탈로그와 디지털 서비스.'
+    },
+    'illustration-character': {
+      en: 'Characters, illustration assets, and goods visuals.',
+      ko: '캐릭터, 일러스트 에셋, 굿즈 비주얼.'
+    }
+  };
+  const item = copy[category.slug];
+  if (item) return currentLang === 'ko' ? item.ko : item.en;
+  return currentLang === 'ko' ? category.koDescription : category.description;
+}
+
+function categoryMoreCardHTML() {
+  const label = currentLang === 'ko' ? '다른 프로젝트 보기' : 'Other Projects';
+  return `
+        <article class="portfolio-card category-more-card relative group">
+          <a href="#/archive" class="category-more-link" style="text-decoration:none" aria-label="${esc(label)}">
+            <span>${esc(label)}</span>
+            <span class="category-more-arrow" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </span>
+          </a>
+        </article>`;
+}
+
+function archivePlaceholderCardHTML() {
+  const label = currentLang === 'ko' ? '추가 프로젝트 자리' : 'Reserved project slot';
+  const status = currentLang === 'ko' ? 'Coming Soon' : 'Coming Soon';
+  const title = currentLang === 'ko' ? 'More\nProjects' : 'More\nProjects';
+  return `
+        <article class="portfolio-card archive-empty-card relative group" aria-label="${esc(label)}">
+          <div class="archive-empty-thumb" aria-hidden="true">
+            <span class="archive-empty-title">${esc(title).replace(/\n/g, '<br>')}</span>
+            <span class="archive-empty-status">${esc(status)}</span>
+          </div>
+        </article>`;
+}
+
+function updateCategoryFocusBar(category, resultCount) {
+  const bar = document.getElementById('categoryFocusBar');
+  if (!bar || !category) return;
+  const description = categoryFocusDescription(category);
+  bar.innerHTML = `
+    <div class="category-focus-bar-inner">
+      <div class="category-focus-copy">
+        <strong>${esc(category.title)}</strong>
+        <span>${esc(description)}</span>
+      </div>
+      <div class="category-focus-view-toggle" aria-label="${currentLang === 'ko' ? '보기 형식' : 'View mode'}">
+        <button type="button" data-category-view="1" class="${viewMode === '1' ? 'active' : ''}" aria-label="${currentLang === 'ko' ? '1개씩 보기' : 'One by one'}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+          </svg>
+        </button>
+        <button type="button" data-category-view="3" class="${viewMode === '3' ? 'active' : ''}" aria-label="${currentLang === 'ko' ? '3개씩 보기' : 'Three-up thumbnails'}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+            <line x1="12" y1="3" x2="12" y2="21"></line>
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+          </svg>
+        </button>
+        <button type="button" data-category-view="5" class="${viewMode === '5' ? 'active' : ''}" aria-label="${currentLang === 'ko' ? '5개씩 보기' : 'Five-up thumbnails'}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+            <line x1="9" y1="3" x2="9" y2="21"></line>
+            <line x1="15" y1="3" x2="15" y2="21"></line>
+            <line x1="3" y1="9" x2="21" y2="9"></line>
+            <line x1="3" y1="15" x2="21" y2="15"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+  `;
+  bar.classList.remove('hidden');
+  bar.style.display = '';
+}
+
+function renderCategory(categorySlug, skipScroll = false) {
+  const category = CATEGORY_CONFIG.find((item) => item.slug === categorySlug);
+  if (!category) {
+    renderLanding();
+    return;
+  }
+  document.body.classList.add('category-page-active');
+  document.body.classList.remove('about-page-active', 'detail-page-active', 'archive-page-active', 'landing-page-active');
+  document.body.classList.remove('landing-header-revealed', 'header-collapsed');
+  const mainHeader = document.getElementById('mainHeader');
+  const topBar = document.getElementById('topBar');
+  if (mainHeader) {
+    mainHeader.style.backgroundColor = '#ffb000';
+    mainHeader.style.borderBottom = '0';
+    mainHeader.style.boxShadow = 'none';
+    Array.from(mainHeader.children).forEach((child) => {
+      child.style.backgroundColor = '#ffb000';
+      child.style.borderBottom = '0';
+    });
+  }
+  if (topBar) topBar.style.display = 'none';
+  clearThumbRollers();
+  updateViewToggleBar();
+  hideArchiveControls();
+  const items = sortProjects(getCategoryProjects(category));
+  updateCategoryFocusBar(category, items.length);
+  pane.innerHTML = categoryIntroHTML(category, items.length) + gridHTML(items, categoryMoreCardHTML());
+  initThumbRollers();
+  initLazyVideos(pane);
+  if (mobileProjectList) mobileProjectList.innerHTML = listHTML(state.projects);
+  toggleMobileHamburger(true);
+  updateStaticText();
+  if (!skipScroll) {
+    const scroller = document.getElementById('desktopScroller');
+    if (scroller) scroller.scrollTo({ top: 0, behavior: "smooth" });
+  }
+}
+
+function renderArchive(skipScroll = false) {
+  const mainHeader = document.getElementById('mainHeader');
+  if (mainHeader && document.body.classList.contains('landing-page-active')) {
+    mainHeader.style.transition = 'none';
+    requestAnimationFrame(() => {
+      mainHeader.style.transition = '';
+    });
+  }
+  document.body.classList.remove('about-page-active', 'landing-page-active', 'category-page-active');
+  document.body.classList.remove('detail-page-active');
+  document.body.classList.add('archive-page-active');
+  if (viewMode !== '3') {
+    viewMode = '3';
+    storage.set('view_mode', viewMode);
+  }
+  const topBar = document.getElementById('topBar');
+  if (mainHeader) {
+    mainHeader.style.backgroundColor = '';
+    mainHeader.style.borderBottom = '';
+    mainHeader.style.boxShadow = '';
+    Array.from(mainHeader.children).forEach((child) => {
+      child.style.backgroundColor = '';
+      child.style.borderBottom = '';
+    });
+  }
+  if (topBar) topBar.style.display = '';
+  const viewToggleBar = document.getElementById('viewToggleBar');
+  const mobileTopBar = document.getElementById('mobileTopBar');
+  if (viewToggleBar) viewToggleBar.classList.remove('hidden');
+  if (mobileTopBar) mobileTopBar.classList.remove('hidden');
+  clearThumbRollers();
+  const filteredItems = sortProjects(getArchiveFilteredProjects());
 
   // Show filter menu on home page - respect filterVisible state
   const filterMenu = document.getElementById('desktopFilterMenu');
@@ -1172,8 +1870,9 @@ function renderHome() {
 
   // View toggle bar is now a fixed element in HTML, just update its state
   updateViewToggleBar();
+  syncArchiveFilterBar();
 
-  pane.innerHTML = gridHTML(filteredItems);
+  pane.innerHTML = gridHTML(filteredItems, archivePlaceholderCardHTML());
   initThumbRollers();
   initLazyVideos(pane);
   updateMobileViewDropdown();
@@ -1197,7 +1896,7 @@ function renderHome() {
   // Reset scroll position on view change ONLY if requested or significant change
   const scroller = document.getElementById('desktopScroller');
   if (scroller) {
-    if (window._preventNextScrollReset) {
+    if (window._preventNextScrollReset || skipScroll) {
       // Keep current scroll
     } else if (lastHomeScrollTop > 0) {
       // Restore scroll
@@ -1216,9 +1915,25 @@ function renderHome() {
 
 }
 
-function renderAbout() {
+function renderHome() {
+  renderArchive();
+}
+
+function renderAbout(skipScroll = false) {
   document.body.classList.add('about-page-active');
-  document.body.classList.remove('detail-page-active');
+  document.body.classList.remove('detail-page-active', 'archive-page-active', 'landing-page-active', 'category-page-active');
+  const mainHeader = document.getElementById('mainHeader');
+  const topBar = document.getElementById('topBar');
+  if (mainHeader) {
+    mainHeader.style.backgroundColor = '';
+    mainHeader.style.borderBottom = '';
+    mainHeader.style.boxShadow = '';
+    Array.from(mainHeader.children).forEach((child) => {
+      child.style.backgroundColor = '';
+      child.style.borderBottom = '';
+    });
+  }
+  if (topBar) topBar.style.display = '';
   updateViewToggleBar(); // Ensure bar is hidden
   clearThumbRollers();
   // Use JS rendering instead of template
@@ -1247,17 +1962,32 @@ function renderAbout() {
   updateMobileResultCount();
 
   // Reset scroll position on view change
-  const scroller = document.getElementById('desktopScroller');
-  if (scroller) {
-    scroller.scrollTo({ top: 0, behavior: "instant" });
-  } else {
-    window.scrollTo({ top: 0, behavior: "instant" });
+  if (!skipScroll) {
+    const scroller = document.getElementById('desktopScroller');
+    if (scroller) {
+      scroller.scrollTo({ top: 0, behavior: "instant" });
+    } else {
+      window.scrollTo({ top: 0, behavior: "instant" });
+    }
   }
 }
 
-function renderDetail(slug) {
-  document.body.classList.remove('about-page-active');
+function renderDetail(slug, skipScroll = false) {
+  document.body.classList.remove('about-page-active', 'landing-page-active', 'category-page-active');
   document.body.classList.add('detail-page-active');
+  document.body.classList.remove('archive-page-active');
+  const mainHeader = document.getElementById('mainHeader');
+  const topBar = document.getElementById('topBar');
+  if (mainHeader) {
+    mainHeader.style.backgroundColor = '';
+    mainHeader.style.borderBottom = '';
+    mainHeader.style.boxShadow = '';
+    Array.from(mainHeader.children).forEach((child) => {
+      child.style.backgroundColor = '';
+      child.style.borderBottom = '';
+    });
+  }
+  if (topBar) topBar.style.display = '';
   clearThumbRollers();
   const filterMenu = document.getElementById('desktopFilterMenu');
   if (filterMenu) {
@@ -1285,11 +2015,13 @@ function renderDetail(slug) {
 
 
   // Scroll Reset
-  const scroller = document.getElementById('desktopScroller');
-  if (scroller) {
-    scroller.scrollTo({ top: 0, behavior: "smooth" });
-  } else {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+  if (!skipScroll) {
+    const scroller = document.getElementById('desktopScroller');
+    if (scroller) {
+      scroller.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   }
 }
 
@@ -1454,6 +2186,17 @@ function updateStaticText() {
       btn.classList.remove('bg-neutral-50', 'font-semibold');
     }
   });
+
+  // Desktop Header Lang Toggle Styles
+  document.querySelectorAll('.desktop-lang-toggle').forEach(btn => {
+    if (btn.dataset.lang === currentLang) {
+      btn.classList.add('text-neutral-900', 'font-bold');
+      btn.classList.remove('text-neutral-400');
+    } else {
+      btn.classList.add('text-neutral-400');
+      btn.classList.remove('text-neutral-900', 'font-bold');
+    }
+  });
   // Top Bar Language Option Styles
   document.querySelectorAll('.topbar-lang-option').forEach(btn => {
     if (btn.dataset.lang === currentLang) {
@@ -1485,19 +2228,20 @@ function setLanguage(lang) {
   updateMobileViewDropdown();
   updateMobileResultCount();
   updateDesktopResultCount();
-  router(); // re-render current view
+  router(true); // re-render current view without scrolling
   // Update filter toggle button text if on home page
-  if (location.hash === '#/' || location.hash === '') {
-    window._stableShuffleOrder = null; // Clear shuffle order when explicitly changing language/refreshing home
+  if (location.hash === '#/archive') {
+    window._stableShuffleOrder = null; // Clear shuffle order when explicitly changing language/refreshing archive
     updateFilterToggleButton();
   }
 }
 
-function router() {
+function router(skipScroll = false) {
 
   const raw = location.hash || '#/';
   const m = raw.match(/^#\/(.*)$/);
   const slug = m ? m[1] : '';
+  const previousSlug = window._lastSlug || '';
 
   // Save scroll if leaving home
   const scroller = document.getElementById('desktopScroller');
@@ -1507,25 +2251,37 @@ function router() {
   window._lastSlug = slug;
 
   if (!slug) {
-    renderHome();
+    renderLanding(skipScroll);
+    closeMenu();
+    return;
+  }
+  if (slug === 'archive') {
+    renderArchive(skipScroll);
+    closeMenu();
+    return;
+  }
+  if (slug.startsWith('category/')) {
+    renderCategory(slug.replace('category/', ''), skipScroll);
     closeMenu();
     return;
   }
   if (slug === 'about') {
-    renderAbout();
+    renderAbout(skipScroll);
     closeMenu();
     return;
   }
 
   const p = state.projects.find((x) => x.slug === slug);
   if (p && p.locked) {
+    rememberDetailBackRoute(previousSlug);
     pendingSlug = slug;
     showLockModal();
     closeMenu();
     return;
   }
 
-  renderDetail(slug);
+  if (p) rememberDetailBackRoute(previousSlug);
+  renderDetail(slug, skipScroll);
   closeMenu();
 }
 
@@ -1617,11 +2373,6 @@ brandLink.addEventListener('click', (e) => {
     }
   }, 30);
 });
-const s = state.site.social || {};
-
-// Top Bar Social Links
-(document.getElementById('topBarLinkedIn') || {}).href = s.linkedin || '#';
-
 // Language Event Listeners
 document.querySelectorAll('.lang-option').forEach(btn => {
   btn.addEventListener('click', (e) => {
@@ -1634,6 +2385,12 @@ document.querySelectorAll('.topbar-lang-option').forEach(btn => {
   });
 });
 document.querySelectorAll('.lang-toggle').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    setLanguage(e.target.dataset.lang);
+  });
+});
+
+document.querySelectorAll('.desktop-lang-toggle').forEach(btn => {
   btn.addEventListener('click', (e) => {
     setLanguage(e.target.dataset.lang);
   });
@@ -1698,14 +2455,19 @@ function setViewMode(nextMode, { render = true } = {}) {
   storage.set('view_mode', viewMode);
   updateViewToggleButtons();
   updateMobileViewDropdown();
-  if (render && (location.hash === '#/' || location.hash === '')) {
+  if (render && (location.hash === '#/archive')) {
     renderHome();
+  }
+  if (render && location.hash.indexOf('#/category/') === 0) {
+    renderCategory(location.hash.replace('#/category/', ''), true);
   }
 }
 
 const updateMobileResultCount = () => {
   if (!mobileResultCount) return;
-  const count = filterProjects().length;
+  const count = document.body.classList.contains('archive-page-active')
+    ? getArchiveFilteredProjects().length
+    : filterProjects().length;
   mobileResultCount.textContent = currentLang === 'ko'
     ? `${count}${t('resultsSuffix')}`
     : `${count} ${t('resultsSuffix')}`;
@@ -1714,7 +2476,9 @@ const updateMobileResultCount = () => {
 const updateDesktopResultCount = () => {
   const desktopResultCount = document.getElementById('desktopResultCount');
   if (!desktopResultCount) return;
-  const count = filterProjects().length;
+  const count = document.body.classList.contains('archive-page-active')
+    ? getArchiveFilteredProjects().length
+    : filterProjects().length;
   desktopResultCount.textContent = currentLang === 'ko'
     ? `${count}${t('resultsSuffix')}`
     : `${count} ${t('resultsSuffix')}`;
@@ -1727,7 +2491,7 @@ if (desktopSortSelect) {
     if (!SORT_MODES.includes(nextMode) || sortMode === nextMode) return;
     sortMode = nextMode;
     storage.set('sort_mode', sortMode);
-    if (location.hash === '#/' || location.hash === '') {
+    if (location.hash === '#/archive') {
       renderHome();
     } else if (filterMenuContent) {
       filterMenuContent.innerHTML = filterMenuHTML();
@@ -1738,6 +2502,78 @@ if (desktopSortSelect) {
   });
 }
 
+function getArchiveFocusFilterValue() {
+  return ARCHIVE_FOCUS_VALUES.includes(archiveFocusMode) ? archiveFocusMode : '';
+}
+
+function setArchiveFocusFilter(nextValue) {
+  const selected = ARCHIVE_FOCUS_VALUES.includes(nextValue) ? nextValue : '';
+  archiveFocusMode = selected;
+  storage.set('archive_focus', archiveFocusMode);
+  renderHome();
+}
+
+function setArchiveYearFilter(nextValue) {
+  archiveYearMode = ARCHIVE_YEAR_VALUES.includes(nextValue) ? nextValue : '';
+  storage.set('archive_year', archiveYearMode);
+  renderHome();
+}
+
+function resetArchiveFilters() {
+  sortMode = 'latest';
+  archiveFocusMode = '';
+  archiveYearMode = '';
+  searchQuery = '';
+  activeFilters = {};
+  storage.set('sort_mode', sortMode);
+  storage.set('archive_focus', archiveFocusMode);
+  storage.set('archive_year', archiveYearMode);
+  storage.set('activeFilters', JSON.stringify(activeFilters));
+  if (searchInput) searchInput.value = '';
+  if (mobileSearchInput) mobileSearchInput.value = '';
+  renderHome();
+}
+
+function syncArchiveFilterBar() {
+  const archiveSortSelect = document.getElementById('archiveSortSelect');
+  const archiveFocusSelect = document.getElementById('archiveFocusSelect');
+  const archiveYearSelect = document.getElementById('archiveYearSelect');
+
+  if (archiveSortSelect) archiveSortSelect.value = sortMode;
+  if (archiveFocusSelect) archiveFocusSelect.value = getArchiveFocusFilterValue();
+  if (archiveYearSelect) archiveYearSelect.value = archiveYearMode;
+}
+
+const archiveSortSelect = document.getElementById('archiveSortSelect');
+if (archiveSortSelect) {
+  archiveSortSelect.addEventListener('change', (e) => {
+    const nextMode = e.target.value;
+    if (!SORT_MODES.includes(nextMode) || sortMode === nextMode) return;
+    sortMode = nextMode;
+    storage.set('sort_mode', sortMode);
+    renderHome();
+  });
+}
+
+const archiveFocusSelect = document.getElementById('archiveFocusSelect');
+if (archiveFocusSelect) {
+  archiveFocusSelect.addEventListener('change', (e) => {
+    setArchiveFocusFilter(e.target.value);
+  });
+}
+
+const archiveYearSelect = document.getElementById('archiveYearSelect');
+if (archiveYearSelect) {
+  archiveYearSelect.addEventListener('change', (e) => {
+    setArchiveYearFilter(e.target.value);
+  });
+}
+
+const archiveResetFiltersBtn = document.getElementById('archiveResetFiltersBtn');
+if (archiveResetFiltersBtn) {
+  archiveResetFiltersBtn.addEventListener('click', resetArchiveFilters);
+}
+
 const mobileSortSelect = document.getElementById('mobileSortSelect');
 if (mobileSortSelect) {
   mobileSortSelect.addEventListener('change', (e) => {
@@ -1745,7 +2581,7 @@ if (mobileSortSelect) {
     if (!SORT_MODES.includes(nextMode) || sortMode === nextMode) return;
     sortMode = nextMode;
     storage.set('sort_mode', sortMode);
-    if (location.hash === '#/' || location.hash === '') {
+    if (location.hash === '#/archive') {
       renderHome();
     } else if (filterMenuContent) {
       filterMenuContent.innerHTML = filterMenuHTML();
@@ -1775,7 +2611,7 @@ if (searchInput) {
 
   searchInput.addEventListener('input', (e) => {
     searchQuery = e.target.value;
-    if (location.hash === '#/' || location.hash === '') {
+    if (location.hash === '#/archive') {
       renderHome();
     }
   });
@@ -1783,8 +2619,8 @@ if (searchInput) {
   searchInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      if (location.hash !== '#/' && location.hash !== '') {
-        location.hash = '#/';
+      if (location.hash !== '#/archive') {
+        location.hash = '#/archive';
         setTimeout(() => renderHome(), 100);
       }
     }
@@ -1802,7 +2638,7 @@ const closeMobileSearch = () => {
   mobileSearchModal.classList.add('hidden');
   mobileSearchInput.value = '';
   searchQuery = '';
-  if (location.hash === '#/' || location.hash === '') renderHome();
+  if (location.hash === '#/archive') renderHome();
 };
 
 if (mobileSearchBtn && mobileSearchInput) {
@@ -1812,7 +2648,7 @@ if (mobileSearchBtn && mobileSearchInput) {
 
   mobileSearchInput.addEventListener('input', (e) => {
     searchQuery = e.target.value;
-    if (location.hash === '#/' || location.hash === '') {
+    if (location.hash === '#/archive') {
       renderHome();
     }
   });
@@ -1820,8 +2656,8 @@ if (mobileSearchBtn && mobileSearchInput) {
   mobileSearchInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      if (location.hash !== '#/' && location.hash !== '') {
-        location.hash = '#/';
+      if (location.hash !== '#/archive') {
+        location.hash = '#/archive';
         setTimeout(() => renderHome(), 100);
       }
     }
@@ -1845,6 +2681,11 @@ if (mobileSearchModal) {
 }
 
 window.addEventListener('hashchange', router);
+document.addEventListener('click', (event) => {
+  const button = event.target.closest('[data-category-view]');
+  if (!button) return;
+  setViewMode(button.dataset.categoryView);
+});
 // Resize listener merged into updateLayoutMode
 router();
 setupViewToggle(); // Initialize fixed view toggle bar event listeners
@@ -1943,6 +2784,7 @@ function updateViewToggleButtons() {
   if (mobileSortSelect) {
     mobileSortSelect.value = sortMode;
   }
+  syncArchiveFilterBar();
 }
 
 /** Update the fixed view toggle bar state */
@@ -1954,16 +2796,20 @@ function updateViewToggleBar() {
   // Show/hide the bar based on page
   const viewToggleBar = document.getElementById('viewToggleBar');
   if (viewToggleBar) {
-    if (document.body.classList.contains('about-page-active')) {
-      viewToggleBar.classList.add('hidden');
-      viewToggleBar.classList.remove('lg:flex');
-    } else if (location.hash && location.hash !== '#/' && location.hash !== '') {
-      viewToggleBar.classList.add('hidden');
-      viewToggleBar.classList.remove('lg:flex');
-    } else {
+    if (document.body.classList.contains('archive-page-active')) {
       viewToggleBar.classList.remove('hidden');
-      viewToggleBar.classList.add('lg:flex');
+      viewToggleBar.style.display = '';
+    } else {
+      viewToggleBar.classList.add('hidden');
+      viewToggleBar.style.display = 'none';
     }
+  }
+
+  const categoryFocusBar = document.getElementById('categoryFocusBar');
+  if (categoryFocusBar && !document.body.classList.contains('category-page-active')) {
+    categoryFocusBar.classList.add('hidden');
+    categoryFocusBar.style.display = 'none';
+    categoryFocusBar.innerHTML = '';
   }
 }
 
@@ -1977,7 +2823,20 @@ function updateFilterToggleButton() {
 function updateFilterVisibility() {
   const filterMenu = document.getElementById('desktopFilterMenu');
   const main = document.querySelector('main');
-  const isDetailPage = location.hash && location.hash !== '#/' && location.hash !== '' && location.hash !== '#/about';
+  const isArchivePage = location.hash === '#/archive';
+  const isDetailPage = location.hash && location.hash !== '#/archive' && location.hash !== '#/about';
+
+  if (!isArchivePage) {
+    if (filterMenu) {
+      filterMenu.classList.add('hidden', 'filter-hidden');
+      filterMenu.classList.remove('filter-visible');
+    }
+    if (main) {
+      main.classList.add('filter-hidden');
+      main.classList.remove('filter-visible');
+    }
+    return;
+  }
 
   if (filterMenu) {
     if (isDetailPage) {
@@ -2049,7 +2908,7 @@ function setupFilterListeners() {
       sortMode = nextMode;
       storage.set('sort_mode', sortMode);
 
-      if (location.hash === '#/' || location.hash === '') {
+      if (location.hash === '#/archive') {
         renderHome();
       } else {
         if (filterMenuContent) {
@@ -2083,7 +2942,7 @@ function setupFilterListeners() {
     clearBtn.addEventListener('click', () => {
       activeFilters = {};
       storage.set('activeFilters', JSON.stringify(activeFilters));
-      if (location.hash === '#/' || location.hash === '') {
+      if (location.hash === '#/archive') {
         renderHome();
       } else {
         if (filterMenuContent) {
@@ -2111,7 +2970,7 @@ function updateFilterSelection(filterType, filterValue, isChecked) {
   storage.set('activeFilters', JSON.stringify(activeFilters));
 
   // Re-render home if we're on home page
-  if (location.hash === '#/' || location.hash === '') {
+  if (location.hash === '#/archive') {
     window._preventNextScrollReset = true; // Prevent jumping to top
     renderHome();
   } else {
@@ -2150,7 +3009,7 @@ function bindMobileFilterDelegation() {
       if (!SORT_MODES.includes(nextMode) || sortMode === nextMode) return;
       sortMode = nextMode;
       storage.set('sort_mode', sortMode);
-      if (location.hash === '#/' || location.hash === '') {
+      if (location.hash === '#/archive') {
         renderHome();
       } else if (filterMenuContent) {
         filterMenuContent.innerHTML = filterMenuHTML();
@@ -2176,7 +3035,7 @@ function bindMobileFilterDelegation() {
     if (clearBtn) {
       activeFilters = {};
       storage.set('activeFilters', JSON.stringify(activeFilters));
-      if (location.hash === '#/' || location.hash === '') {
+      if (location.hash === '#/archive') {
         renderHome();
       } else if (filterMenuContent) {
         filterMenuContent.innerHTML = filterMenuHTML();
@@ -2221,6 +3080,7 @@ function closeDesktopMenu() {
 
 /** Feature: Scroll to Top Button (Mobile) */
 const scrollTopBtn = document.getElementById('scrollTopBtn');
+const personaGuide = document.getElementById('personaGuide');
 
 let lastScrollY = window.scrollY;
 const mainHeader = document.getElementById('mainHeader');
@@ -2244,8 +3104,9 @@ function updateDesktopHeaderVars() {
   if (viewToggleHeight) {
     document.documentElement.style.setProperty('--desktop-view-toggle', `${Math.round(viewToggleHeight)}px`);
   }
+  const isLanding = document.body.classList.contains('landing-page-active');
   const isCollapsed = document.body.classList.contains('header-collapsed');
-  const offset = isCollapsed ? 0 : headerStack;
+  const offset = (isCollapsed || isLanding) ? 0 : headerStack;
   document.documentElement.style.setProperty('--desktop-header-offset', `${Math.round(offset)}px`);
   const contentHeight = Math.max(0, window.innerHeight - offset - viewToggleHeight);
   document.documentElement.style.setProperty('--desktop-content-height', `${Math.round(contentHeight)}px`);
@@ -2270,15 +3131,30 @@ let ticking = false;
 let isHeaderCollapsed = document.body.classList.contains('header-collapsed');
 
 function updateHeader() {
+  updatePinnedScrollEffects();
   const isDesktop = window.innerWidth >= 1024;
   const scroller = document.getElementById('desktopScroller');
-  const currentY = (isDesktop && scroller) ? scroller.scrollTop : window.scrollY;
+  const currentY = (isDesktop && scroller)
+    ? Math.max(scroller.scrollTop || 0, window.scrollY || document.documentElement.scrollTop || 0)
+    : window.scrollY;
+  const isLanding = document.body.classList.contains('landing-page-active');
+  const isArchive = document.body.classList.contains('archive-page-active');
+  const isCategory = document.body.classList.contains('category-page-active');
+
+  // Landing page header reveal logic
+  if (isLanding && isDesktop) {
+    const shouldReveal = currentY > 200; // Reveal after scrolling 200px
+    if (shouldReveal !== document.body.classList.contains('landing-header-revealed')) {
+      document.body.classList.toggle('landing-header-revealed', shouldReveal);
+    }
+  }
 
   // Header collapse effect
   if (isDesktop) {
-    if (isHeaderCollapsed) {
-      document.body.classList.remove('header-collapsed');
-      isHeaderCollapsed = false;
+    const shouldCollapse = (isArchive || isCategory) && currentY > 80;
+    if (shouldCollapse !== isHeaderCollapsed) {
+      document.body.classList.toggle('header-collapsed', shouldCollapse);
+      isHeaderCollapsed = shouldCollapse;
       updateDesktopHeaderVars();
     }
   } else {
@@ -2293,8 +3169,13 @@ function updateHeader() {
   // Scroll Top Button Logic
   if (currentY > 300) {
     if (scrollTopBtn) scrollTopBtn.classList.add('visible');
+    if (personaGuide && (isArchive || isCategory)) personaGuide.classList.add('visible');
   } else {
     if (scrollTopBtn) scrollTopBtn.classList.remove('visible');
+    if (personaGuide) {
+      personaGuide.classList.remove('visible');
+      togglePersonaGuide(false);
+    }
   }
 
   lastY = currentY > 0 ? currentY : 0; // Prevent negative
@@ -2309,6 +3190,18 @@ const handleScroll = () => {
 };
 
 window.addEventListener("scroll", handleScroll, { passive: true });
+document.addEventListener("scroll", handleScroll, { passive: true, capture: true });
+
+window.setInterval(() => {
+  if (document.body.classList.contains('archive-page-active') || document.body.classList.contains('category-page-active')) {
+    updateHeader();
+  }
+}, 250);
+
+const desktopScroller = document.getElementById('desktopScroller');
+if (desktopScroller) {
+  desktopScroller.addEventListener('scroll', handleScroll, { passive: true });
+}
 
 // Also listen to desktopScroller if it exists
 document.addEventListener('DOMContentLoaded', () => {
@@ -2320,11 +3213,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
 window.addEventListener('resize', () => {
   updateDesktopHeaderVars();
+  requestPinnedScrollEffects();
 });
 
 window.addEventListener('load', () => {
   updateDesktopHeaderVars();
+  requestPinnedScrollEffects();
 });
+
+function updatePinnedScrollEffects() {
+  const isLanding = document.body.classList.contains('landing-page-active');
+  if (!isLanding) return;
+
+  const stage = document.querySelector('.philosophy-stage');
+  if (!stage) return;
+
+  const isDesktop = window.innerWidth >= 1024;
+  const scroller = document.getElementById('desktopScroller');
+  const viewportHeight = window.innerHeight;
+  const stageHeight = stage.offsetHeight;
+
+  const rect = stage.getBoundingClientRect();
+  const scrollDistance = stageHeight - viewportHeight;
+
+  // Calculate progress relative to the stage's presence in the viewport
+  let progress = -rect.top / scrollDistance;
+  progress = Math.max(0, Math.min(1, progress));
+
+  // Set on both root and stage for maximum compatibility
+  document.documentElement.style.setProperty('--scroll-progress', progress.toFixed(4));
+  stage.style.setProperty('--scroll-progress', progress.toFixed(4));
+}
+
+let pinnedScrollFrame = null;
+function requestPinnedScrollEffects() {
+  if (pinnedScrollFrame) return;
+  pinnedScrollFrame = requestAnimationFrame(() => {
+    pinnedScrollFrame = null;
+    updatePinnedScrollEffects();
+  });
+}
 
 // Add scroll listener
 
@@ -2339,10 +3267,182 @@ if (scrollTopBtn) {
     }
   });
 }
+
+const personaGuideBtn = document.getElementById('personaGuideBtn');
+const personaGuidePanel = document.getElementById('personaGuidePanel');
+const personaGuideClose = document.getElementById('personaGuideClose');
+const personaGuideNote = document.getElementById('personaGuideNote');
+const personaGuideEmail = document.getElementById('personaGuideEmail');
+const personaGuideState = {
+  focus: '',
+  timeline: '',
+  scope: ''
+};
+
+function getPersonaGuideMessage() {
+  return [
+    'Hello Design Persona,',
+    '',
+    'I would like to discuss a project.',
+    '',
+    `Interest: ${personaGuideState.focus || 'Not selected yet'}`,
+    `Timeline: ${personaGuideState.timeline || 'Not selected yet'}`,
+    `Scope: ${personaGuideState.scope || 'Not selected yet'}`,
+    '',
+    'I found your work through the portfolio archive.'
+  ].join('\n');
+}
+
+function updatePersonaGuideEmail() {
+  if (!personaGuideNote || !personaGuideEmail) return;
+  const body = getPersonaGuideMessage();
+  const subject = 'Project inquiry from Design Persona portfolio';
+  personaGuideNote.textContent = body;
+  personaGuideEmail.href = `mailto:designpersona.kr@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
+function togglePersonaGuide(forceOpen = null) {
+  if (!personaGuidePanel || !personaGuideBtn) return;
+  const shouldOpen = forceOpen === null
+    ? personaGuidePanel.classList.contains('hidden')
+    : forceOpen;
+  personaGuidePanel.classList.toggle('hidden', !shouldOpen);
+  personaGuideBtn.setAttribute('aria-expanded', String(shouldOpen));
+  if (shouldOpen) updatePersonaGuideEmail();
+}
+
+if (personaGuideBtn) {
+  personaGuideBtn.addEventListener('click', () => togglePersonaGuide());
+}
+
+if (personaGuideClose) {
+  personaGuideClose.addEventListener('click', () => togglePersonaGuide(false));
+}
+
+if (personaGuidePanel) {
+  personaGuidePanel.addEventListener('click', (event) => {
+    const option = event.target.closest('[data-guide-value]');
+    if (!option) return;
+
+    const group = option.closest('[data-guide-group]');
+    const key = group?.dataset.guideGroup;
+    if (!key || !(key in personaGuideState)) return;
+
+    personaGuideState[key] = option.dataset.guideValue || '';
+    group.querySelectorAll('[data-guide-value]').forEach((button) => {
+      button.classList.toggle('active', button === option);
+    });
+    updatePersonaGuideEmail();
+  });
+}
+
+updatePersonaGuideEmail();
+
 function syncMobileFilterContent() {
   if (!filterMenuContent || !mobileFilterContent) return;
   if (!filterMenuContent.innerHTML) return;
   mobileFilterContent.innerHTML = filterMenuContent.innerHTML;
   setupFilterListeners();
   bindMobileFilterDelegation();
+}
+
+function scrollToPhilosophy() {
+  const scroller = document.getElementById('desktopScroller');
+  const philosophy = document.getElementById('philosophy');
+  if (scroller && philosophy) {
+    scroller.scrollTo({
+      top: philosophy.offsetTop,
+      behavior: 'smooth'
+    });
+  } else if (philosophy) {
+    window.scrollTo({
+      top: philosophy.offsetTop,
+      behavior: 'smooth'
+    });
+  }
+}
+
+function scrollToLandingStart() {
+  const scroller = document.getElementById('desktopScroller');
+  const target = document.querySelector('.dashboard-hero');
+  if (scroller && target) {
+    scroller.scrollTo({
+      top: target.offsetTop,
+      behavior: 'smooth'
+    });
+  } else if (target) {
+    window.scrollTo({
+      top: target.offsetTop,
+      behavior: 'smooth'
+    });
+  }
+}
+
+function scrollToLandingFeature() {
+  const scroller = document.getElementById('desktopScroller');
+  const target = document.getElementById('landingFeaturedProject') || document.getElementById('philosophy');
+  if (scroller && target) {
+    scroller.scrollTo({
+      top: target.offsetTop,
+      behavior: 'smooth'
+    });
+  } else if (target) {
+    window.scrollTo({
+      top: target.offsetTop,
+      behavior: 'smooth'
+    });
+  }
+}
+
+function scrollToFooter() {
+  const scroller = document.getElementById('desktopScroller');
+  const target = document.querySelector('.desktop-footer');
+  if (scroller && target) {
+    scroller.scrollTo({
+      top: target.offsetTop,
+      behavior: 'smooth'
+    });
+  } else if (target) {
+    window.scrollTo({
+      top: target.offsetTop,
+      behavior: 'smooth'
+    });
+  }
+}
+
+function switchLang(lang) {
+  if (!lang) return;
+  currentLang = lang;
+  storage.set('site_lang', lang);
+  document.documentElement.dataset.lang = lang;
+  document.body.classList.toggle('lang-en', lang === 'en');
+  document.body.classList.toggle('lang-ko', lang === 'ko');
+  updateStaticText();
+  updateFilterToggleButton();
+  updateMobileViewDropdown();
+  updateMobileResultCount();
+  updateDesktopResultCount();
+  // Re-render the menu list in place (don't close)
+  if (desktopProjectListNav) {
+    desktopProjectListNav.innerHTML = listHTML(state.projects);
+  }
+  // Update lang button styles in drawer
+  document.querySelectorAll('.drawer-lang-btn').forEach(btn => {
+    if (btn.dataset.lang === lang) {
+      btn.style.color = '#111';
+      btn.style.fontWeight = '700';
+    } else {
+      btn.style.color = '#999';
+      btn.style.fontWeight = '500';
+    }
+  });
+  // Also re-render the current page content behind the menu
+  const raw = location.hash || '#/';
+  const m = raw.match(/^#\/(.*)$/);
+  const slug = m ? m[1] : '';
+  if (!slug) renderLanding(true);
+  else if (slug === 'archive') renderArchive(true);
+  else if (slug === 'about') renderAbout(true);
+  else if (slug.startsWith('category/')) renderCategory(slug.replace('category/', ''), true);
+  else renderDetail(slug, true);
 }

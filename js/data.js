@@ -4,7 +4,7 @@ window.PROJECT_DATA = {
         "social": {
             "linkedin": "https://www.linkedin.com/in/gyuri-min",
             "x": " ",
-            "behance": "www.behance.net/gyuri_min"
+            "behance": "https://www.behance.net/gyuri_min"
         },
         "copyright": {
             "en": "Copyright © Design Persona 2013-2026. All Rights Reserved.",
@@ -36,7 +36,7 @@ window.PROJECT_DATA = {
             "role": "Product Designer",
             "projectType": "Product Design",
             "industry": "Service",
-            "tools": "Antigravity, Codex, VS Code, Cursor",
+            "tools": "Figma, VS Code",
             "description": {
                 "en": [
                     "Chat Book is a service designed to track and analyze personal interests and usage frequency by managing chat histories.",
@@ -75,7 +75,7 @@ window.PROJECT_DATA = {
             "role": "Web Designer",
             "projectType": "Web Design",
             "industry": "Service",
-            "tools": "ChatGPT, Cursor",
+            "tools": "Figma, VS Code",
             "description": {
                 "en": [
                     "This site is a comprehensive project that encompasses both the design portfolio composition and the web development work involved in creating a personalized web portfolio. It was created to present a branding portfolio in the form of an e-catalog, showcasing an understanding of both visual design and front-end development. Further details will be announced soon."
@@ -86,7 +86,7 @@ window.PROJECT_DATA = {
             },
             "links": [],
             "gallery": [],
-            "tool_notes": "Codex used; Other tools: Antigravity"
+            "tool_notes": ""
         },
         {
             "slug": "farmsplan-deli-cafe",
@@ -810,7 +810,7 @@ window.PROJECT_DATA = {
             "links": [],
             "gallery": [
                 {
-                    "src": "assets/projects/Gullyjumper/1.jpg",
+                    "src": "assets/projects/Gullyjumper/cover.jpg",
                     "caption": " "
                 },
                 {
