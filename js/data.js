@@ -7,8 +7,8 @@ window.PROJECT_DATA = {
             "behance": "https://www.behance.net/gyuri_min"
         },
         "copyright": {
-            "en": "Copyright © Design Persona 2013-2026. All Rights Reserved.",
-            "ko": "Copyright © Design Persona 2013-2026. All Rights Reserved."
+            "en": "Copyright © Min Gyuri 2013-2026. All Rights Reserved.",
+            "ko": "Copyright © Min Gyuri 2013-2026. All Rights Reserved."
         }
     },
     "projects": [
@@ -26,8 +26,8 @@ window.PROJECT_DATA = {
                 "ko": "프로덕트 디자인"
             },
             "summary": {
-                "en": "Product service analyzing personal interests through chat histories.",
-                "ko": "채팅 기록을 통한 개인 관심사 분석 데이터 추적 서비스"
+                "en": "Read yourself through everyday conversations, one page at a time.",
+                "ko": "일상의 대화를 한 장씩 넘기며, 나를 읽어가는 기록."
             },
             "cover": "assets/projects/ChatLog/cover.jpg",
             "thumbnail": "assets/projects/ChatLog/thumbnail.jpg",

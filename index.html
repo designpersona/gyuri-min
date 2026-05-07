@@ -5,6 +5,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#ff6a00">
+  <meta name="referrer" content="no-referrer">
   <title>Gyuri Min | Portfolio</title>
   <link rel="icon" href="./assets/icons/favicon2.png" sizes="any" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,7 +22,7 @@
       font-family: var(--font-outfit);
     }
   </style>
-  <link rel="stylesheet" href="css/styles.css?v=20260508-07" />
+    <link rel="stylesheet" href="css/styles.css?v=20260508-59" />
 
 
 </head>
@@ -145,7 +146,7 @@
       <span id="desktopResultCount" class="text-[11px] font-medium text-neutral-600 hidden"></span>
       <div class="catalog-filter-strip hidden lg:grid">
         <label class="catalog-filter-cell" for="archiveSortSelect">
-          <span>Sort by:</span>
+          <span></span>
           <select id="archiveSortSelect" class="catalog-filter-select" aria-label="Archive sort">
             <option value="latest">New</option>
             <option value="featured">Featured</option>
@@ -153,7 +154,7 @@
           </select>
         </label>
         <label class="catalog-filter-cell" for="archiveFocusSelect">
-          <span>Project:</span>
+          <span></span>
           <select id="archiveFocusSelect" class="catalog-filter-select" aria-label="Archive project">
             <option value="">All</option>
             <option value="brand-systems">Brand Systems</option>
@@ -165,7 +166,7 @@
           </select>
         </label>
         <label class="catalog-filter-cell" for="archiveYearSelect">
-          <span>Year:</span>
+          <span></span>
           <select id="archiveYearSelect" class="catalog-filter-select" aria-label="Archive year">
             <option value="">All</option>
             <option value="2026-2024">2026-2024</option>
@@ -228,6 +229,41 @@
     <div id="mobileTopBar"
       class="lg:hidden sticky left-0 right-0 bg-white border-b border-neutral-200 flex items-center gap-3 px-4 py-2.5 z-[60] i18n-pending">
       <span id="mobileResultCount" class="text-xs font-medium text-neutral-600"></span>
+      <div class="mobile-catalog-filter-strip" aria-label="Archive filters">
+        <label class="catalog-filter-cell" for="mobileArchiveSortSelect">
+          <span>Sort</span>
+          <select id="mobileArchiveSortSelect" class="catalog-filter-select" aria-label="Archive sort">
+            <option value="latest">Sort: New</option>
+            <option value="featured">Sort: Featured</option>
+            <option value="oldest">Sort: Oldest</option>
+          </select>
+        </label>
+        <label class="catalog-filter-cell" for="mobileArchiveFocusSelect">
+          <span>Type</span>
+          <select id="mobileArchiveFocusSelect" class="catalog-filter-select" aria-label="Archive project">
+            <option value="">Type: All</option>
+            <option value="brand-systems">Type: Brand</option>
+            <option value="fnb-retail">Type: F&amp;B</option>
+            <option value="packaging">Type: Package</option>
+            <option value="campaign-content">Type: Campaign</option>
+            <option value="digital-web">Type: Digital</option>
+            <option value="illustration-character">Type: Illustration</option>
+          </select>
+        </label>
+        <label class="catalog-filter-cell" for="mobileArchiveYearSelect">
+          <span>Year:</span>
+          <select id="mobileArchiveYearSelect" class="catalog-filter-select" aria-label="Archive year">
+            <option value="">All</option>
+            <option value="2026-2024">2026-2024</option>
+            <option value="2023-2021">2023-2021</option>
+            <option value="2020-2018">2020-2018</option>
+            <option value="older">~2017</option>
+          </select>
+        </label>
+        <button id="mobileArchiveResetFiltersBtn" class="catalog-filter-reset" type="button" aria-label="Reset archive filters">
+          Reset
+        </button>
+      </div>
       <div class="ml-auto flex items-center gap-3">
         <button id="mobileFilterOpenBtn"
           class="flex items-center gap-2 text-sm font-medium text-neutral-900 hover:text-[var(--accent-orange)] transition-colors i18n-pending"
@@ -398,7 +434,7 @@
       <footer class="desktop-footer site-footer hidden lg:block w-full mt-auto">
         <div class="site-footer-inner">
           <div class="site-footer-brand">
-            <strong>Design Persona</strong>
+            <strong class="site-footer-brand-lockup"><img src="assets/icons/1.png" alt="" aria-hidden="true" /><span>Design Persona</span></strong>
           </div>
           <nav class="site-footer-column" aria-label="Explore">
             <strong>Explore</strong>
@@ -425,7 +461,6 @@
             <strong>Connect</strong>
             <a href="mailto:designpersona.kr@gmail.com">Email</a>
             <span>Seoul, Korea</span>
-            <span>Updated for 2026</span>
           </nav>
         </div>
         <div class="site-footer-bottom">
@@ -525,10 +560,41 @@
   </template>
 
   <!-- Mobile Footer (Remains outside) -->
-  <footer class="mobile-footer lg:hidden w-full bg-neutral-900 px-5 pt-24 border-t border-neutral-800 pb-safe"
+  <footer class="mobile-footer site-footer lg:hidden w-full bg-neutral-900 px-5 pt-24 border-t border-neutral-800 pb-safe"
     style="padding-bottom: calc(env(safe-area-inset-bottom) + 80px); margin-bottom: 0;">
-    <div class="mx-auto max-w-screen-sm flex flex-col gap-4">
-      <div class="text-center text-[12px] text-neutral-400" id="mobileCopyright"></div>
+    <div class="site-footer-inner">
+      <div class="site-footer-brand">
+        <strong class="site-footer-brand-lockup"><img src="assets/icons/1.png" alt="" aria-hidden="true" /><span>Design Persona</span></strong>
+      </div>
+      <nav class="site-footer-column" aria-label="Explore">
+        <strong>Explore</strong>
+        <a href="#/">Main</a>
+        <a href="#/about">About</a>
+        <a href="#/archive">All Projects</a>
+      </nav>
+      <nav class="site-footer-column site-footer-projects" aria-label="Projects">
+        <strong>Project</strong>
+        <div class="site-footer-project-grid">
+          <div>
+            <a href="#/category/brand-systems">Brand Systems</a>
+            <a href="#/category/fnb-retail">F&amp;B Retail</a>
+            <a href="#/category/packaging">Package Line</a>
+          </div>
+          <div>
+            <a href="#/category/campaign-content">Campaign Content</a>
+            <a href="#/category/digital-web">Digital Service</a>
+            <a href="#/category/illustration-character">Illustration Character</a>
+          </div>
+        </div>
+      </nav>
+      <nav class="site-footer-column" aria-label="Connect">
+        <strong>Connect</strong>
+        <a href="mailto:designpersona.kr@gmail.com">Email</a>
+        <span>Seoul, Korea</span>
+      </nav>
+    </div>
+    <div class="site-footer-bottom">
+      <span id="mobileCopyright"></span>
     </div>
   </footer>
 
@@ -632,13 +698,7 @@
   <style>
     @media (max-width: 1023px) {
       #mobileBlocker {
-        display: flex !important;
-      }
-      body {
-        overflow: hidden !important;
-        position: fixed !important;
-        width: 100% !important;
-        height: 100% !important;
+        display: none !important;
       }
     }
   </style>
@@ -836,8 +896,8 @@
     </svg>
   </button>
 
-  <script src="js/data.js?v=20260507-16"></script>
-  <script src="js/main.js?v=20260507-16"></script>
+  <script src="js/data.js?v=20260508-12"></script>
+  <script src="js/main.js?v=20260508-25"></script>
 
 </body>
 

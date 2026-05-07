@@ -1,5 +1,5 @@
 /** Configuration & State */
-const LOCK_PASSWORD = '123412'; // password for protected content
+const LOCK_PASSWORD_HASH = '64054d8092ebdd04ae20aadbe8ef3f168495fa514af6865e12f421470c8f7cb7';
 
 const storage = (() => {
   let available = true;
@@ -38,6 +38,50 @@ const safeJsonParse = (value, fallback) => {
     return fallback;
   }
 };
+
+async function sha256Hex(value) {
+  if (!window.crypto || !window.crypto.subtle) return '';
+  const bytes = new TextEncoder().encode(value);
+  const hash = await window.crypto.subtle.digest('SHA-256', bytes);
+  return Array.from(new Uint8Array(hash))
+    .map((byte) => byte.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+function installContentProtection() {
+  document.body.classList.add('content-protected');
+
+  const allowEditable = (target) => {
+    if (!target || !(target instanceof Element)) return false;
+    return Boolean(target.closest('input, textarea, select, [contenteditable="true"]'));
+  };
+
+  document.addEventListener('contextmenu', (event) => {
+    if (!allowEditable(event.target)) event.preventDefault();
+  }, { capture: true });
+
+  document.addEventListener('dragstart', (event) => {
+    event.preventDefault();
+  }, { capture: true });
+
+  document.addEventListener('selectstart', (event) => {
+    if (!allowEditable(event.target)) event.preventDefault();
+  }, { capture: true });
+
+  document.addEventListener('copy', (event) => {
+    if (!allowEditable(event.target)) event.preventDefault();
+  }, { capture: true });
+
+  document.addEventListener('keydown', (event) => {
+    const key = event.key.toLowerCase();
+    const modifier = event.metaKey || event.ctrlKey;
+    if (modifier && ['a', 'c', 's', 'u', 'p'].includes(key) && !allowEditable(event.target)) {
+      event.preventDefault();
+    }
+  }, { capture: true });
+}
+
+installContentProtection();
 
 // Parse embedded JSON data
 const DATA = window.PROJECT_DATA;
@@ -218,12 +262,11 @@ const I18N = {
     // About Page
     aboutRole: "Brand Designer",
     aboutTagline: "Brand Architect.<br>Visual Strategist.<br>Experience Builder.<br>Creative Connector.",
-    aboutIntro: "A brand designer shaping identity, packaging, content, and campaign systems across digital and physical touchpoints.",
     expertise: "Expertise",
     experience: "Experience",
     recognition: "Recognition",
     education: "Education",
-    credentials: "Credentials",
+    credentials: "Activities & Credentials",
     contact: "Get in touch →",
     competencies: [
       "<span class=\"font-semibold\">Brand Strategy & Design:</span> End-to-end identity, packaging, and campaign execution",
@@ -321,12 +364,11 @@ const I18N = {
     // About Page
     aboutRole: "브랜드 디자이너",
     aboutTagline: "Brand Architect.<br>Visual Strategist.<br>Experience Builder.<br>Creative Connector.",
-    aboutIntro: "아이덴티티, 패키지, 콘텐츠, 캠페인 시스템을 디지털과 오프라인 접점에 맞게 설계하는 브랜드 디자이너입니다.",
     expertise: "전문 분야",
     experience: "경력",
     recognition: "수상 경력",
     education: "학력",
-    credentials: "자격증",
+    credentials: "사회활동 및 자격사항",
     contact: "연락처 →",
     competencies: [
       "<span class=\"font-semibold\">Brand Strategy & Design:</span> 아이덴티티, 패키지, 캠페인의 통합 설계와 실행",
@@ -713,7 +755,9 @@ const gridHTML = (items, extraCardHTML = '') => {
     }
   }
 
-  return `<div class="grid ${gridClasses}">` +
+  const mobileArchiveGridClass = !isDesktop ? ` mobile-archive-grid mobile-view-${viewMode}` : '';
+
+  return `<div class="grid ${gridClasses}${mobileArchiveGridClass}">` +
     items
       .map(
         (p) => {
@@ -799,11 +843,13 @@ const gridHTML = (items, extraCardHTML = '') => {
             .map((label) => `<span class="portfolio-hover-kicker">${esc(label)}</span>`)
             .join('');
           const hoverTitle = title.length > 22 ? title.split(/\s+/).join('<br>') : title;
+          const showImageOverlay = isDesktop || isWideView;
 
           return `
         <article class="portfolio-card relative group ${isWideView ? 'portfolio-card-wide w-full max-w-full' : ''}">
           <a href="#/${p.slug}" class="block overflow-hidden relative thumb-frame portfolio-card-media" style="text-decoration:none">
             ${mediaHtml}
+            ${showImageOverlay ? `
             <div class="portfolio-hover-info" aria-hidden="true">
               <div class="portfolio-hover-copy">
                 ${projectCategoryPills ? `<div class="portfolio-hover-kickers">${projectCategoryPills}</div>` : ''}
@@ -821,8 +867,9 @@ const gridHTML = (items, extraCardHTML = '') => {
                 </span>
               </div>
             </div>
-            ${p.locked ? `<div class="absolute top-0 right-0 bg-black/10 text-white text-[10px] px-3 py-1 uppercase tracking-wider font-medium">${t('restricted')}</div>` : ''}
-            ${p.developing ? `<div class="absolute top-0 right-0 bg-[#7c3aed] text-white text-[10px] px-3 py-1 uppercase tracking-wider font-medium">${t('developing')}</div>` : ''}
+            ` : ''}
+            ${showImageOverlay && p.locked ? `<div class="absolute top-0 right-0 bg-black/10 text-white text-[10px] px-3 py-1 uppercase tracking-wider font-medium">${t('restricted')}</div>` : ''}
+            ${showImageOverlay && p.developing ? `<div class="absolute top-0 right-0 bg-[#7c3aed] text-white text-[10px] px-3 py-1 uppercase tracking-wider font-medium">${t('developing')}</div>` : ''}
           </a>
           <div class="portfolio-card-body">
             <h3 class="portfolio-card-title">${title}</h3>
@@ -851,7 +898,7 @@ function detailHTML(p) {
 
       if (ytMatch) {
         media = `<div class="relative w-full aspect-video">
-              <iframe class="absolute inset-0 w-full h-full" src="https://www.youtube.com/embed/${ytMatch[1]}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+              <iframe class="absolute inset-0 w-full h-full" src="https://www.youtube.com/embed/${ytMatch[1]}" title="YouTube video player" frameborder="0" loading="lazy" referrerpolicy="no-referrer" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>`;
       } else if (/\.(mp4|webm|mov)$/i.test(src)) {
         media = `<video class="w-full" controls playsinline preload="metadata">
@@ -909,7 +956,7 @@ function detailHTML(p) {
         
         ${hasLinks
       ? `<div class="space-y-4 pt-4 border-t border-neutral-100">
-            ${p.links.map(link => `<a href="${esc(link.url)}" target="_blank" rel="noopener" class="detail-link group flex items-center gap-2">
+            ${p.links.map(link => `<a href="${esc(link.url)}" target="_blank" rel="noopener noreferrer" class="detail-link group flex items-center gap-2">
               <span class="underline underline-offset-4 decoration-neutral-300 group-hover:decoration-neutral-900 transition-colors">${esc(link.label || link.url)}</span>
               <svg class="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all text-neutral-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
             </a>`).join('')}
@@ -984,7 +1031,6 @@ function aboutHTML() {
         </div>
         <div class="about-summary">
           <p class="about-tagline">${t('aboutTagline')}</p>
-          <p class="about-intro">${t('aboutIntro')}</p>
         </div>
       </section>
 
@@ -1463,6 +1509,58 @@ function hideArchiveControls() {
   if (filterMenuContent) filterMenuContent.innerHTML = '';
 }
 
+function setMobileTopBarMode(mode) {
+  const mobileTopBar = document.getElementById('mobileTopBar');
+  if (!mobileTopBar) return;
+
+  const forceHide = (el) => {
+    if (!el) return;
+    el.style.setProperty('display', 'none', 'important');
+    el.setAttribute('hidden', '');
+    el.setAttribute('aria-hidden', 'true');
+  };
+  const forceShow = (el) => {
+    if (!el) return;
+    el.style.removeProperty('display');
+    el.removeAttribute('hidden');
+    el.removeAttribute('aria-hidden');
+  };
+  const makePlainControl = (el) => {
+    if (!el) return;
+    el.style.setProperty('border', '0', 'important');
+    el.style.setProperty('background', 'transparent', 'important');
+    el.style.setProperty('box-shadow', 'none', 'important');
+    el.style.setProperty('outline', '0', 'important');
+  };
+
+  const resultCount = document.getElementById('mobileResultCount');
+  const filterButton = document.getElementById('mobileFilterOpenBtn');
+  const legacySort = document.getElementById('mobileSortSelect');
+  const yearSelect = document.getElementById('mobileArchiveYearSelect');
+  const yearCell = yearSelect?.closest('.catalog-filter-cell');
+  const resetButton = document.getElementById('mobileArchiveResetFiltersBtn');
+  const sortCell = document.getElementById('mobileArchiveSortSelect')?.closest('.catalog-filter-cell');
+  const focusCell = document.getElementById('mobileArchiveFocusSelect')?.closest('.catalog-filter-cell');
+  const viewActions = mobileTopBar.querySelector('.ml-auto');
+
+  if (mode !== 'archive') {
+    mobileTopBar.classList.add('hidden');
+    forceHide(mobileTopBar);
+    return;
+  }
+
+  forceShow(mobileTopBar);
+  mobileTopBar.classList.remove('hidden');
+  mobileTopBar.style.setProperty('background', 'transparent', 'important');
+  mobileTopBar.style.setProperty('border', '0', 'important');
+  mobileTopBar.style.setProperty('box-shadow', 'none', 'important');
+
+  [sortCell, focusCell, viewActions].forEach(forceShow);
+  [resultCount, filterButton, legacySort, yearSelect, yearCell, resetButton].forEach(forceHide);
+  [sortCell, focusCell, document.getElementById('mobileArchiveSortSelect'), document.getElementById('mobileArchiveFocusSelect')].forEach(makePlainControl);
+  mobileTopBar.querySelectorAll('.view-toggle-btn').forEach(makePlainControl);
+}
+
 function categoryCardHTML(category) {
   const projects = getCategoryProjects(category);
   const featured = projects.slice(0, 2);
@@ -1532,15 +1630,22 @@ function landingFeaturedProjectHTML() {
 
   const title = esc(getText(project.title));
   const summary = esc(getText(project.summary));
-  const image = esc(project.cover || project.thumbnail || '');
-  const ctaLabel = currentLang === 'ko' ? '자세히 보기' : 'View details';
-  const statusLabel = currentLang === 'ko' ? '개발중' : 'In development';
-  const ctaHref = '#/chatlog';
+  const image = esc(project.thumbnail || project.cover || '');
+  const chatbookDesktopFrames = [1, 2, 3].map((index) => `assets/projects/ChatBook/desktop/${index}.webp`);
+  const statusLabel = currentLang === 'ko' ? 'Coming Soon' : 'Coming Soon';
 
   return `
     <section id="landingFeaturedProject" class="landing-featured-project snap-page" aria-label="${title}">
       <div class="landing-featured-media" aria-label="${title}">
-        ${image ? `<img src="${image}" alt="${title}" loading="lazy" decoding="async" />` : ''}
+        ${image ? `<img class="landing-featured-fallback-image" src="${image}" alt="${title}" loading="lazy" decoding="async" />` : ''}
+        <div class="landing-featured-chatbook-mockup" data-chatbook-slide="0" aria-label="${title} preview">
+          <div class="chatbook-screen-window">
+            <div class="chatbook-screen-track">
+              ${chatbookDesktopFrames.map((src) => `<img src="${src}" alt="" loading="lazy" decoding="async" />`).join('')}
+            </div>
+          </div>
+          <img class="chatbook-device-frame" src="assets/projects/ChatBook/desktop/0.webp" alt="" loading="lazy" decoding="async" />
+        </div>
       </div>
       <div class="landing-featured-copy">
         <div class="landing-featured-nav" aria-label="${currentLang === 'ko' ? '섹션 이동' : 'Section navigation'}">
@@ -1563,15 +1668,11 @@ function landingFeaturedProjectHTML() {
             <img src="assets/logo/ChatBook_Symbol.png" alt="${title}" loading="lazy" decoding="async" />
           </h2>
           <p>${summary}</p>
-          <a class="landing-featured-service-cta" href="${ctaHref}">
-            <strong>${ctaLabel}</strong>
-            <span class="landing-featured-cta-arrow" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="6" y1="18" x2="18" y2="6"></line>
-                <polyline points="9 6 18 6 18 15"></polyline>
-              </svg>
-            </span>
-          </a>
+          <div class="landing-featured-downloads" aria-label="${currentLang === 'ko' ? '다운로드 옵션' : 'Download options'}">
+            <span aria-disabled="true">macOS</span>
+            <span aria-disabled="true">Windows</span>
+            <span aria-disabled="true">Linux</span>
+          </div>
         </div>
       </div>
     </section>
@@ -1581,9 +1682,12 @@ function landingFeaturedProjectHTML() {
 function landingHTML() {
   return `
     <section class="dashboard-hero">
-      <div class="hero-band hero-band-top" aria-hidden="true">
+      <div class="hero-band hero-band-top">
         <div class="hero-band-content" style="justify-content: space-between; display: flex; width: 100%; align-items: center;">
-          <strong>Design Persona</strong>
+          <strong class="hero-brand-lockup">
+            <img src="assets/icons/1.png" alt="" aria-hidden="true" />
+            <span>Design Persona</span>
+          </strong>
           <button class="hero-hamburger-btn" aria-label="Open menu" onclick="window.innerWidth >= 1024 ? toggleDesktopMenu() : toggleMenu()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
               <path d="M3 12h18M3 6h18M3 18h18" />
@@ -1591,7 +1695,7 @@ function landingHTML() {
           </button>
         </div>
       </div>
-      <div class="hero-band hero-band-bottom" aria-hidden="true">
+      <div class="hero-band hero-band-bottom">
         <div class="hero-band-content" style="justify-content: space-between; display: flex; width: 100%; align-items: center;">
           <button class="hero-down-btn" aria-label="Scroll down" onclick="scrollToPhilosophy()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -1650,6 +1754,7 @@ function renderLanding(skipScroll = false) {
   if (pane.innerHTML !== newHTML) {
     pane.innerHTML = newHTML;
   }
+  setupChatbookPreview();
   if (mobileProjectList) mobileProjectList.innerHTML = listHTML(state.projects);
   toggleMobileHamburger(true);
   updateStaticText();
@@ -1685,23 +1790,23 @@ function categoryFocusDescription(category) {
     },
     'fnb-retail': {
       en: 'Food, retail, packaging, and offline brand touchpoints.',
-      ko: '푸드, 리테일, 패키지와 오프라인 브랜드 접점.'
+      ko: '푸드, 리테일, 패키지와 오프라인 브랜드 접점 디자인.'
     },
     'packaging': {
       en: 'Package systems, product lines, and sales assets.',
-      ko: '패키지 시스템, 제품 라인, 세일즈 비주얼.'
+      ko: '패키지 시스템, 제품 라인, 세일즈 비주얼 디자인.'
     },
     'campaign-content': {
       en: 'Key visuals, campaigns, and repeatable content.',
-      ko: '키비주얼, 캠페인, 반복 가능한 콘텐츠.'
+      ko: '키비주얼, 캠페인, 반복 가능한 콘텐츠 디자인.'
     },
     'digital-web': {
       en: 'Web, UIUX, catalogues, and digital services.',
-      ko: '웹, UIUX, 카탈로그와 디지털 서비스.'
+      ko: '웹, UIUX, 카탈로그와 디지털 서비스 디자인.'
     },
     'illustration-character': {
       en: 'Characters, illustration assets, and goods visuals.',
-      ko: '캐릭터, 일러스트 에셋, 굿즈 비주얼.'
+      ko: '캐릭터, 일러스트 에셋, 굿즈형 비주얼 작업.'
     }
   };
   const item = copy[category.slug];
@@ -1711,10 +1816,11 @@ function categoryFocusDescription(category) {
 
 function categoryMoreCardHTML() {
   const label = currentLang === 'ko' ? '다른 프로젝트 보기' : 'Other Projects';
+  const displayLabel = currentLang === 'ko' ? '다른 프로젝트\n보기' : 'Other\nProjects';
   return `
         <article class="portfolio-card category-more-card relative group">
           <a href="#/archive" class="category-more-link" style="text-decoration:none" aria-label="${esc(label)}">
-            <span>${esc(label)}</span>
+            <span>${esc(displayLabel).replace(/\n/g, '<br>')}</span>
             <span class="category-more-arrow" aria-hidden="true">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                 <path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
@@ -1825,10 +1931,6 @@ function renderArchive(skipScroll = false) {
   document.body.classList.remove('about-page-active', 'landing-page-active', 'category-page-active');
   document.body.classList.remove('detail-page-active');
   document.body.classList.add('archive-page-active');
-  if (viewMode !== '3') {
-    viewMode = '3';
-    storage.set('view_mode', viewMode);
-  }
   const topBar = document.getElementById('topBar');
   if (mainHeader) {
     mainHeader.style.backgroundColor = '';
@@ -1844,6 +1946,7 @@ function renderArchive(skipScroll = false) {
   const mobileTopBar = document.getElementById('mobileTopBar');
   if (viewToggleBar) viewToggleBar.classList.remove('hidden');
   if (mobileTopBar) mobileTopBar.classList.remove('hidden');
+  setMobileTopBarMode('archive');
   clearThumbRollers();
   const filteredItems = sortProjects(getArchiveFilteredProjects());
 
@@ -1935,6 +2038,7 @@ function renderAbout(skipScroll = false) {
   }
   if (topBar) topBar.style.display = '';
   updateViewToggleBar(); // Ensure bar is hidden
+  setMobileTopBarMode('hidden');
   clearThumbRollers();
   // Use JS rendering instead of template
   pane.innerHTML = aboutHTML();
@@ -2146,8 +2250,14 @@ function updateStaticText() {
 
   // Copyright
   const copyText = getText(state.site.copyright);
-  (document.getElementById('desktopCopyright') || {}).textContent = copyText;
-  (document.getElementById('mobileCopyright') || {}).textContent = copyText;
+  const desktopCopyright = document.getElementById('desktopCopyright');
+  if (desktopCopyright) {
+    desktopCopyright.innerHTML = `${esc(copyText)}<span class="site-footer-version">Site v1.0.3</span>`;
+  }
+  const mobileCopyright = document.getElementById('mobileCopyright');
+  if (mobileCopyright) {
+    mobileCopyright.innerHTML = `${esc(copyText)}<span class="site-footer-version">Site v1.0.3</span>`;
+  }
 
   // Language Label
   if (currentLangLabel) currentLangLabel.textContent = t('langLabel');
@@ -2213,6 +2323,7 @@ function updateStaticText() {
   document.querySelector('#lockModal p').textContent = t('lockedDesc');
   document.querySelector('#lockForm button[type="submit"]').textContent = t('unlock');
   document.getElementById('lockCancel').textContent = t('cancel');
+  if (window.__personaGuideReady) updatePersonaGuideCopy();
 }
 
 function setLanguage(lang) {
@@ -2306,10 +2417,11 @@ function hideLockModal() {
   pendingSlug = null;
 }
 
-lockForm.addEventListener('submit', (e) => {
+lockForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const pwd = lockInput.value;
-  if (pwd === LOCK_PASSWORD) {
+  const isValid = (await sha256Hex(pwd)) === LOCK_PASSWORD_HASH;
+  if (isValid) {
     if (pendingSlug) {
       renderDetail(pendingSlug);
     }
@@ -2538,10 +2650,16 @@ function syncArchiveFilterBar() {
   const archiveSortSelect = document.getElementById('archiveSortSelect');
   const archiveFocusSelect = document.getElementById('archiveFocusSelect');
   const archiveYearSelect = document.getElementById('archiveYearSelect');
+  const mobileArchiveSortSelect = document.getElementById('mobileArchiveSortSelect');
+  const mobileArchiveFocusSelect = document.getElementById('mobileArchiveFocusSelect');
+  const mobileArchiveYearSelect = document.getElementById('mobileArchiveYearSelect');
 
   if (archiveSortSelect) archiveSortSelect.value = sortMode;
   if (archiveFocusSelect) archiveFocusSelect.value = getArchiveFocusFilterValue();
   if (archiveYearSelect) archiveYearSelect.value = archiveYearMode;
+  if (mobileArchiveSortSelect) mobileArchiveSortSelect.value = sortMode;
+  if (mobileArchiveFocusSelect) mobileArchiveFocusSelect.value = getArchiveFocusFilterValue();
+  if (mobileArchiveYearSelect) mobileArchiveYearSelect.value = archiveYearMode;
 }
 
 const archiveSortSelect = document.getElementById('archiveSortSelect');
@@ -2572,6 +2690,36 @@ if (archiveYearSelect) {
 const archiveResetFiltersBtn = document.getElementById('archiveResetFiltersBtn');
 if (archiveResetFiltersBtn) {
   archiveResetFiltersBtn.addEventListener('click', resetArchiveFilters);
+}
+
+const mobileArchiveSortSelect = document.getElementById('mobileArchiveSortSelect');
+if (mobileArchiveSortSelect) {
+  mobileArchiveSortSelect.addEventListener('change', (e) => {
+    const nextMode = e.target.value;
+    if (!SORT_MODES.includes(nextMode) || sortMode === nextMode) return;
+    sortMode = nextMode;
+    storage.set('sort_mode', sortMode);
+    renderHome();
+  });
+}
+
+const mobileArchiveFocusSelect = document.getElementById('mobileArchiveFocusSelect');
+if (mobileArchiveFocusSelect) {
+  mobileArchiveFocusSelect.addEventListener('change', (e) => {
+    setArchiveFocusFilter(e.target.value);
+  });
+}
+
+const mobileArchiveYearSelect = document.getElementById('mobileArchiveYearSelect');
+if (mobileArchiveYearSelect) {
+  mobileArchiveYearSelect.addEventListener('change', (e) => {
+    setArchiveYearFilter(e.target.value);
+  });
+}
+
+const mobileArchiveResetFiltersBtn = document.getElementById('mobileArchiveResetFiltersBtn');
+if (mobileArchiveResetFiltersBtn) {
+  mobileArchiveResetFiltersBtn.addEventListener('click', resetArchiveFilters);
 }
 
 const mobileSortSelect = document.getElementById('mobileSortSelect');
@@ -3141,11 +3289,15 @@ function updateHeader() {
   const isArchive = document.body.classList.contains('archive-page-active');
   const isCategory = document.body.classList.contains('category-page-active');
 
-  // Landing page header reveal logic
+  // Landing page keeps the header and utility controls stable while the deck scrolls.
   if (isLanding && isDesktop) {
-    const shouldReveal = currentY > 200; // Reveal after scrolling 200px
-    if (shouldReveal !== document.body.classList.contains('landing-header-revealed')) {
-      document.body.classList.toggle('landing-header-revealed', shouldReveal);
+    if (!document.body.classList.contains('landing-header-revealed')) {
+      document.body.classList.add('landing-header-revealed');
+    }
+    if (document.body.classList.contains('header-collapsed')) {
+      document.body.classList.remove('header-collapsed');
+      isHeaderCollapsed = false;
+      updateDesktopHeaderVars();
     }
   }
 
@@ -3167,7 +3319,8 @@ function updateHeader() {
   }
 
   // Scroll Top Button Logic
-  if (currentY > 300) {
+  const scrollTopThreshold = isLanding ? 80 : 300;
+  if (currentY > scrollTopThreshold) {
     if (scrollTopBtn) scrollTopBtn.classList.add('visible');
     if (personaGuide && (isArchive || isCategory)) personaGuide.classList.add('visible');
   } else {
@@ -3279,24 +3432,151 @@ const personaGuideState = {
   scope: ''
 };
 
+const PERSONA_GUIDE_COPY = {
+  en: {
+    title: 'Persona Guide',
+    note: 'No data is saved. Your email app will open with a draft.',
+    close: 'Close guide',
+    groups: {
+      focus: 'What do you need?',
+      timeline: 'Timeline',
+      scope: 'Scope'
+    },
+    options: {
+      'Brand identity': 'Brand',
+      'Package line': 'Package',
+      'Web / service': 'Web',
+      'Campaign content': 'Campaign',
+      'Soon': 'Soon',
+      '1-2 months': '1-2 months',
+      'Flexible': 'Flexible',
+      'Small start': 'Small start',
+      'One project': 'One project',
+      'Discuss first': 'Discuss first'
+    },
+    values: {
+      'Brand identity': 'Brand identity',
+      'Package line': 'Package line',
+      'Web / service': 'Web / service',
+      'Campaign content': 'Campaign content',
+      'Soon': 'Soon',
+      '1-2 months': '1-2 months',
+      'Flexible': 'Flexible',
+      'Small start': 'Small start',
+      'One project': 'One project',
+      'Discuss first': 'Discuss first'
+    },
+    empty: 'Not selected yet',
+    message: {
+      greeting: 'Hello site operator,',
+      request: 'I would like to discuss a project.',
+      interest: 'Interest',
+      timeline: 'Timeline',
+      scope: 'Scope',
+      source: 'I found your work through the portfolio archive.'
+    },
+    email: 'Email this note',
+    subject: 'Project inquiry from portfolio archive'
+  },
+  ko: {
+    title: 'Persona Guide',
+    note: '내용은 저장되지 않으며, 이메일 앱에 초안이 열립니다.',
+    close: '가이드 닫기',
+    groups: {
+      focus: '무엇이 필요하세요?',
+      timeline: '일정',
+      scope: '범위'
+    },
+    options: {
+      'Brand identity': '브랜드',
+      'Package line': '패키지',
+      'Web / service': '웹',
+      'Campaign content': '캠페인',
+      'Soon': '빠르게',
+      '1-2 months': '1-2개월',
+      'Flexible': '유동적',
+      'Small start': '작게 시작',
+      'One project': '단일 프로젝트',
+      'Discuss first': '먼저 상담'
+    },
+    values: {
+      'Brand identity': '브랜드 아이덴티티',
+      'Package line': '패키지 라인',
+      'Web / service': '웹 / 서비스',
+      'Campaign content': '캠페인 콘텐츠',
+      'Soon': '빠르게',
+      '1-2 months': '1-2개월',
+      'Flexible': '유동적',
+      'Small start': '작게 시작',
+      'One project': '단일 프로젝트',
+      'Discuss first': '먼저 상담'
+    },
+    empty: '아직 선택하지 않음',
+    message: {
+      greeting: '사이트 운영자님께,',
+      request: '프로젝트 상담을 요청드립니다.',
+      interest: '관심 분야',
+      timeline: '일정',
+      scope: '범위',
+      source: '포트폴리오 아카이브를 통해 작업을 확인했습니다.'
+    },
+    email: '이메일 초안 열기',
+    subject: '포트폴리오 아카이브 프로젝트 문의'
+  }
+};
+
+function guideCopy() {
+  return PERSONA_GUIDE_COPY[currentLang] || PERSONA_GUIDE_COPY.en;
+}
+
+function guideValueLabel(value) {
+  const copy = guideCopy();
+  if (!value) return copy.empty;
+  return copy.values[value] || value;
+}
+
 function getPersonaGuideMessage() {
+  const copy = guideCopy();
+  const message = copy.message;
   return [
-    'Hello Design Persona,',
+    message.greeting,
     '',
-    'I would like to discuss a project.',
+    message.request,
     '',
-    `Interest: ${personaGuideState.focus || 'Not selected yet'}`,
-    `Timeline: ${personaGuideState.timeline || 'Not selected yet'}`,
-    `Scope: ${personaGuideState.scope || 'Not selected yet'}`,
+    `${message.interest}: ${guideValueLabel(personaGuideState.focus)}`,
+    `${message.timeline}: ${guideValueLabel(personaGuideState.timeline)}`,
+    `${message.scope}: ${guideValueLabel(personaGuideState.scope)}`,
     '',
-    'I found your work through the portfolio archive.'
+    message.source
   ].join('\n');
+}
+
+function updatePersonaGuideCopy() {
+  if (!personaGuidePanel) return;
+  const copy = guideCopy();
+  const title = document.getElementById('personaGuideTitle');
+  if (title) title.textContent = copy.title;
+  const note = personaGuidePanel.querySelector('.persona-guide-head span');
+  if (note) note.textContent = copy.note;
+  if (personaGuideClose) personaGuideClose.setAttribute('aria-label', copy.close);
+  personaGuidePanel.querySelectorAll('[data-guide-group]').forEach((group) => {
+    const key = group.dataset.guideGroup;
+    const label = group.querySelector('p');
+    if (label && copy.groups[key]) label.textContent = copy.groups[key];
+    group.querySelectorAll('[data-guide-value]').forEach((button) => {
+      const value = button.dataset.guideValue || '';
+      button.textContent = copy.options[value] || value;
+    });
+  });
+  if (personaGuideEmail) personaGuideEmail.textContent = copy.email;
+  updatePersonaGuideEmail();
 }
 
 function updatePersonaGuideEmail() {
   if (!personaGuideNote || !personaGuideEmail) return;
+  const copy = guideCopy();
   const body = getPersonaGuideMessage();
-  const subject = 'Project inquiry from Design Persona portfolio';
+  const subject = copy.subject;
   personaGuideNote.textContent = body;
   personaGuideEmail.href = `mailto:designpersona.kr@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
@@ -3336,7 +3616,8 @@ if (personaGuidePanel) {
   });
 }
 
-updatePersonaGuideEmail();
+window.__personaGuideReady = true;
+updatePersonaGuideCopy();
 
 function syncMobileFilterContent() {
   if (!filterMenuContent || !mobileFilterContent) return;
@@ -3349,7 +3630,9 @@ function syncMobileFilterContent() {
 function scrollToPhilosophy() {
   const scroller = document.getElementById('desktopScroller');
   const philosophy = document.getElementById('philosophy');
-  if (scroller && philosophy) {
+  if (window.innerWidth < 1024 && philosophy) {
+    philosophy.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } else if (scroller && philosophy) {
     scroller.scrollTo({
       top: philosophy.offsetTop,
       behavior: 'smooth'
@@ -3365,7 +3648,9 @@ function scrollToPhilosophy() {
 function scrollToLandingStart() {
   const scroller = document.getElementById('desktopScroller');
   const target = document.querySelector('.dashboard-hero');
-  if (scroller && target) {
+  if (window.innerWidth < 1024 && target) {
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } else if (scroller && target) {
     scroller.scrollTo({
       top: target.offsetTop,
       behavior: 'smooth'
@@ -3381,7 +3666,9 @@ function scrollToLandingStart() {
 function scrollToLandingFeature() {
   const scroller = document.getElementById('desktopScroller');
   const target = document.getElementById('landingFeaturedProject') || document.getElementById('philosophy');
-  if (scroller && target) {
+  if (window.innerWidth < 1024 && target) {
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } else if (scroller && target) {
     scroller.scrollTo({
       top: target.offsetTop,
       behavior: 'smooth'
@@ -3394,10 +3681,88 @@ function scrollToLandingFeature() {
   }
 }
 
+let chatbookSlideTimer = null;
+
+function setChatbookSlide(index) {
+  const mockup = document.querySelector('.landing-featured-chatbook-mockup');
+  if (!mockup) return;
+  const total = 3;
+  const next = ((Number(index) % total) + total) % total;
+  mockup.dataset.chatbookSlide = String(next);
+  mockup.style.setProperty('--chatbook-slide-index', next);
+}
+
+function shiftChatbookSlide(direction) {
+  const mockup = document.querySelector('.landing-featured-chatbook-mockup');
+  if (!mockup) return;
+  const current = Number(mockup.dataset.chatbookSlide || 0);
+  setChatbookSlide(current + direction);
+}
+
+function startChatbookAutoplay() {
+  window.clearInterval(chatbookSlideTimer);
+  chatbookSlideTimer = window.setInterval(() => {
+    shiftChatbookSlide(1);
+  }, 6400);
+}
+
+function setupChatbookPreview() {
+  const screen = document.querySelector('.chatbook-screen-window');
+  const mockup = document.querySelector('.landing-featured-chatbook-mockup');
+  if (!screen || !mockup) {
+    window.clearInterval(chatbookSlideTimer);
+    chatbookSlideTimer = null;
+    return;
+  }
+
+  setChatbookSlide(Number(mockup.dataset.chatbookSlide || 0));
+  startChatbookAutoplay();
+
+  if (screen.dataset.swipeReady === 'true') return;
+  screen.dataset.swipeReady = 'true';
+
+  let startX = 0;
+  let startY = 0;
+  let pointerDown = false;
+
+  screen.addEventListener('pointerdown', (event) => {
+    pointerDown = true;
+    startX = event.clientX;
+    startY = event.clientY;
+    window.clearInterval(chatbookSlideTimer);
+    screen.classList.add('is-dragging');
+    try {
+      screen.setPointerCapture(event.pointerId);
+    } catch (error) {
+      // Some older browsers do not support capture for every pointer type.
+    }
+  });
+
+  screen.addEventListener('pointerup', (event) => {
+    if (!pointerDown) return;
+    pointerDown = false;
+    screen.classList.remove('is-dragging');
+    const deltaX = event.clientX - startX;
+    const deltaY = event.clientY - startY;
+    if (Math.abs(deltaX) > 34 && Math.abs(deltaX) > Math.abs(deltaY) * 1.2) {
+      shiftChatbookSlide(deltaX < 0 ? 1 : -1);
+    }
+    startChatbookAutoplay();
+  });
+
+  screen.addEventListener('pointercancel', () => {
+    pointerDown = false;
+    screen.classList.remove('is-dragging');
+    startChatbookAutoplay();
+  });
+}
+
 function scrollToFooter() {
   const scroller = document.getElementById('desktopScroller');
-  const target = document.querySelector('.desktop-footer');
-  if (scroller && target) {
+  const target = window.innerWidth < 1024 ? document.querySelector('.mobile-footer') : document.querySelector('.desktop-footer');
+  if (window.innerWidth < 1024 && target) {
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } else if (scroller && target) {
     scroller.scrollTo({
       top: target.offsetTop,
       behavior: 'smooth'
