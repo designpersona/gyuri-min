@@ -1,6 +1,4 @@
 /** Configuration & State */
-const LOCK_PASSWORD_HASH = '64054d8092ebdd04ae20aadbe8ef3f168495fa514af6865e12f421470c8f7cb7';
-
 const storage = (() => {
   let available = true;
   try {
@@ -38,15 +36,6 @@ const safeJsonParse = (value, fallback) => {
     return fallback;
   }
 };
-
-async function sha256Hex(value) {
-  if (!window.crypto || !window.crypto.subtle) return '';
-  const bytes = new TextEncoder().encode(value);
-  const hash = await window.crypto.subtle.digest('SHA-256', bytes);
-  return Array.from(new Uint8Array(hash))
-    .map((byte) => byte.toString(16).padStart(2, '0'))
-    .join('');
-}
 
 function installContentProtection() {
   document.body.classList.add('content-protected');
@@ -135,7 +124,6 @@ try {
   // Ignore storage failures.
 }
 const state = { site: DATA.site, projects: DATA.projects };
-let pendingSlug = null;
 let currentLang = storage.get('site_lang', 'en');
 let viewMode = storage.get('view_mode', '3'); // '1', '2', '3', or '5'
 let searchQuery = '';
@@ -187,6 +175,12 @@ let filterVisible = filterVisibleStored === null
   ? (window.innerWidth >= 1024)
   : (filterVisibleStored !== 'false');
 
+const ARCHIVE_DESKTOP_VIEW_MODE = '3';
+function getEffectiveViewMode() {
+  const isDesktopArchive = window.innerWidth >= 1024 && document.body.classList.contains('archive-page-active');
+  return isDesktopArchive ? ARCHIVE_DESKTOP_VIEW_MODE : viewMode;
+}
+
 document.documentElement.dataset.lang = currentLang;
 document.body.classList.toggle('lang-en', currentLang === 'en');
 document.body.classList.toggle('lang-ko', currentLang === 'ko');
@@ -200,10 +194,6 @@ const I18N = {
     back: "Back to Archive",
     restricted: "COMING SOON",
     developing: "In Dev.",
-    lockedTitle: "Protected Project",
-    lockedDesc: "Enter password to view details",
-    unlock: "Unlock",
-    cancel: "Cancel",
     year: "Year",
     client: "Client",
     role: "Role",
@@ -302,10 +292,6 @@ const I18N = {
     back: "목록으로",
     restricted: "준비 중",
     developing: "개발중",
-    lockedTitle: "비공개 프로젝트",
-    lockedDesc: "비밀번호를 입력하여 상세 내용을 확인하세요",
-    unlock: "확인",
-    cancel: "취소",
     year: "연도",
     client: "고객사",
     role: "역할",
@@ -476,6 +462,13 @@ const FILTER_KEYS = ["projectType", "industry", "client", "tools"];
 const SORT_MODES = ["featured", "latest", "oldest"];
 const ARCHIVE_FOCUS_VALUES = ["", "brand-systems", "fnb-retail", "packaging", "campaign-content", "digital-web", "illustration-character"];
 const ARCHIVE_YEAR_VALUES = ["", "2026-2024", "2023-2021", "2020-2018", "older"];
+const SLUG_ALIASES = {
+  "Farmsplan-Swine-Feed": "farmsplan-swine-feed",
+  "Farmsplan-Cattle-Feed": "farmsplan-cattle-feed",
+  "Farmsplan-Chicken": "farmsplan-chicken",
+  "News-Letter": "news-letter",
+  "Chabssal-tteogkki": "chabssal-tteogkki"
+};
 
 const CATEGORY_CONFIG = [
   {
@@ -496,7 +489,7 @@ const CATEGORY_CONFIG = [
     description: "Food, cafe, retail, and offline brand touchpoints that connect products with customers.",
     koDescription: "푸드, 카페, 리테일, 오프라인 접점에서 고객 경험을 만드는 작업.",
     tags: ["F&B", "Retail", "Space"],
-    slugs: ["farmsplan-deli-cafe", "27-red-brick", "Farmsplan-Chicken", "record-of-sea-salt", "cafe-terrabite"]
+    slugs: ["farmsplan-deli-cafe", "27-red-brick", "farmsplan-chicken", "record-of-sea-salt", "cafe-terrabite"]
   },
   {
     slug: "packaging",
@@ -506,7 +499,7 @@ const CATEGORY_CONFIG = [
     description: "Package systems, product series, sales kits, and scalable visual assets.",
     koDescription: "패키지 시스템, 제품 시리즈, 세일즈 키트, 확장 가능한 브랜드 자산.",
     tags: ["Package", "Series", "Sales Kit"],
-    slugs: ["Farmsplan-Cattle-Feed", "Farmsplan-Swine-Feed", "Farmsplan-Chicken", "record-of-sea-salt", "eye-makeup"]
+    slugs: ["farmsplan-cattle-feed", "farmsplan-swine-feed", "farmsplan-chicken", "record-of-sea-salt", "eye-makeup"]
   },
   {
     slug: "campaign-content",
@@ -516,7 +509,7 @@ const CATEGORY_CONFIG = [
     description: "Key visuals, event branding, digital content, newsletters, and promotional assets.",
     koDescription: "키비주얼, 이벤트 브랜딩, 디지털 콘텐츠, 뉴스레터, 프로모션 디자인.",
     tags: ["Key Visual", "Event", "Content"],
-    slugs: ["openfarm", "deep-dive-campaign", "News-Letter", "fp-brand-film", "fresh-chungnam"]
+    slugs: ["openfarm", "deep-dive-campaign", "news-letter", "fp-brand-film", "fresh-chungnam"]
   },
   {
     slug: "digital-web",
@@ -526,7 +519,7 @@ const CATEGORY_CONFIG = [
     description: "Websites, e-catalogues, product concepts, and digital service interfaces.",
     koDescription: "웹사이트, e-카탈로그, 제품 콘셉트, 디지털 서비스 인터페이스.",
     tags: ["Web", "UI/UX", "Service"],
-    slugs: ["gm-portfolio", "chatlog", "fresh-chungnam", "News-Letter"]
+    slugs: ["gm-portfolio", "chatlog", "fresh-chungnam", "news-letter"]
   },
   {
     slug: "illustration-character",
@@ -536,7 +529,7 @@ const CATEGORY_CONFIG = [
     description: "Character systems, illustration assets, brand films, and goods-oriented visuals.",
     koDescription: "캐릭터 시스템, 일러스트 자산, 브랜드 필름, 굿즈형 비주얼 작업.",
     tags: ["Character", "Illustration", "Goods"],
-    slugs: ["gullyjumper-universe", "Chabssal-tteogkki", "fp-brand-film"]
+    slugs: ["gullyjumper-universe", "chabssal-tteogkki", "fp-brand-film"]
   }
 ];
 
@@ -551,20 +544,20 @@ const PROJECT_TAG_OVERRIDES = {
   "farmsplan-deli-cafe": ["Brand", "Food", "Retail"],
   openfarm: ["Campaign", "Graphic", "Marketing"],
   "27-red-brick": ["Direction", "Food", "Brand"],
-  "Farmsplan-Swine-Feed": ["Package", "Food", "Brand"],
+  "farmsplan-swine-feed": ["Package", "Food", "Brand"],
   "aid-rebranding": ["BXBI", "Tech", "Design System"],
   "cafe-terrabite": ["BXBI", "Logo", "Food"],
   "record-of-sea-salt": ["Package", "Food", "Brand"],
-  "Farmsplan-Cattle-Feed": ["Package", "Food", "Marketing"],
-  "Farmsplan-Chicken": ["Package", "Food", "Consulting"],
+  "farmsplan-cattle-feed": ["Package", "Food", "Marketing"],
+  "farmsplan-chicken": ["Package", "Food", "Consulting"],
   "fp-brand-film": ["Video", "Illustration", "Brand"],
   "fp-brand-identity": ["BXBI", "Tech", "Design System"],
   "gullyjumper-universe": ["Figure", "Character", "Brand"],
   "deep-dive-campaign": ["Campaign", "Graphic", "Marketing"],
   "fresh-chungnam": ["Digital", "Food", "UIUX"],
   "siso-fair-2020": ["BXBI", "Campaign", "Graphic"],
-  "News-Letter": ["Web", "Graphic", "Digital"],
-  "Chabssal-tteogkki": ["Figure", "Character", "Goods"],
+  "news-letter": ["Web", "Graphic", "Digital"],
+  "chabssal-tteogkki": ["Figure", "Character", "Goods"],
   "eye-makeup": ["Beauty", "Graphic", "Package"]
 };
 
@@ -716,7 +709,7 @@ const listHTML = (items, activeSlug = null) => {
     .map(
       (p) => {
         let displayYear = p.year || '';
-        if (p.slug === 'News-Letter') displayYear = '2021';
+        if (p.slug === 'news-letter') displayYear = '2021';
         return `
         <li class="py-2 ${p.slug === activeSlug ? 'active' : ''}">
           <a class="block w-fit pb-1 menu-list-link" style="text-decoration:none" href="#/${p.slug}">
@@ -732,30 +725,31 @@ const listHTML = (items, activeSlug = null) => {
 const gridHTML = (items, extraCardHTML = '') => {
   // Determine grid classes based on view mode
   const isDesktop = window.innerWidth >= 1024;
+  const activeViewMode = getEffectiveViewMode();
   let gridClasses;
 
   if (isDesktop) {
-    if (viewMode === '1') {
+    if (activeViewMode === '1') {
       gridClasses = 'grid-cols-1 gap-y-12';
-    } else if (viewMode === '2') {
+    } else if (activeViewMode === '2') {
       gridClasses = 'grid-cols-2 gap-[1px]';
-    } else if (viewMode === '3') {
+    } else if (activeViewMode === '3') {
       gridClasses = 'grid-cols-4 gap-5';
-    } else if (viewMode === '5') {
+    } else if (activeViewMode === '5') {
       gridClasses = 'grid-cols-5 gap-[1px]';
     } else {
       gridClasses = 'grid-cols-4 gap-5';
     }
   } else {
     // Mobile/Tablet: Respect 1-column if selected, else default to 2
-    if (viewMode === '1') {
+    if (activeViewMode === '1') {
       gridClasses = 'grid-cols-1 gap-y-8';
     } else {
       gridClasses = 'grid-cols-2 gap-[1px]';
     }
   }
 
-  const mobileArchiveGridClass = !isDesktop ? ` mobile-archive-grid mobile-view-${viewMode}` : '';
+  const mobileArchiveGridClass = !isDesktop ? ` mobile-archive-grid mobile-view-${activeViewMode}` : '';
 
   return `<div class="grid ${gridClasses}${mobileArchiveGridClass}">` +
     items
@@ -763,7 +757,7 @@ const gridHTML = (items, extraCardHTML = '') => {
         (p) => {
           const thumb = esc(p.thumbnail);
           const isVideo = /\.(mp4|webm|mov)$/i.test(thumb);
-          const isWideView = viewMode === '1'; // Now applies to mobile too
+          const isWideView = activeViewMode === '1'; // Now applies to mobile too
           const aspectClass = isWideView ? 'aspect-[16/9]' : 'aspect-square';
           const coverSrc = esc(p.cover || '');
 
@@ -871,14 +865,14 @@ const gridHTML = (items, extraCardHTML = '') => {
             ${showImageOverlay && p.locked ? `<div class="absolute top-0 right-0 bg-black/10 text-white text-[10px] px-3 py-1 uppercase tracking-wider font-medium">${t('restricted')}</div>` : ''}
             ${showImageOverlay && p.developing ? `<div class="absolute top-0 right-0 bg-[#7c3aed] text-white text-[10px] px-3 py-1 uppercase tracking-wider font-medium">${t('developing')}</div>` : ''}
           </a>
-          <div class="portfolio-card-body">
+          <a href="#/${p.slug}" class="portfolio-card-body portfolio-card-body-link" style="text-decoration:none; color:inherit" aria-label="${esc(currentLang === 'ko' ? `${title} 프로젝트 보기` : `View ${title} project`)}">
             <h3 class="portfolio-card-title">${title}</h3>
             <div class="portfolio-card-meta flex items-center gap-2 text-[11px] uppercase tracking-[0.08em]">
               ${year ? `<span>${year}</span>` : ''}
               ${year && projectType ? `<span aria-hidden="true">/</span>` : ''}
               ${projectType ? `<span>${projectType}</span>` : ''}
             </div>
-          </div>
+          </a>
         </article>`;
         }
       )
@@ -1194,7 +1188,18 @@ function toggleMenu() {
 }
 
 function closeMenu() {
-  if (!drawerPanel || !drawerPanel.classList.contains('open')) return;
+  if (!drawerPanel) {
+    if (menuEl) menuEl.classList.add('hidden');
+    menuBtn?.setAttribute('aria-expanded', 'false');
+    return;
+  }
+
+  if (!drawerPanel.classList.contains('open')) {
+    if (menuEl) menuEl.classList.add('hidden');
+    menuBtn?.setAttribute('aria-expanded', 'false');
+    return;
+  }
+
   drawerPanel.classList.remove('open');
   menuBtn?.setAttribute('aria-expanded', 'false');
   setTimeout(() => {
@@ -1202,6 +1207,37 @@ function closeMenu() {
       if (menuEl) menuEl.classList.add('hidden');
     }
   }, 300); // matching transition .25s + buffer
+}
+
+function closeTransientOverlays() {
+  if (drawerPanel) drawerPanel.classList.remove('open');
+  if (menuEl) menuEl.classList.add('hidden');
+  menuBtn?.setAttribute('aria-expanded', 'false');
+
+  if (desktopDrawerPanel) desktopDrawerPanel.classList.remove('open');
+  if (desktopMenuEl) desktopMenuEl.classList.add('hidden');
+  desktopMenuBtn?.setAttribute('aria-expanded', 'false');
+
+  if (mobileFilterDrawer) mobileFilterDrawer.classList.remove('open');
+
+  const activeSearchModal = document.getElementById('mobileSearchModal');
+  const activeSearchInput = document.getElementById('mobileSearchInput');
+  if (activeSearchModal) {
+    activeSearchModal.classList.add('hidden');
+    activeSearchModal.style.setProperty('display', 'none', 'important');
+    activeSearchModal.style.setProperty('visibility', 'hidden', 'important');
+    activeSearchModal.style.setProperty('opacity', '0', 'important');
+    activeSearchModal.style.setProperty('pointer-events', 'none', 'important');
+  }
+  if (activeSearchInput) activeSearchInput.value = '';
+  searchQuery = '';
+
+  const activeGuide = document.getElementById('personaGuide');
+  const activeGuideBtn = document.getElementById('personaGuideBtn');
+  const activeGuidePanel = document.getElementById('personaGuidePanel');
+  if (activeGuidePanel) activeGuidePanel.classList.add('hidden');
+  if (activeGuideBtn) activeGuideBtn.setAttribute('aria-expanded', 'false');
+  if (activeGuide) activeGuide.classList.remove('visible');
 }
 
 // Extract unique filter values from projects
@@ -1509,6 +1545,16 @@ function hideArchiveControls() {
   if (filterMenuContent) filterMenuContent.innerHTML = '';
 }
 
+function setRoutePendingState(slug) {
+  const isNonLandingRoute = Boolean(slug && slug !== '/');
+  document.documentElement.classList.toggle('route-nonlanding-pending', isNonLandingRoute);
+}
+
+function clearRoutePendingState() {
+  document.documentElement.classList.remove('route-nonlanding-pending');
+  document.documentElement.classList.add('app-routed');
+}
+
 function setMobileTopBarMode(mode) {
   const mobileTopBar = document.getElementById('mobileTopBar');
   if (!mobileTopBar) return;
@@ -1551,9 +1597,10 @@ function setMobileTopBarMode(mode) {
 
   forceShow(mobileTopBar);
   mobileTopBar.classList.remove('hidden');
-  mobileTopBar.style.setProperty('background', 'transparent', 'important');
-  mobileTopBar.style.setProperty('border', '0', 'important');
-  mobileTopBar.style.setProperty('box-shadow', 'none', 'important');
+  mobileTopBar.style.setProperty('background', '#fff', 'important');
+  mobileTopBar.style.setProperty('border-top', '1px solid #111', 'important');
+  mobileTopBar.style.setProperty('border-bottom', '1px solid #111', 'important');
+  mobileTopBar.style.setProperty('box-shadow', '0 1px 0 rgba(17, 17, 17, 0.08)', 'important');
 
   [sortCell, focusCell, viewActions].forEach(forceShow);
   [resultCount, filterButton, legacySort, yearSelect, yearCell, resetButton].forEach(forceHide);
@@ -1595,7 +1642,7 @@ function dashboardCategoryCellHTML(category) {
     'brand-systems': 'fp-brand-identity',
     'fnb-retail': 'farmsplan-deli-cafe',
     'packaging': 'record-of-sea-salt',
-    'campaign-content': 'News-Letter',
+    'campaign-content': 'news-letter',
     'digital-web': 'gm-portfolio',
     'illustration-character': 'gullyjumper-universe'
   };
@@ -1624,6 +1671,8 @@ function dashboardCategoryCellHTML(category) {
   `;
 }
 
+const DESIGN_PERSONA_MARK_SVG = '<svg class="design-persona-mark" viewBox="0 0 50 50" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12.35 0h9.15c4.15 0 7.2 3.12 7.72 7.48H25c-7.1 0-12.15-2.78-12.65-7.48Z"></path><circle cx="25" cy="30.85" r="16.9" fill="none" stroke="currentColor" stroke-width="4.15"></circle></svg>';
+
 function landingFeaturedProjectHTML() {
   const project = state.projects.find((item) => item.slug === 'chatlog');
   if (!project) return '';
@@ -1649,12 +1698,12 @@ function landingFeaturedProjectHTML() {
       </div>
       <div class="landing-featured-copy">
         <div class="landing-featured-nav" aria-label="${currentLang === 'ko' ? '섹션 이동' : 'Section navigation'}">
-          <button type="button" aria-label="${currentLang === 'ko' ? '이전 블록' : 'Previous section'}" onclick="scrollToLandingStart()">
+          <button type="button" aria-label="${currentLang === 'ko' ? '이전 블록' : 'Previous section'}" data-landing-action="landing-start">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <polyline points="6 15 12 9 18 15"></polyline>
             </svg>
           </button>
-          <button type="button" aria-label="${currentLang === 'ko' ? '다음 블록' : 'Next section'}" onclick="scrollToPhilosophy()">
+          <button type="button" aria-label="${currentLang === 'ko' ? '다음 블록' : 'Next section'}" data-landing-action="philosophy">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <polyline points="6 9 12 15 18 9"></polyline>
             </svg>
@@ -1684,11 +1733,11 @@ function landingHTML() {
     <section class="dashboard-hero">
       <div class="hero-band hero-band-top">
         <div class="hero-band-content" style="justify-content: space-between; display: flex; width: 100%; align-items: center;">
-          <strong class="hero-brand-lockup">
-            <img src="assets/icons/1.png" alt="" aria-hidden="true" />
+          <a href="#/" class="hero-brand-lockup" data-landing-action="home" aria-label="Design Persona home" style="text-decoration:none">
+            ${DESIGN_PERSONA_MARK_SVG}
             <span>Design Persona</span>
-          </strong>
-          <button class="hero-hamburger-btn" aria-label="Open menu" onclick="window.innerWidth >= 1024 ? toggleDesktopMenu() : toggleMenu()">
+          </a>
+          <button class="hero-hamburger-btn" type="button" aria-label="Open menu" data-landing-action="menu">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
               <path d="M3 12h18M3 6h18M3 18h18" />
             </svg>
@@ -1697,7 +1746,7 @@ function landingHTML() {
       </div>
       <div class="hero-band hero-band-bottom">
         <div class="hero-band-content" style="justify-content: space-between; display: flex; width: 100%; align-items: center;">
-          <button class="hero-down-btn" aria-label="Scroll down" onclick="scrollToPhilosophy()">
+          <button class="hero-down-btn" type="button" aria-label="Scroll down" data-landing-action="philosophy">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
               <line x1="12" y1="5" x2="12" y2="19"></line>
               <polyline points="19 12 12 19 5 12"></polyline>
@@ -1726,7 +1775,7 @@ function landingHTML() {
         </ol>
       </div>
       <div class="philosophy-nav" aria-label="${currentLang === 'ko' ? '섹션 이동' : 'Section navigation'}">
-        <button type="button" aria-label="${currentLang === 'ko' ? '이전 블록' : 'Previous section'}" onclick="scrollToLandingFeature()">
+        <button type="button" aria-label="${currentLang === 'ko' ? '이전 블록' : 'Previous section'}" data-landing-action="landing-feature">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <polyline points="6 15 12 9 18 15"></polyline>
           </svg>
@@ -1739,6 +1788,9 @@ function landingHTML() {
 function renderLanding(skipScroll = false) {
   document.body.classList.add('landing-page-active');
   document.body.classList.remove('about-page-active', 'detail-page-active', 'archive-page-active', 'category-page-active');
+  if (!skipScroll) {
+    document.body.classList.remove('landing-header-revealed', 'header-collapsed');
+  }
   const mainHeader = document.getElementById('mainHeader');
   const topBar = document.getElementById('topBar');
   if (mainHeader) {
@@ -1754,15 +1806,16 @@ function renderLanding(skipScroll = false) {
   if (pane.innerHTML !== newHTML) {
     pane.innerHTML = newHTML;
   }
-  setupChatbookPreview();
   if (mobileProjectList) mobileProjectList.innerHTML = listHTML(state.projects);
   toggleMobileHamburger(true);
   updateStaticText();
+  setupChatbookPreview();
 
   if (!skipScroll) {
     const scroller = document.getElementById('desktopScroller');
     if (scroller) scroller.scrollTo({ top: 0, behavior: "smooth" });
   }
+  clearRoutePendingState();
 }
 
 function categoryIntroHTML(category, resultCount) {
@@ -1918,6 +1971,7 @@ function renderCategory(categorySlug, skipScroll = false) {
     const scroller = document.getElementById('desktopScroller');
     if (scroller) scroller.scrollTo({ top: 0, behavior: "smooth" });
   }
+  clearRoutePendingState();
 }
 
 function renderArchive(skipScroll = false) {
@@ -1975,7 +2029,7 @@ function renderArchive(skipScroll = false) {
   updateViewToggleBar();
   syncArchiveFilterBar();
 
-  pane.innerHTML = gridHTML(filteredItems, archivePlaceholderCardHTML());
+  pane.innerHTML = `<div class="mobile-archive-start-spacer" aria-hidden="true"></div>${gridHTML(filteredItems, archivePlaceholderCardHTML())}`;
   initThumbRollers();
   initLazyVideos(pane);
   updateMobileViewDropdown();
@@ -2016,6 +2070,7 @@ function renderArchive(skipScroll = false) {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
+  clearRoutePendingState();
 }
 
 function renderHome() {
@@ -2074,12 +2129,14 @@ function renderAbout(skipScroll = false) {
       window.scrollTo({ top: 0, behavior: "instant" });
     }
   }
+  clearRoutePendingState();
 }
 
 function renderDetail(slug, skipScroll = false) {
   document.body.classList.remove('about-page-active', 'landing-page-active', 'category-page-active');
   document.body.classList.add('detail-page-active');
   document.body.classList.remove('archive-page-active');
+  document.body.classList.remove('landing-header-revealed', 'header-collapsed');
   const mainHeader = document.getElementById('mainHeader');
   const topBar = document.getElementById('topBar');
   if (mainHeader) {
@@ -2097,6 +2154,7 @@ function renderDetail(slug, skipScroll = false) {
   if (filterMenu) {
     filterMenu.classList.add('hidden');
   }
+  setMobileTopBarMode('hidden');
   const main = document.querySelector('main');
   if (main) {
     main.classList.remove('filter-visible', 'filter-hidden');
@@ -2127,6 +2185,7 @@ function renderDetail(slug, skipScroll = false) {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
   }
+  clearRoutePendingState();
 }
 
 function initThumbRollers() {
@@ -2318,11 +2377,6 @@ function updateStaticText() {
     }
   });
 
-  // Lock Modal Strings
-  document.querySelector('#lockModal h3').textContent = t('lockedTitle');
-  document.querySelector('#lockModal p').textContent = t('lockedDesc');
-  document.querySelector('#lockForm button[type="submit"]').textContent = t('unlock');
-  document.getElementById('lockCancel').textContent = t('cancel');
   if (window.__personaGuideReady) updatePersonaGuideCopy();
 }
 
@@ -2351,8 +2405,10 @@ function router(skipScroll = false) {
 
   const raw = location.hash || '#/';
   const m = raw.match(/^#\/(.*)$/);
-  const slug = m ? m[1] : '';
+  const slug = m ? (SLUG_ALIASES[m[1]] || m[1]) : '';
   const previousSlug = window._lastSlug || '';
+  setRoutePendingState(slug);
+  closeTransientOverlays();
 
   // Save scroll if leaving home
   const scroller = document.getElementById('desktopScroller');
@@ -2384,9 +2440,7 @@ function router(skipScroll = false) {
 
   const p = state.projects.find((x) => x.slug === slug);
   if (p && p.locked) {
-    rememberDetailBackRoute(previousSlug);
-    pendingSlug = slug;
-    showLockModal();
+    location.hash = '#/archive';
     closeMenu();
     return;
   }
@@ -2396,74 +2450,10 @@ function router(skipScroll = false) {
   closeMenu();
 }
 
-/** Modal Logic: Lock/Unlock */
-const lockModal = document.getElementById('lockModal');
-const lockForm = document.getElementById('lockForm');
-const lockInput = document.getElementById('lockInput');
-const lockError = document.getElementById('lockError');
-const lockCancel = document.getElementById('lockCancel');
-const lockCloseX = document.getElementById('lockCloseX');
-
-function showLockModal() {
-  lockModal.classList.add('active');
-  lockInput.value = '';
-  lockError.classList.add('hidden');
-  lockInput.classList.remove('border-red-500');
-  setTimeout(() => lockInput.focus(), 50);
-}
-
-function hideLockModal() {
-  lockModal.classList.remove('active');
-  pendingSlug = null;
-}
-
-lockForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const pwd = lockInput.value;
-  const isValid = (await sha256Hex(pwd)) === LOCK_PASSWORD_HASH;
-  if (isValid) {
-    if (pendingSlug) {
-      renderDetail(pendingSlug);
-    }
-    hideLockModal();
-  } else {
-    lockError.classList.remove('hidden');
-    lockInput.classList.add('border-red-500');
-  }
-});
-
-lockInput.addEventListener('input', () => {
-  lockError.classList.add('hidden');
-  lockInput.classList.remove('border-red-500');
-});
-
-function cancelLock() {
-  hideLockModal();
-  // Return to Home on cancel
-  location.hash = '#/';
-}
-
-lockCancel.addEventListener('click', cancelLock);
-lockCloseX.addEventListener('click', cancelLock);
-
-// Event: Close modal on outside click
-lockModal.addEventListener('click', (e) => {
-  if (e.target === lockModal) {
-    cancelLock();
-  }
-});
-
-// Event: Close modal on Escape key
-window.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && lockModal.classList.contains('active')) {
-    cancelLock();
-  }
-});
-
 // init
 const brandLink = document.getElementById('brandLink');
 if (brandLink && !brandLink.innerHTML.trim()) {
-  brandLink.innerHTML = '<img src="assets/icons/1.png" alt="" class="w-[60px] h-[60px] lg:w-12 lg:h-12 inline-block mr-3 align-middle -mt-[24px] lg:mt-[-14px]" />Design Persona';
+  brandLink.innerHTML = `${DESIGN_PERSONA_MARK_SVG}Design Persona`;
 }
 
 /** Brand Link Navigation & Smooth Scroll */
@@ -2646,6 +2636,24 @@ function resetArchiveFilters() {
   renderHome();
 }
 
+function updateMobileFilterReadouts() {
+  const readoutIds = {
+    mobileArchiveSortSelect: 'mobileArchiveSortReadout',
+    mobileArchiveFocusSelect: 'mobileArchiveFocusReadout',
+  };
+
+  Object.keys(readoutIds).forEach((id) => {
+    const select = document.getElementById(id);
+    const cell = select?.closest('.catalog-filter-cell');
+    const readout = document.getElementById(readoutIds[id]);
+    if (!select || !cell) return;
+    const selectedOption = select.options[select.selectedIndex];
+    const label = selectedOption ? selectedOption.textContent.trim() : '';
+    cell.dataset.filterLabel = label;
+    if (readout) readout.textContent = label;
+  });
+}
+
 function syncArchiveFilterBar() {
   const archiveSortSelect = document.getElementById('archiveSortSelect');
   const archiveFocusSelect = document.getElementById('archiveFocusSelect');
@@ -2660,6 +2668,7 @@ function syncArchiveFilterBar() {
   if (mobileArchiveSortSelect) mobileArchiveSortSelect.value = sortMode;
   if (mobileArchiveFocusSelect) mobileArchiveFocusSelect.value = getArchiveFocusFilterValue();
   if (mobileArchiveYearSelect) mobileArchiveYearSelect.value = archiveYearMode;
+  updateMobileFilterReadouts();
 }
 
 const archiveSortSelect = document.getElementById('archiveSortSelect');
@@ -2749,6 +2758,16 @@ const mobileSearchInput = document.getElementById('mobileSearchInput');
 const mobileSearchModal = document.getElementById('mobileSearchModal');
 const mobileSearchBox = document.getElementById('mobileSearchBox');
 const mobileSearchClose = document.getElementById('mobileSearchClose');
+
+function enableMobileSearchButton() {
+  if (!mobileSearchBtn) return;
+  mobileSearchBtn.style.setProperty('pointer-events', 'auto', 'important');
+  mobileSearchBtn.style.setProperty('cursor', 'pointer', 'important');
+  mobileSearchBtn.style.setProperty('touch-action', 'manipulation', 'important');
+}
+
+enableMobileSearchButton();
+
 if (searchInput) {
   const desktopSearchContainer = document.querySelector('.desktop-search');
   if (desktopSearchContainer) {
@@ -2778,21 +2797,35 @@ if (searchInput) {
 const openMobileSearch = () => {
   if (!mobileSearchModal || !mobileSearchInput) return;
   mobileSearchModal.classList.remove('hidden');
+  mobileSearchModal.style.setProperty('display', 'block', 'important');
+  mobileSearchModal.style.setProperty('visibility', 'visible', 'important');
+  mobileSearchModal.style.setProperty('opacity', '1', 'important');
+  mobileSearchModal.style.setProperty('pointer-events', 'auto', 'important');
   setTimeout(() => mobileSearchInput.focus(), 0);
 };
 
 const closeMobileSearch = () => {
   if (!mobileSearchModal || !mobileSearchInput) return;
   mobileSearchModal.classList.add('hidden');
+  mobileSearchModal.style.setProperty('display', 'none', 'important');
+  mobileSearchModal.style.setProperty('visibility', 'hidden', 'important');
+  mobileSearchModal.style.setProperty('opacity', '0', 'important');
+  mobileSearchModal.style.setProperty('pointer-events', 'none', 'important');
   mobileSearchInput.value = '';
   searchQuery = '';
   if (location.hash === '#/archive') renderHome();
 };
 
 if (mobileSearchBtn && mobileSearchInput) {
-  mobileSearchBtn.addEventListener('click', () => {
+  const handleMobileSearchOpen = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    enableMobileSearchButton();
     openMobileSearch();
-  });
+  };
+
+  mobileSearchBtn.addEventListener('click', handleMobileSearchOpen);
+  mobileSearchBtn.addEventListener('touchend', handleMobileSearchOpen, { passive: false });
 
   mobileSearchInput.addEventListener('input', (e) => {
     searchQuery = e.target.value;
@@ -2830,10 +2863,39 @@ if (mobileSearchModal) {
 
 window.addEventListener('hashchange', router);
 document.addEventListener('click', (event) => {
+  const actionButton = event.target.closest('[data-landing-action]');
+  if (!actionButton) return;
+
+  const action = actionButton.dataset.landingAction;
+  event.preventDefault();
+  event.stopPropagation();
+
+  if (action === 'menu') {
+    if (window.innerWidth >= 1024) {
+      toggleDesktopMenu();
+    } else {
+      toggleMenu();
+    }
+  } else if (action === 'philosophy') {
+    scrollToPhilosophy();
+  } else if (action === 'landing-start') {
+    scrollToLandingStart();
+  } else if (action === 'landing-feature') {
+    scrollToLandingFeature();
+  } else if (action === 'home') {
+    if (location.hash !== '#/' && location.hash !== '') {
+      location.hash = '#/';
+    }
+    window.setTimeout(scrollToLandingStart, 30);
+  }
+});
+document.addEventListener('click', (event) => {
   const button = event.target.closest('[data-category-view]');
   if (!button) return;
   setViewMode(button.dataset.categoryView);
 });
+let chatbookSlideTimer = null;
+let chatbookSlideKickTimer = null;
 // Resize listener merged into updateLayoutMode
 router();
 setupViewToggle(); // Initialize fixed view toggle bar event listeners
@@ -2896,13 +2958,14 @@ function setupViewToggle() {
 }
 
 function updateViewToggleButtons() {
+  const activeViewMode = getEffectiveViewMode();
   const toggle1 = document.getElementById('viewToggle1');
   const toggle2 = document.getElementById('viewToggle2');
   const toggle3 = document.getElementById('viewToggle3');
   const toggle5 = document.getElementById('viewToggle5');
 
   document.body.classList.remove('view-mode-1', 'view-mode-2', 'view-mode-3', 'view-mode-5');
-  document.body.classList.add(`view-mode-${viewMode}`);
+  document.body.classList.add(`view-mode-${activeViewMode}`);
 
   [toggle1, toggle2, toggle3, toggle5].forEach(toggle => {
     if (toggle) {
@@ -2910,7 +2973,7 @@ function updateViewToggleButtons() {
     }
   });
 
-  const activeToggle = document.getElementById(`viewToggle${viewMode}`);
+  const activeToggle = document.getElementById(`viewToggle${activeViewMode}`);
   if (activeToggle) {
     activeToggle.classList.add('active');
   }
@@ -2919,10 +2982,10 @@ function updateViewToggleButtons() {
   const mToggleActive2 = document.getElementById('mobileViewToggle2');
 
   if (mToggleActive1) {
-    mToggleActive1.classList.toggle('active', viewMode === '1');
+    mToggleActive1.classList.toggle('active', activeViewMode === '1');
   }
   if (mToggleActive2) {
-    mToggleActive2.classList.toggle('active', viewMode === '2' || (window.innerWidth < 1024 && viewMode !== '1'));
+    mToggleActive2.classList.toggle('active', activeViewMode === '2' || (window.innerWidth < 1024 && activeViewMode !== '1'));
   }
   const desktopSortSelect = document.getElementById('desktopSortSelect');
   if (desktopSortSelect) {
@@ -2958,6 +3021,10 @@ function updateViewToggleBar() {
     categoryFocusBar.classList.add('hidden');
     categoryFocusBar.style.display = 'none';
     categoryFocusBar.innerHTML = '';
+  }
+
+  if (!document.body.classList.contains('archive-page-active')) {
+    setMobileTopBarMode('hidden');
   }
 }
 
@@ -3278,32 +3345,91 @@ let lastY = window.scrollY;
 let ticking = false;
 let isHeaderCollapsed = document.body.classList.contains('header-collapsed');
 
+function getPrimaryScrollY(isDesktop = window.innerWidth >= 1024) {
+  const scroller = document.getElementById('desktopScroller');
+  const windowY = Math.max(
+    window.scrollY || 0,
+    document.documentElement.scrollTop || 0,
+    document.body.scrollTop || 0
+  );
+  if (isDesktop && scroller) {
+    return Math.max(scroller.scrollTop || 0, windowY);
+  }
+  return windowY;
+}
+
+function setImportantStyle(el, prop, value) {
+  if (!el) return;
+  el.style.setProperty(prop, value, 'important');
+}
+
+function syncMobileChromeState(currentY = getPrimaryScrollY(false)) {
+  if (window.innerWidth >= 1024) return;
+
+  const isLanding = document.body.classList.contains('landing-page-active');
+  const isDetail = document.body.classList.contains('detail-page-active');
+  const isArchive = document.body.classList.contains('archive-page-active');
+  const guidePanel = document.getElementById('personaGuidePanel');
+  const isPersonaGuideOpen = Boolean(guidePanel && !guidePanel.classList.contains('hidden'));
+  const headerShouldShow = (isDetail || isArchive) ? currentY <= 50 : (!isLanding || currentY > 80);
+  const scrollTopShouldShow = currentY > (isLanding ? 80 : 300) || isPersonaGuideOpen;
+
+  if (isLanding) {
+    document.body.classList.toggle('landing-header-revealed', headerShouldShow);
+    document.body.classList.remove('header-collapsed');
+    isHeaderCollapsed = headerShouldShow;
+  } else {
+    document.body.classList.remove('landing-header-revealed');
+  }
+
+  if (mainHeader) {
+    setImportantStyle(mainHeader, 'transform', headerShouldShow ? 'translate3d(0, 0, 0)' : 'translate3d(0, -100%, 0)');
+    setImportantStyle(mainHeader, 'opacity', headerShouldShow ? '1' : '0');
+    setImportantStyle(mainHeader, 'visibility', headerShouldShow ? 'visible' : 'hidden');
+    setImportantStyle(mainHeader, 'pointer-events', headerShouldShow ? 'auto' : 'none');
+  }
+
+  if (scrollTopBtn) {
+    scrollTopBtn.classList.toggle('visible', scrollTopShouldShow);
+    setImportantStyle(scrollTopBtn, 'display', 'flex');
+    setImportantStyle(scrollTopBtn, 'opacity', scrollTopShouldShow ? '1' : '0');
+    setImportantStyle(scrollTopBtn, 'visibility', scrollTopShouldShow ? 'visible' : 'hidden');
+    setImportantStyle(scrollTopBtn, 'pointer-events', scrollTopShouldShow ? 'auto' : 'none');
+  }
+}
+
 function updateHeader() {
   updatePinnedScrollEffects();
   const isDesktop = window.innerWidth >= 1024;
-  const scroller = document.getElementById('desktopScroller');
-  const currentY = (isDesktop && scroller)
-    ? Math.max(scroller.scrollTop || 0, window.scrollY || document.documentElement.scrollTop || 0)
-    : window.scrollY;
+  const currentY = getPrimaryScrollY(isDesktop);
   const isLanding = document.body.classList.contains('landing-page-active');
   const isArchive = document.body.classList.contains('archive-page-active');
   const isCategory = document.body.classList.contains('category-page-active');
+  const isDetail = document.body.classList.contains('detail-page-active');
+  const guidePanel = document.getElementById('personaGuidePanel');
+  const isPersonaGuideOpen = Boolean(guidePanel && !guidePanel.classList.contains('hidden'));
 
-  // Landing page keeps the header and utility controls stable while the deck scrolls.
-  if (isLanding && isDesktop) {
-    if (!document.body.classList.contains('landing-header-revealed')) {
-      document.body.classList.add('landing-header-revealed');
+  if (isLanding) {
+    const shouldRevealLandingHeader = currentY > 80;
+    if (document.body.classList.contains('landing-header-revealed') !== shouldRevealLandingHeader) {
+      document.body.classList.toggle('landing-header-revealed', shouldRevealLandingHeader);
+      updateDesktopHeaderVars();
     }
     if (document.body.classList.contains('header-collapsed')) {
       document.body.classList.remove('header-collapsed');
       isHeaderCollapsed = false;
       updateDesktopHeaderVars();
     }
+    if (!isDesktop) {
+      isHeaderCollapsed = shouldRevealLandingHeader;
+    }
   }
 
   // Header collapse effect
-  if (isDesktop) {
-    const shouldCollapse = (isArchive || isCategory) && currentY > 80;
+  if (isLanding && !isDesktop) {
+    // Mobile landing uses the branded hero header at the top, then reveals the fixed site header after scroll.
+  } else if (isDesktop) {
+    const shouldCollapse = (isArchive || isCategory || isDetail) && currentY > 80;
     if (shouldCollapse !== isHeaderCollapsed) {
       document.body.classList.toggle('header-collapsed', shouldCollapse);
       isHeaderCollapsed = shouldCollapse;
@@ -3320,17 +3446,18 @@ function updateHeader() {
 
   // Scroll Top Button Logic
   const scrollTopThreshold = isLanding ? 80 : 300;
-  if (currentY > scrollTopThreshold) {
+  if (currentY > scrollTopThreshold || isPersonaGuideOpen) {
     if (scrollTopBtn) scrollTopBtn.classList.add('visible');
     if (personaGuide && (isArchive || isCategory)) personaGuide.classList.add('visible');
   } else {
     if (scrollTopBtn) scrollTopBtn.classList.remove('visible');
-    if (personaGuide) {
+    if (personaGuide && !isPersonaGuideOpen) {
       personaGuide.classList.remove('visible');
       togglePersonaGuide(false);
     }
   }
 
+  syncMobileChromeState(currentY);
   lastY = currentY > 0 ? currentY : 0; // Prevent negative
   ticking = false;
 }
@@ -3346,7 +3473,12 @@ window.addEventListener("scroll", handleScroll, { passive: true });
 document.addEventListener("scroll", handleScroll, { passive: true, capture: true });
 
 window.setInterval(() => {
-  if (document.body.classList.contains('archive-page-active') || document.body.classList.contains('category-page-active')) {
+  if (
+    window.innerWidth < 1024 ||
+    document.body.classList.contains('landing-page-active') ||
+    document.body.classList.contains('archive-page-active') ||
+    document.body.classList.contains('category-page-active')
+  ) {
     updateHeader();
   }
 }, 250);
@@ -3366,12 +3498,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
 window.addEventListener('resize', () => {
   updateDesktopHeaderVars();
+  updateHeader();
   requestPinnedScrollEffects();
 });
 
 window.addEventListener('load', () => {
   updateDesktopHeaderVars();
+  updateHeader();
   requestPinnedScrollEffects();
+  setupChatbookPreview();
 });
 
 function updatePinnedScrollEffects() {
@@ -3411,13 +3546,12 @@ function requestPinnedScrollEffects() {
 
 if (scrollTopBtn) {
   scrollTopBtn.addEventListener('click', () => {
-    const isDesktop = window.innerWidth >= 1024;
     const scroller = document.getElementById('desktopScroller');
-    if (isDesktop && scroller) {
+    if (scroller) {
       scroller.scrollTo({ top: 0, behavior: 'smooth' });
-    } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.setTimeout(() => syncMobileChromeState(0), 260);
   });
 }
 
@@ -3588,11 +3722,16 @@ function togglePersonaGuide(forceOpen = null) {
     : forceOpen;
   personaGuidePanel.classList.toggle('hidden', !shouldOpen);
   personaGuideBtn.setAttribute('aria-expanded', String(shouldOpen));
+  if (shouldOpen && personaGuide) personaGuide.classList.add('visible');
   if (shouldOpen) updatePersonaGuideEmail();
 }
 
 if (personaGuideBtn) {
-  personaGuideBtn.addEventListener('click', () => togglePersonaGuide());
+  personaGuideBtn.addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    togglePersonaGuide();
+  });
 }
 
 if (personaGuideClose) {
@@ -3681,8 +3820,6 @@ function scrollToLandingFeature() {
   }
 }
 
-let chatbookSlideTimer = null;
-
 function setChatbookSlide(index) {
   const mockup = document.querySelector('.landing-featured-chatbook-mockup');
   if (!mockup) return;
@@ -3690,6 +3827,10 @@ function setChatbookSlide(index) {
   const next = ((Number(index) % total) + total) % total;
   mockup.dataset.chatbookSlide = String(next);
   mockup.style.setProperty('--chatbook-slide-index', next);
+  const track = mockup.querySelector('.chatbook-screen-track');
+  if (track) {
+    track.style.transform = `translate3d(${next * -33.333333}%, 0, 0)`;
+  }
 }
 
 function shiftChatbookSlide(direction) {
@@ -3701,6 +3842,10 @@ function shiftChatbookSlide(direction) {
 
 function startChatbookAutoplay() {
   window.clearInterval(chatbookSlideTimer);
+  window.clearTimeout(chatbookSlideKickTimer);
+  chatbookSlideKickTimer = window.setTimeout(() => {
+    shiftChatbookSlide(1);
+  }, 1800);
   chatbookSlideTimer = window.setInterval(() => {
     shiftChatbookSlide(1);
   }, 6400);
@@ -3711,7 +3856,9 @@ function setupChatbookPreview() {
   const mockup = document.querySelector('.landing-featured-chatbook-mockup');
   if (!screen || !mockup) {
     window.clearInterval(chatbookSlideTimer);
+    window.clearTimeout(chatbookSlideKickTimer);
     chatbookSlideTimer = null;
+    chatbookSlideKickTimer = null;
     return;
   }
 
@@ -3730,6 +3877,7 @@ function setupChatbookPreview() {
     startX = event.clientX;
     startY = event.clientY;
     window.clearInterval(chatbookSlideTimer);
+    window.clearTimeout(chatbookSlideKickTimer);
     screen.classList.add('is-dragging');
     try {
       screen.setPointerCapture(event.pointerId);

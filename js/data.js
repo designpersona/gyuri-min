@@ -251,7 +251,7 @@ window.PROJECT_DATA = {
             ]
         },
         {
-            "slug": "Farmsplan-Swine-Feed",
+            "slug": "farmsplan-swine-feed",
             "country": "India",
             "flagImage": "assets/icons/india-flag.png",
             "featured": false,
@@ -488,7 +488,7 @@ window.PROJECT_DATA = {
             ]
         },
         {
-            "slug": "Farmsplan-Cattle-Feed",
+            "slug": "farmsplan-cattle-feed",
             "country": "India",
             "flagImage": "assets/icons/india-flag.png",
             "featured": false,
@@ -563,7 +563,7 @@ window.PROJECT_DATA = {
             "client_detail": "India"
         },
         {
-            "slug": "Farmsplan-Chicken",
+            "slug": "farmsplan-chicken",
             "country": "Malaysia",
             "flagImage": "assets/icons/malaysia-flag.png",
             "featured": false,
@@ -967,7 +967,7 @@ window.PROJECT_DATA = {
             "tool_notes": "Legacy tool: Dreamweaver"
         },
         {
-            "slug": "News-Letter",
+            "slug": "news-letter",
             "featured": false,
             "title": {
                 "en": "News Letter",
@@ -1010,7 +1010,7 @@ window.PROJECT_DATA = {
             "tool_notes": "Legacy tool: Dreamweaver"
         },
         {
-            "slug": "Chabssal-tteogkki",
+            "slug": "chabssal-tteogkki",
             "featured": false,
             "title": {
                 "en": "Chabssal-tteogkki",
