@@ -136,6 +136,7 @@ let lastHomeScrollTop = 0;
 window._lastSlug = '';
 const DETAIL_BACK_ROUTE_KEY = 'detail_back_route_session';
 let detailBackRouteFallback = '#/archive';
+let isHeaderCollapsed = false;
 const normalizeDetailBackRoute = (route) => {
   if (route === '#/archive') return route;
   if (typeof route === 'string' && route.startsWith('#/category/')) {
@@ -176,10 +177,25 @@ let filterVisible = filterVisibleStored === null
   : (filterVisibleStored !== 'false');
 
 const ARCHIVE_DESKTOP_VIEW_MODE = '3';
+function isMobileViewport() {
+  return window.innerWidth < 1024;
+}
+function syncMobileArchiveClass() {
+  document.body.classList.toggle(
+    'mobile-archive',
+    isMobileViewport() && document.body.classList.contains('archive-page-active')
+  );
+}
 function getEffectiveViewMode() {
-  const isDesktopArchive = window.innerWidth >= 1024 && document.body.classList.contains('archive-page-active');
+  if (isMobileViewport()) return '2';
+  const isDesktopArchive = document.body.classList.contains('archive-page-active');
   return isDesktopArchive ? ARCHIVE_DESKTOP_VIEW_MODE : viewMode;
 }
+function getEffectiveSortMode() {
+  return isMobileViewport() ? 'latest' : sortMode;
+}
+const MOBILE_ARCHIVE_PAGE_SIZE = 8;
+let mobileArchiveLimit = MOBILE_ARCHIVE_PAGE_SIZE;
 
 document.documentElement.dataset.lang = currentLang;
 document.body.classList.toggle('lang-en', currentLang === 'en');
@@ -197,6 +213,7 @@ const I18N = {
     year: "Year",
     client: "Client",
     role: "Role",
+    contribution: "Contribution",
     projectType: "Project Type",
     industry: "Industry",
     tools: "Tools",
@@ -217,6 +234,7 @@ const I18N = {
     oldest: "Oldest",
     moreTools: "+ More",
     lessTools: "Show less",
+    loadMore: "Load more",
     langLabel: "EN",
     viewLabel: "View",
     magazineView: "Magazine",
@@ -270,19 +288,18 @@ const I18N = {
       { period: "2015.09 — 2015.11", company: "The K Holdings", role: "Designer" }
     ],
     awards: [
-      "Korea Angel Investment Association President's Award",
-      "Edison Awards Bronze Medal <span class=\"text-neutral-500\">(AID, BX Team)</span>",
-      "National University Student Design Contest",
-      "46th GG National Design Competition"
+      { text: "Edison Awards Bronze Medal <span class=\"text-neutral-500\">(AID, BX Team)</span>", year: "2023" },
+      { text: "National University Student Design Contest", year: "2012" },
+      { text: "46th GG National Design Competition", year: "2010" }
     ],
     eduList: [
-      "Dankook University, Visual Communication Design",
-      "The University of Waikato Pathways College"
+      "Hongik University, Graduate School of Film, Digital Media & Communication",
+      "Dankook University, Visual Communication Design"
     ],
     credList: [
-      "Gangnam-gu Venture Startup Academy",
-      "Craftsman Computer Graphics Operator",
-      "Design Teacher Certificate"
+      { text: "OpenAI Build Week Hackathon", year: "2026" },
+      { text: "Craftsman Computer Graphics Operator", year: "2021" },
+      { text: "Design Teacher Certificate", year: "2013" }
     ]
   },
   ko: {
@@ -295,6 +312,7 @@ const I18N = {
     year: "연도",
     client: "고객사",
     role: "역할",
+    contribution: "기여도",
     projectType: "프로젝트 유형",
     industry: "산업",
     tools: "도구",
@@ -315,6 +333,7 @@ const I18N = {
     oldest: "오래된 순",
     moreTools: "+더보기",
     lessTools: "간단히 보기",
+    loadMore: "더보기",
     langLabel: "KO",
     viewLabel: "보기",
     magazineView: "매거진",
@@ -368,19 +387,18 @@ const I18N = {
       { period: "2015.09 — 2015.11", company: "The K Holdings", role: "Designer" }
     ],
     awards: [
-      "한국엔젤투자협회장상",
-      "에디슨 어워드 동상 <span class=\"text-neutral-500\">(AID, BX팀)</span>",
-      "2012 디자인대전 제 41회 전국대학생 디자인 공모전",
-      "제 46회 GG 전국디자인공모전"
+      { text: "에디슨 어워드 동상 <span class=\"text-neutral-500\">(AID, BX팀)</span>", year: "2023" },
+      { text: "2012 디자인대전 제 41회 전국대학생 디자인 공모전", year: "2012" },
+      { text: "제 46회 GG 전국디자인공모전", year: "2010" }
     ],
     eduList: [
-      "단국대학교 시각디자인과",
-      "와이카토 대학교 패스웨이 컬리지"
+      "홍익대학교 영상커뮤니케이션 대학원",
+      "단국대학교 시각디자인"
     ],
     credList: [
-      "강남구 벤처 스타트업 아카데미",
-      "컴퓨터그래픽스운용기능사",
-      "실기교사디자인교원자격증"
+      { text: "OpenAI Build Week 해커톤", year: "2026" },
+      { text: "컴퓨터그래픽스운용기능사", year: "2021" },
+      { text: "실기교사디자인교원자격증", year: "2013" }
     ]
   }
 };
@@ -519,7 +537,7 @@ const CATEGORY_CONFIG = [
     description: "Websites, e-catalogues, product concepts, and digital service interfaces.",
     koDescription: "웹사이트, e-카탈로그, 제품 콘셉트, 디지털 서비스 인터페이스.",
     tags: ["Web", "UI/UX", "Service"],
-    slugs: ["gm-portfolio", "chatlog", "fresh-chungnam", "news-letter"]
+    slugs: ["rebuilders", "gm-portfolio", "chatlog", "fresh-chungnam", "news-letter"]
   },
   {
     slug: "illustration-character",
@@ -539,6 +557,7 @@ const getCategoryProjects = (category) => {
 };
 
 const PROJECT_TAG_OVERRIDES = {
+  rebuilders: ["Product", "UIUX", "Dev"],
   chatlog: ["Product", "UIUX", "Dev"],
   "gm-portfolio": ["Web", "UIUX", "Dev"],
   "farmsplan-deli-cafe": ["Brand", "Food", "Retail"],
@@ -837,7 +856,7 @@ const gridHTML = (items, extraCardHTML = '') => {
             .map((label) => `<span class="portfolio-hover-kicker">${esc(label)}</span>`)
             .join('');
           const hoverTitle = title.length > 22 ? title.split(/\s+/).join('<br>') : title;
-          const showImageOverlay = isDesktop || isWideView;
+          const showImageOverlay = true;
 
           return `
         <article class="portfolio-card relative group ${isWideView ? 'portfolio-card-wide w-full max-w-full' : ''}">
@@ -863,7 +882,7 @@ const gridHTML = (items, extraCardHTML = '') => {
             </div>
             ` : ''}
             ${showImageOverlay && p.locked ? `<div class="absolute top-0 right-0 bg-black/10 text-white text-[10px] px-3 py-1 uppercase tracking-wider font-medium">${t('restricted')}</div>` : ''}
-            ${showImageOverlay && p.developing ? `<div class="absolute top-0 right-0 bg-[#7c3aed] text-white text-[10px] px-3 py-1 uppercase tracking-wider font-medium">${t('developing')}</div>` : ''}
+            ${showImageOverlay && p.developing ? `<div class="absolute top-0 right-0 bg-[#111] text-white text-[10px] px-3 py-1 uppercase tracking-wider font-medium">${t('developing')}</div>` : ''}
           </a>
           <a href="#/${p.slug}" class="portfolio-card-body portfolio-card-body-link" style="text-decoration:none; color:inherit" aria-label="${esc(currentLang === 'ko' ? `${title} 프로젝트 보기` : `View ${title} project`)}">
             <h3 class="portfolio-card-title">${title}</h3>
@@ -916,6 +935,7 @@ function detailHTML(p) {
   const clientDetail = getText(p.client_detail);
   const clientDisplay = clientDetail ? `${client} (${clientDetail})` : client;
   const role = getText(p.role);
+  const contribution = getText(p.contribution) || '100%';
   const projectType = getText(p.projectType);
   const industry = getText(p.industry);
   const tools = getText(p.tools);
@@ -937,8 +957,9 @@ function detailHTML(p) {
           ${year ? `<div class="detail-meta-item"><span class="detail-label">${t('year')}</span><div class="detail-value">${esc(year)}</div></div>` : ''}
           ${client ? `<div class="detail-meta-item"><span class="detail-label">${t('client')}</span><div class="detail-value">${esc(clientDisplay)}</div></div>` : ''}
           ${role ? `<div class="detail-meta-item"><span class="detail-label">${t('role')}</span><div class="detail-value">${esc(role)}</div></div>` : ''}
+          ${contribution ? `<div class="detail-meta-item"><span class="detail-label">${t('contribution')}</span><div class="detail-value">${esc(contribution)}</div></div>` : ''}
           ${industry ? `<div class="detail-meta-item"><span class="detail-label">${t('industry')}</span><div class="detail-value">${esc(industry)}</div></div>` : ''}
-          ${tools && p.slug !== 'gm-portfolio' && p.slug !== 'chatlog' ? `<div class="detail-meta-item"><span class="detail-label">${t('tools')}</span><div class="detail-value">${esc(tools)}</div></div>` : ''}
+          ${tools && p.slug !== 'gm-portfolio' && p.slug !== 'chatlog' && p.slug !== 'rebuilders' ? `<div class="detail-meta-item"><span class="detail-label">${t('tools')}</span><div class="detail-value">${esc(tools)}</div></div>` : ''}
         </div>
 
         <div class="border-t border-neutral-100"></div>
@@ -998,20 +1019,16 @@ function detailHTML(p) {
 
 function aboutHTML() {
   const competencies = t('competencies').map(c => `<div class="about-competency-card">${c}</div>`).join('');
-  const awardsData = I18N[currentLang].awards;
-  const awardsYears = ['2025', '2023', '2012', '2010'];
-  const awardsHTML = awardsData.map((a, i) => `
-    <p>${a} <span class="about-log-year">${awardsYears[i]}</span></p>
-  `).join('');
+  const logLine = (item) => {
+    if (typeof item === 'string') return `<p>${item}</p>`;
+    return `<p>${item.text}${item.year ? ` <span class="about-log-year">${item.year}</span>` : ''}</p>`;
+  };
+  const awardsHTML = I18N[currentLang].awards.map(logLine).join('');
 
   const eduData = I18N[currentLang].eduList;
   const eduHTML = eduData.map(e => `<p>${e}</p>`).join('');
 
-  const credData = I18N[currentLang].credList;
-  const credYears = ['2025', '2021', '2013'];
-  const credHTML = credData.map((c, i) => `
-    <p>${c} <span class="about-log-year">${credYears[i]}</span></p>
-  `).join('');
+  const credHTML = I18N[currentLang].credList.map(logLine).join('');
 
   return `
     <article class="about-page-content max-w-none">
@@ -1115,7 +1132,7 @@ function updateLayoutMode() {
     if (!desktopDefaultSet) {
       storage.set('view_mode_v2_initialized', '1');
       if (viewMode !== '3') {
-        setViewMode('3');
+        setViewMode('3', { render: false });
       }
     }
   }
@@ -1125,16 +1142,17 @@ function updateLayoutMode() {
     if (!mobileDefaultSet) {
       storage.set('mobile_view_mode_initialized', '1');
       if (viewMode !== '2') {
-        setViewMode('2');
+        setViewMode('2', { render: false });
       }
     }
   }
 
   if (!isMobile && viewMode === '2') {
-    setViewMode('3');
+    setViewMode('3', { render: false });
   }
 
   updateViewToggleButtons();
+  syncMobileArchiveClass();
 }
 let layoutResizeTimer = null;
 window.addEventListener('resize', () => {
@@ -1228,8 +1246,7 @@ function closeTransientOverlays() {
     activeSearchModal.style.setProperty('opacity', '0', 'important');
     activeSearchModal.style.setProperty('pointer-events', 'none', 'important');
   }
-  if (activeSearchInput) activeSearchInput.value = '';
-  searchQuery = '';
+  // Keep the active query while the archive re-renders for live filtering.
 
   const activeGuide = document.getElementById('personaGuide');
   const activeGuideBtn = document.getElementById('personaGuideBtn');
@@ -1282,10 +1299,11 @@ function getFilterOptions() {
 // Filter projects based on active filters and search query
 function filterProjects() {
   let filtered = state.projects;
+  const activeSearchQuery = searchQuery || document.body.dataset.searchQuery || '';
 
   // Apply search filter first
-  if (searchQuery) {
-    const q = searchQuery.toLowerCase();
+  if (activeSearchQuery) {
+    const q = activeSearchQuery.toLowerCase();
     filtered = filtered.filter(p => {
       const text = [
         getText(p.title),
@@ -1364,6 +1382,8 @@ function filterArchiveFocus(projects) {
 }
 
 function getArchiveFilteredProjects() {
+  // Mobile archive uses the same search/filter pipeline as desktop.
+  if (isMobileViewport()) return filterProjects();
   return filterArchiveYear(filterArchiveFocus(filterProjects()));
 }
 
@@ -1375,7 +1395,7 @@ const getYearRange = (yearValue) => {
   return { start, end };
 };
 
-const shuffleArray = (items) => {
+function shuffleArray(items) {
   const arr = [...items];
   for (let i = arr.length - 1; i > 0; i -= 1) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -1384,8 +1404,9 @@ const shuffleArray = (items) => {
   return arr;
 };
 
-const sortProjects = (items) => {
-  if (sortMode === 'featured') {
+function sortProjects(items) {
+  const activeSortMode = getEffectiveSortMode();
+  if (activeSortMode === 'featured') {
     // Stable shuffle: maintain the same random order within a session
     if (!window._stableShuffleOrder) {
       window._stableShuffleOrder = shuffleArray(items.map((_, i) => i));
@@ -1410,7 +1431,7 @@ const sortProjects = (items) => {
     const yearA = getYearRange(getText(a.year));
     const yearB = getYearRange(getText(b.year));
 
-    if (sortMode === 'oldest') {
+    if (activeSortMode === 'oldest') {
       return yearA.start - yearB.start;
     }
 
@@ -1597,14 +1618,12 @@ function setMobileTopBarMode(mode) {
   forceShow(mobileTopBar);
   mobileTopBar.classList.remove('hidden');
   mobileTopBar.style.setProperty('background', '#fff', 'important');
-  mobileTopBar.style.setProperty('border-top', '1px solid #111', 'important');
+  mobileTopBar.style.setProperty('border-top', '0', 'important');
   mobileTopBar.style.setProperty('border-bottom', '1px solid #111', 'important');
-  mobileTopBar.style.setProperty('box-shadow', '0 1px 0 rgba(17, 17, 17, 0.08)', 'important');
+  mobileTopBar.style.setProperty('box-shadow', 'none', 'important');
 
-  [sortCell, focusCell, viewActions].forEach(forceShow);
-  [resultCount, filterButton, legacySort, yearSelect, yearCell, resetButton].forEach(forceHide);
-  [sortCell, focusCell, document.getElementById('mobileArchiveSortSelect'), document.getElementById('mobileArchiveFocusSelect')].forEach(makePlainControl);
-  mobileTopBar.querySelectorAll('.view-toggle-btn').forEach(makePlainControl);
+  [sortCell, focusCell, yearCell, resetButton].forEach(forceShow);
+  [resultCount, filterButton, legacySort, viewActions].forEach(forceHide);
 }
 
 function categoryCardHTML(category) {
@@ -1614,7 +1633,7 @@ function categoryCardHTML(category) {
   const index = String(CATEGORY_CONFIG.findIndex((item) => item.slug === category.slug) + 1).padStart(2, '0');
   const shortTitle = esc(category.shortTitle || category.title).replace(/\\n/g, '<br>');
   return `
-    <article class="category-panel" style="--category-accent:${esc(category.accent || '#FF5A00')}">
+    <article class="category-panel" style="--category-accent:${esc(category.accent || 'var(--accent)')}">
       <a href="#/category/${category.slug}" class="category-panel-main" style="text-decoration:none" aria-label="${esc(category.title)}">
         <div class="category-panel-top">
           <span class="category-index">${index}</span>
@@ -1651,7 +1670,7 @@ function dashboardCategoryCellHTML(category) {
   const description = currentLang === 'ko' ? category.koDescription : category.description;
   const title = esc(category.shortTitle || category.title).replace(/\\n/g, '<br>');
   return `
-    <a href="#/category/${category.slug}" class="dash-cell dash-category-cell" style="--category-accent:${esc(category.accent || '#FF5A00')}; text-decoration:none" aria-label="${esc(category.title)}">
+    <a href="#/category/${category.slug}" class="dash-cell dash-category-cell" style="--category-accent:${esc(category.accent || 'var(--accent)')}; text-decoration:none" aria-label="${esc(category.title)}">
       ${image ? `<img class="dash-card-image" src="${image}" alt="" loading="lazy" decoding="async" />` : ''}
       <span class="dash-details" aria-label="${currentLang === 'ko' ? '자세히 보기' : 'View details'}">
         <span class="dash-details-number" aria-hidden="true">${index}</span>
@@ -1784,7 +1803,7 @@ function landingHTML() {
 
 function renderLanding(skipScroll = false) {
   document.body.classList.add('landing-page-active');
-  document.body.classList.remove('about-page-active', 'detail-page-active', 'archive-page-active', 'category-page-active');
+  document.body.classList.remove('about-page-active', 'detail-page-active', 'archive-page-active', 'category-page-active', 'mobile-archive');
   if (!skipScroll) {
     document.body.classList.remove('landing-header-revealed', 'header-collapsed');
   }
@@ -1939,17 +1958,17 @@ function renderCategory(categorySlug, skipScroll = false) {
     return;
   }
   document.body.classList.add('category-page-active');
-  document.body.classList.remove('about-page-active', 'detail-page-active', 'archive-page-active', 'landing-page-active');
+  document.body.classList.remove('about-page-active', 'detail-page-active', 'archive-page-active', 'landing-page-active', 'mobile-archive');
   document.body.classList.remove('landing-header-revealed', 'header-collapsed');
   const mainHeader = document.getElementById('mainHeader');
   const topBar = document.getElementById('topBar');
   if (mainHeader) {
-    mainHeader.style.backgroundColor = '#f7ccf8';
-    mainHeader.style.borderBottom = '0';
-    mainHeader.style.boxShadow = 'none';
+    mainHeader.style.backgroundColor = '';
+    mainHeader.style.borderBottom = '';
+    mainHeader.style.boxShadow = '';
     Array.from(mainHeader.children).forEach((child) => {
-      child.style.backgroundColor = '#f7ccf8';
-      child.style.borderBottom = '0';
+      child.style.backgroundColor = '';
+      child.style.borderBottom = '';
     });
   }
   if (topBar) topBar.style.display = 'none';
@@ -1982,6 +2001,11 @@ function renderArchive(skipScroll = false) {
   document.body.classList.remove('about-page-active', 'landing-page-active', 'category-page-active');
   document.body.classList.remove('detail-page-active');
   document.body.classList.add('archive-page-active');
+  if (!skipScroll) {
+    document.body.classList.remove('landing-header-revealed', 'header-collapsed');
+    isHeaderCollapsed = false;
+  }
+  syncMobileArchiveClass();
   const topBar = document.getElementById('topBar');
   if (mainHeader) {
     mainHeader.style.backgroundColor = '';
@@ -1996,10 +2020,17 @@ function renderArchive(skipScroll = false) {
   const viewToggleBar = document.getElementById('viewToggleBar');
   const mobileTopBar = document.getElementById('mobileTopBar');
   if (viewToggleBar) viewToggleBar.classList.remove('hidden');
-  if (mobileTopBar) mobileTopBar.classList.remove('hidden');
-  setMobileTopBarMode('archive');
+  if (isMobileViewport()) {
+    setMobileTopBarMode('hidden');
+  } else {
+    if (mobileTopBar) mobileTopBar.classList.remove('hidden');
+    setMobileTopBarMode('archive');
+  }
   clearThumbRollers();
   const filteredItems = sortProjects(getArchiveFilteredProjects());
+  if (isMobileViewport() && !skipScroll) mobileArchiveLimit = MOBILE_ARCHIVE_PAGE_SIZE;
+  const visibleItems = isMobileViewport() ? filteredItems.slice(0, mobileArchiveLimit) : filteredItems;
+  const hasMoreMobile = isMobileViewport() && mobileArchiveLimit < filteredItems.length;
 
   // Show filter menu on home page - respect filterVisible state
   const filterMenu = document.getElementById('desktopFilterMenu');
@@ -2026,7 +2057,20 @@ function renderArchive(skipScroll = false) {
   updateViewToggleBar();
   syncArchiveFilterBar();
 
-  pane.innerHTML = `<div class="mobile-archive-start-spacer" aria-hidden="true"></div>${gridHTML(filteredItems, archivePlaceholderCardHTML())}`;
+  const archiveExtraCard = isMobileViewport() ? '' : archivePlaceholderCardHTML();
+  const moreButtonHTML = hasMoreMobile
+    ? `<div class="mobile-archive-more"><button type="button" id="mobileArchiveMoreBtn">${t('loadMore')}</button></div>`
+    : '';
+  pane.innerHTML = isMobileViewport()
+    ? `<div class="mobile-archive-offset" aria-hidden="true"></div>${gridHTML(visibleItems)}${moreButtonHTML}`
+    : `<div class="mobile-archive-start-spacer" aria-hidden="true"></div>${gridHTML(filteredItems, archiveExtraCard)}`;
+  const moreBtn = document.getElementById('mobileArchiveMoreBtn');
+  if (moreBtn) {
+    moreBtn.addEventListener('click', () => {
+      mobileArchiveLimit += MOBILE_ARCHIVE_PAGE_SIZE;
+      renderArchive(true);
+    });
+  }
   initThumbRollers();
   initLazyVideos(pane);
   updateMobileViewDropdown();
@@ -2060,11 +2104,12 @@ function renderArchive(skipScroll = false) {
         lastHomeScrollTop = 0;
       });
     } else {
-      scroller.scrollTo({ top: 0, behavior: "smooth" });
+      scroller.scrollTo({ top: 0, behavior: 'instant' });
+      window.scrollTo({ top: 0, behavior: 'instant' });
     }
     window._preventNextScrollReset = false;
   } else {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: 'instant' });
   }
 
   clearRoutePendingState();
@@ -2076,7 +2121,7 @@ function renderHome() {
 
 function renderAbout(skipScroll = false) {
   document.body.classList.add('about-page-active');
-  document.body.classList.remove('detail-page-active', 'archive-page-active', 'landing-page-active', 'category-page-active');
+  document.body.classList.remove('detail-page-active', 'archive-page-active', 'landing-page-active', 'category-page-active', 'mobile-archive');
   const mainHeader = document.getElementById('mainHeader');
   const topBar = document.getElementById('topBar');
   if (mainHeader) {
@@ -2130,7 +2175,7 @@ function renderAbout(skipScroll = false) {
 }
 
 function renderDetail(slug, skipScroll = false) {
-  document.body.classList.remove('about-page-active', 'landing-page-active', 'category-page-active');
+  document.body.classList.remove('about-page-active', 'landing-page-active', 'category-page-active', 'mobile-archive');
   document.body.classList.add('detail-page-active');
   document.body.classList.remove('archive-page-active');
   document.body.classList.remove('landing-header-revealed', 'header-collapsed');
@@ -2173,14 +2218,34 @@ function renderDetail(slug, skipScroll = false) {
   updateMobileResultCount();
 
 
-  // Scroll Reset
+  // Scroll Reset: Ensure top position on both mobile and desktop
   if (!skipScroll) {
+    window.scrollTo({ top: 0, behavior: "instant" });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
     const scroller = document.getElementById('desktopScroller');
     if (scroller) {
-      scroller.scrollTo({ top: 0, behavior: "smooth" });
-    } else {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      scroller.scrollTop = 0;
+      scroller.scrollTo({ top: 0, behavior: "instant" });
     }
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, behavior: "instant" });
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      if (scroller) {
+        scroller.scrollTop = 0;
+        scroller.scrollTo({ top: 0, behavior: "instant" });
+      }
+    });
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: "instant" });
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      if (scroller) {
+        scroller.scrollTop = 0;
+        scroller.scrollTo({ top: 0, behavior: "instant" });
+      }
+    }, 60);
   }
   clearRoutePendingState();
 }
@@ -2354,7 +2419,7 @@ function updateStaticText() {
   });
 
   // Desktop Header Lang Toggle Styles
-  document.querySelectorAll('.desktop-lang-toggle').forEach(btn => {
+  document.querySelectorAll('.desktop-lang-toggle, .mobile-lang-toggle').forEach(btn => {
     if (btn.dataset.lang === currentLang) {
       btn.classList.add('text-neutral-900', 'font-bold');
       btn.classList.remove('text-neutral-400');
@@ -2399,6 +2464,9 @@ function setLanguage(lang) {
 }
 
 function router(skipScroll = false) {
+  if (typeof skipScroll !== 'boolean') {
+    skipScroll = false;
+  }
 
   const raw = location.hash || '#/';
   const m = raw.match(/^#\/(.*)$/);
@@ -2414,6 +2482,11 @@ function router(skipScroll = false) {
   }
   window._lastSlug = slug;
 
+  if (isMobileViewport() && (!slug || slug === 'archive' || slug.startsWith('category/'))) {
+    renderArchive(skipScroll);
+    closeMenu();
+    return;
+  }
   if (!slug) {
     renderLanding(skipScroll);
     closeMenu();
@@ -2445,6 +2518,7 @@ function router(skipScroll = false) {
   if (p) rememberDetailBackRoute(previousSlug);
   renderDetail(slug, skipScroll);
   closeMenu();
+  syncMobileArchiveClass();
 }
 
 // init
@@ -2454,12 +2528,12 @@ if (brandLink && !brandLink.innerHTML.trim()) {
 }
 
 /** Brand Link Navigation & Smooth Scroll */
-brandLink.addEventListener('click', (e) => {
+brandLink?.addEventListener('click', (e) => {
   e.preventDefault();
 
-  // Navigate if needed
-  if (location.hash !== '#/' && location.hash !== '') {
-    window.location.hash = '#/';
+  const homeHash = isMobileViewport() ? '#/archive' : '#/';
+  if (location.hash !== homeHash && location.hash !== '') {
+    window.location.hash = homeHash;
   }
 
   // Force scroll after logic (User requested setTimeout for stability)
@@ -2489,7 +2563,7 @@ document.querySelectorAll('.lang-toggle').forEach(btn => {
   });
 });
 
-document.querySelectorAll('.desktop-lang-toggle').forEach(btn => {
+document.querySelectorAll('.desktop-lang-toggle, .mobile-lang-toggle').forEach(btn => {
   btn.addEventListener('click', (e) => {
     setLanguage(e.target.dataset.lang);
   });
@@ -2544,9 +2618,9 @@ if (mobileFilterDrawer) {
   }
 }
 
-const updateMobileViewDropdown = () => {
+function updateMobileViewDropdown() {
   // No-op for select removed. Handled by updateViewToggleButtons.
-};
+}
 
 function setViewMode(nextMode, { render = true } = {}) {
   if (!nextMode || nextMode === viewMode) return;
@@ -2562,7 +2636,7 @@ function setViewMode(nextMode, { render = true } = {}) {
   }
 }
 
-const updateMobileResultCount = () => {
+function updateMobileResultCount() {
   if (!mobileResultCount) return;
   const count = document.body.classList.contains('archive-page-active')
     ? getArchiveFilteredProjects().length
@@ -2572,7 +2646,7 @@ const updateMobileResultCount = () => {
     : `${count} ${t('resultsSuffix')}`;
 };
 
-const updateDesktopResultCount = () => {
+function updateDesktopResultCount() {
   const desktopResultCount = document.getElementById('desktopResultCount');
   if (!desktopResultCount) return;
   const count = document.body.classList.contains('archive-page-active')
@@ -2623,6 +2697,7 @@ function resetArchiveFilters() {
   archiveFocusMode = '';
   archiveYearMode = '';
   searchQuery = '';
+  delete document.body.dataset.searchQuery;
   activeFilters = {};
   storage.set('sort_mode', sortMode);
   storage.set('archive_focus', archiveFocusMode);
@@ -2750,6 +2825,7 @@ if (mobileSortSelect) {
 
 // Search functionality
 const searchInput = document.getElementById('searchInput');
+const mobileSearchFloat = document.getElementById('mobileSearchFloat');
 const mobileSearchBtn = document.getElementById('mobileSearchBtn');
 const mobileSearchInput = document.getElementById('mobileSearchInput');
 const mobileSearchModal = document.getElementById('mobileSearchModal');
@@ -2793,6 +2869,11 @@ if (searchInput) {
 
 const openMobileSearch = () => {
   if (!mobileSearchModal || !mobileSearchInput) return;
+  if (mobileSearchFloat) {
+    mobileSearchFloat.classList.add('is-open');
+    setTimeout(() => mobileSearchInput.focus(), 0);
+    return;
+  }
   mobileSearchModal.classList.remove('hidden');
   mobileSearchModal.style.setProperty('display', 'block', 'important');
   mobileSearchModal.style.setProperty('visibility', 'visible', 'important');
@@ -2803,6 +2884,7 @@ const openMobileSearch = () => {
 
 const closeMobileSearch = () => {
   if (!mobileSearchModal || !mobileSearchInput) return;
+  if (mobileSearchFloat) mobileSearchFloat.classList.remove('is-open');
   mobileSearchModal.classList.add('hidden');
   mobileSearchModal.style.setProperty('display', 'none', 'important');
   mobileSearchModal.style.setProperty('visibility', 'hidden', 'important');
@@ -2810,6 +2892,7 @@ const closeMobileSearch = () => {
   mobileSearchModal.style.setProperty('pointer-events', 'none', 'important');
   mobileSearchInput.value = '';
   searchQuery = '';
+  delete document.body.dataset.searchQuery;
   if (location.hash === '#/archive') renderHome();
 };
 
@@ -2818,7 +2901,11 @@ if (mobileSearchBtn && mobileSearchInput) {
     event.preventDefault();
     event.stopPropagation();
     enableMobileSearchButton();
-    openMobileSearch();
+    if (mobileSearchFloat && mobileSearchFloat.classList.contains('is-open')) {
+      closeMobileSearch();
+    } else {
+      openMobileSearch();
+    }
   };
 
   mobileSearchBtn.addEventListener('click', handleMobileSearchOpen);
@@ -2826,8 +2913,14 @@ if (mobileSearchBtn && mobileSearchInput) {
 
   mobileSearchInput.addEventListener('input', (e) => {
     searchQuery = e.target.value;
+    document.body.dataset.searchQuery = searchQuery;
     if (location.hash === '#/archive') {
       renderHome();
+      const activeInput = document.getElementById('mobileSearchInput');
+      if (activeInput) {
+        activeInput.value = searchQuery;
+        activeInput.focus();
+      }
     }
   });
 
@@ -2913,13 +3006,13 @@ function setupViewToggle() {
 
   if (toggle2) {
     toggle2.addEventListener('click', () => {
-      setViewMode('2');
+      setViewMode('2', { render: false });
     });
   }
 
   if (toggle3) {
     toggle3.addEventListener('click', () => {
-      setViewMode('3');
+      setViewMode('3', { render: false });
     });
   }
 
@@ -2940,7 +3033,7 @@ function setupViewToggle() {
 
   if (mToggle2) {
     mToggle2.addEventListener('click', () => {
-      setViewMode('2');
+      setViewMode('2', { render: false });
     });
   }
 
@@ -3324,23 +3417,21 @@ function updateDesktopHeaderVars() {
   document.documentElement.style.setProperty('--desktop-content-height', `${Math.round(contentHeight)}px`);
 }
 
-// 1. Scroll Position Restoration
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 window.onbeforeunload = function () {
   window.scrollTo(0, 0);
 };
 
-window.addEventListener('pageshow', (event) => {
-  if (event.persisted) {
-    // bfcache restore
-    window.scrollTo(0, 0);
-    // Force reload if needed, but scrollTo(0,0) usually sufficient
-  }
+window.addEventListener('pageshow', () => {
+  const scroller = document.getElementById('desktopScroller');
+  if (scroller) scroller.scrollTo({ top: 0, behavior: 'instant' });
+  window.scrollTo(0, 0);
 });
 
 // 2. Header Scroll Behavior (Hide/Show)
 let lastY = window.scrollY;
 let ticking = false;
-let isHeaderCollapsed = document.body.classList.contains('header-collapsed');
+isHeaderCollapsed = document.body.classList.contains('header-collapsed');
 
 function getPrimaryScrollY(isDesktop = window.innerWidth >= 1024) {
   const scroller = document.getElementById('desktopScroller');
@@ -3363,18 +3454,18 @@ function setImportantStyle(el, prop, value) {
 function syncMobileChromeState(currentY = getPrimaryScrollY(false)) {
   if (window.innerWidth >= 1024) return;
 
-  const isLanding = document.body.classList.contains('landing-page-active');
-  const isDetail = document.body.classList.contains('detail-page-active');
   const isArchive = document.body.classList.contains('archive-page-active');
+  document.body.classList.toggle('mobile-archive', isArchive);
+  const isLanding = document.body.classList.contains('landing-page-active');
   const guidePanel = document.getElementById('personaGuidePanel');
   const isPersonaGuideOpen = Boolean(guidePanel && !guidePanel.classList.contains('hidden'));
-  const headerShouldShow = (isDetail || isArchive) ? currentY <= 50 : (!isLanding || currentY > 80);
-  const scrollTopShouldShow = currentY > (isLanding ? 80 : 300) || isPersonaGuideOpen;
+  const headerShouldShow = isLanding ? currentY > 80 : !isHeaderCollapsed;
+  const scrollTopShouldShow = currentY > 300 || isPersonaGuideOpen;
 
   if (isLanding) {
     document.body.classList.toggle('landing-header-revealed', headerShouldShow);
     document.body.classList.remove('header-collapsed');
-    isHeaderCollapsed = headerShouldShow;
+    isHeaderCollapsed = !headerShouldShow;
   } else {
     document.body.classList.remove('landing-header-revealed');
   }
@@ -3384,6 +3475,11 @@ function syncMobileChromeState(currentY = getPrimaryScrollY(false)) {
     setImportantStyle(mainHeader, 'opacity', headerShouldShow ? '1' : '0');
     setImportantStyle(mainHeader, 'visibility', headerShouldShow ? 'visible' : 'hidden');
     setImportantStyle(mainHeader, 'pointer-events', headerShouldShow ? 'auto' : 'none');
+  }
+
+  const viewToggleBar = document.getElementById('viewToggleBar');
+  if (viewToggleBar) {
+    setImportantStyle(viewToggleBar, 'top', headerShouldShow ? '56px' : '0px');
   }
 
   if (scrollTopBtn) {
@@ -3433,11 +3529,11 @@ function updateHeader() {
       updateDesktopHeaderVars();
     }
   } else {
-    const shouldCollapse = currentY > 50;
+    // Mobile (Archive, Detail, About, etc.):
+    const shouldCollapse = (isArchive || isCategory || isDetail) && currentY > 60;
     if (shouldCollapse !== isHeaderCollapsed) {
       document.body.classList.toggle('header-collapsed', shouldCollapse);
       isHeaderCollapsed = shouldCollapse;
-      updateDesktopHeaderVars();
     }
   }
 
