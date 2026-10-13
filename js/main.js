@@ -294,10 +294,11 @@ const I18N = {
     ],
     eduList: [
       "Hongik University, Graduate School of Film, Digital Media & Communication",
-      "Dankook University, Visual Communication Design"
+      "Dankook University, College of Art and Design — Visual Communication Design"
     ],
     credList: [
       { text: "OpenAI Build Week Hackathon", year: "2026" },
+      { text: "Web Design & Development Craftsman — Written Exam Passed", year: "2026" },
       { text: "Craftsman Computer Graphics Operator", year: "2021" },
       { text: "Design Teacher Certificate", year: "2013" }
     ]
@@ -393,10 +394,11 @@ const I18N = {
     ],
     eduList: [
       "홍익대학교 영상커뮤니케이션 대학원",
-      "단국대학교 시각디자인"
+      "단국대학교 예술조형대학 시각디자인"
     ],
     credList: [
       { text: "OpenAI Build Week 해커톤", year: "2026" },
+      { text: "웹디자인개발기능사 필기 합격", year: "2026" },
       { text: "컴퓨터그래픽스운용기능사", year: "2021" },
       { text: "실기교사디자인교원자격증", year: "2013" }
     ]
