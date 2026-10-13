@@ -12347,3 +12347,9 @@ body.detail-page-active .detail-header-row {
   /* SNS links belong to the desktop drawer only. */
   #mobileMenu .drawer-social-links { display: none !important; }
 }
+
+@media (min-width: 1024px) {
+  #mobileSearchFloat {
+    display: none !important;
+  }
+}
