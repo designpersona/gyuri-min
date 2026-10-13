@@ -6142,14 +6142,9 @@ body.archive-page-active.header-collapsed #viewToggleBar {
     transition: padding-top 0.28s cubic-bezier(0.22, 1, 0.36, 1) !important;
   }
 
-  body.archive-page-active #desktopScroller {
-    height: calc(100vh - var(--archive-header-height)) !important;
-    transition: margin-top 0.28s cubic-bezier(0.22, 1, 0.36, 1), height 0.28s cubic-bezier(0.22, 1, 0.36, 1) !important;
-    will-change: margin-top;
-  }
-
+  body.archive-page-active #desktopScroller,
   body.archive-page-active.header-collapsed #desktopScroller {
-    margin-top: calc(-1 * var(--archive-header-height)) !important;
+    margin-top: 0 !important;
     height: 100vh !important;
   }
 
@@ -6454,13 +6449,9 @@ body.category-page-active:not(.view-mode-1) .portfolio-view-product {
     transition: padding-top 0.28s cubic-bezier(0.22, 1, 0.36, 1) !important;
   }
 
-  body.category-page-active #desktopScroller {
-    transition: margin-top 0.28s cubic-bezier(0.22, 1, 0.36, 1), height 0.28s cubic-bezier(0.22, 1, 0.36, 1) !important;
-    will-change: margin-top;
-  }
-
+  body.category-page-active #desktopScroller,
   body.category-page-active.header-collapsed #desktopScroller {
-    margin-top: calc(-1 * var(--category-header-height)) !important;
+    margin-top: 0 !important;
     height: 100vh !important;
   }
 
@@ -10217,17 +10208,12 @@ body.detail-page-active .detail-header-row {
     pointer-events: none !important;
   }
 
-  body.detail-page-active #desktopScroller {
-    height: calc(100vh - var(--detail-header-height)) !important;
+  body.detail-page-active #desktopScroller,
+  body.detail-page-active.header-collapsed #desktopScroller {
+    margin-top: 0 !important;
+    height: 100vh !important;
     overflow-y: auto !important;
     overflow-x: hidden !important;
-    transition: margin-top 0.28s cubic-bezier(0.22, 1, 0.36, 1), height 0.28s cubic-bezier(0.22, 1, 0.36, 1) !important;
-    will-change: margin-top;
-  }
-
-  body.detail-page-active.header-collapsed #desktopScroller {
-    margin-top: calc(-1 * var(--detail-header-height)) !important;
-    height: 100vh !important;
   }
 
   body.detail-page-active main {
@@ -11163,13 +11149,13 @@ body.detail-page-active .detail-header-row {
   body.mobile-mode #scrollTopBtn {
     position: fixed !important;
     right: 18px !important;
-    bottom: calc(env(safe-area-inset-bottom) + 22px) !important;
-    z-index: calc(var(--z-header) + 20) !important;
+    bottom: calc(env(safe-area-inset-bottom) + 82px) !important;
+    z-index: 140 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    background: #111 !important;
-    color: #fff !important;
+    background: var(--accent) !important;
+    color: #111 !important;
   }
 
   body.mobile-mode #scrollTopBtn.visible {
@@ -11930,8 +11916,7 @@ body.detail-page-active .detail-header-row {
   #mobileFilterOpenBtn,
   #desktopFilterMenu,
   #desktopResultCount,
-  #topBar,
-  #mobileSearchBtn {
+  #topBar {
     display: none !important;
   }
 
@@ -11949,11 +11934,17 @@ body.detail-page-active .detail-header-row {
 
 /* 3. DESKTOP (min-width: 1024px) */
 @media (min-width: 1024px) {
+  #mobileSearchModal {
+    display: none !important;
+  }
   /* Scroll Container: 100vh stable scrolling, eliminates bottom white bar */
   #desktopScroller,
   body.archive-page-active #desktopScroller,
+  body.archive-page-active.header-collapsed #desktopScroller,
   body.detail-page-active #desktopScroller,
+  body.detail-page-active.header-collapsed #desktopScroller,
   body.category-page-active #desktopScroller,
+  body.category-page-active.header-collapsed #desktopScroller,
   body.about-page-active #desktopScroller,
   body.header-collapsed #desktopScroller {
     display: flex !important;
@@ -12095,6 +12086,51 @@ body.detail-page-active .detail-header-row {
   body.about-page-active .about-page-content {
     padding-top: calc(var(--detail-header-height, 92px) + 36px) !important;
   }
+
+  /* Detail page: keep the back bar as a 56px strip, never a full-page white overlay. */
+  body.detail-page-active #viewToggleBar,
+  body.detail-page-active #desktopFilterMenu,
+  body.detail-page-active #mobileTopBar,
+  body.detail-page-active #mobileSearchFloat,
+  body.detail-page-active #mobileSearchModal {
+    display: none !important;
+  }
+
+  body.detail-page-active .detail-header-row,
+  body.detail-page-active.header-collapsed .detail-header-row {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 56px !important;
+    min-height: 56px !important;
+    max-height: 56px !important;
+    overflow: hidden !important;
+    background: #fff !important;
+    z-index: 110 !important;
+  }
+
+  body.detail-page-active #scrollTopBtn,
+  body.detail-page-active #scrollTopBtn.visible {
+    position: fixed !important;
+    top: auto !important;
+    left: auto !important;
+    right: 40px !important;
+    bottom: 40px !important;
+    width: 48px !important;
+    min-width: 48px !important;
+    max-width: 48px !important;
+    height: 48px !important;
+    min-height: 48px !important;
+    max-height: 48px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    background: #111 !important;
+    color: #fff !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
+    z-index: 200 !important;
+  }
 }
 
 /* Keep archive hover treatment consistent on small screens. */
@@ -12167,84 +12203,6 @@ body.detail-page-active .detail-header-row {
 
 /* Keep the mobile menu above the archive thumbnails and filter controls. */
 @media (max-width: 1023px) {
-  /* Keep search within the floating utility stack on mobile. */
-  #mobileSearchFloat {
-    position: fixed !important;
-    right: 18px !important;
-    bottom: calc(env(safe-area-inset-bottom) + 22px) !important;
-    z-index: 141 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: flex-end !important;
-    width: 48px !important;
-    min-width: 48px !important;
-    height: 48px !important;
-    min-height: 48px !important;
-    padding: 0 !important;
-    border: none !important;
-    border-radius: 50% !important;
-    background: #111 !important;
-    color: #fff !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    pointer-events: auto !important;
-    cursor: pointer !important;
-    touch-action: manipulation !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
-    overflow: hidden !important;
-    transition: width 0.22s ease, border-radius 0.22s ease !important;
-  }
-
-  #mobileSearchFloat.is-open {
-    width: min(230px, calc(100vw - 36px)) !important;
-    border-radius: 999px !important;
-  }
-
-  #mobileSearchFloat input {
-    width: 0 !important;
-    min-width: 0 !important;
-    padding: 0 !important;
-    border: 0 !important;
-    outline: none !important;
-    background: transparent !important;
-    color: #fff !important;
-    font: inherit !important;
-    opacity: 0 !important;
-    transition: width 0.22s ease, opacity 0.18s ease !important;
-  }
-
-  #mobileSearchFloat.is-open input {
-    width: 174px !important;
-    padding: 0 0 0 16px !important;
-    opacity: 1 !important;
-  }
-
-  #mobileSearchFloat input::placeholder {
-    color: rgba(255, 255, 255, 0.72) !important;
-  }
-
-  #mobileSearchBtn {
-    flex: 0 0 48px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 48px !important;
-    min-width: 48px !important;
-    height: 48px !important;
-    min-height: 48px !important;
-    padding: 0 !important;
-    border: 0 !important;
-    border-radius: 50% !important;
-    background: #111 !important;
-    color: #fff !important;
-    line-height: 0 !important;
-  }
-
-  #mobileSearchBtn svg {
-    width: 20px !important;
-    height: 20px !important;
-  }
-
   #mobileMenu {
     z-index: 130 !important;
   }
@@ -12346,6 +12304,117 @@ body.detail-page-active .detail-header-row {
 
   /* SNS links belong to the desktop drawer only. */
   #mobileMenu .drawer-social-links { display: none !important; }
+}
+
+/* Scroll-top must stay a 48px circle. Never stretch into a page overlay. */
+#scrollTopBtn,
+#scrollTopBtn.visible {
+  position: fixed !important;
+  inset: auto !important;
+  width: 48px !important;
+  min-width: 48px !important;
+  max-width: 48px !important;
+  height: 48px !important;
+  min-height: 48px !important;
+  max-height: 48px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  flex: none !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+@media (min-width: 1024px) {
+  #scrollTopBtn,
+  #scrollTopBtn.visible {
+    top: auto !important;
+    left: auto !important;
+    right: 18px !important;
+    bottom: 82px !important;
+    z-index: 140 !important;
+    background: var(--accent) !important;
+    color: #111 !important;
+  }
+}
+
+/* Floating project search is a mobile-only utility. */
+#mobileSearchFloat {
+  position: fixed !important;
+  right: 18px !important;
+  bottom: calc(env(safe-area-inset-bottom) + 22px) !important;
+  z-index: 141 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  width: 48px !important;
+  min-width: 48px !important;
+  height: 48px !important;
+  min-height: 48px !important;
+  padding: 0 !important;
+  border: none !important;
+  border-radius: 50% !important;
+  background: #111 !important;
+  color: #fff !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  touch-action: manipulation !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+  overflow: hidden !important;
+  transition: width 0.22s ease, border-radius 0.22s ease !important;
+}
+
+#mobileSearchFloat.is-open {
+  width: min(230px, calc(100vw - 36px)) !important;
+  border-radius: 999px !important;
+}
+
+#mobileSearchFloat input {
+  width: 0 !important;
+  min-width: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  outline: none !important;
+  background: transparent !important;
+  color: #fff !important;
+  font: inherit !important;
+  opacity: 0 !important;
+  transition: width 0.22s ease, opacity 0.18s ease !important;
+}
+
+#mobileSearchFloat.is-open input {
+  width: 174px !important;
+  padding: 0 0 0 16px !important;
+  opacity: 1 !important;
+}
+
+#mobileSearchFloat input::placeholder {
+  color: rgba(255, 255, 255, 0.72) !important;
+}
+
+#mobileSearchBtn {
+  flex: 0 0 48px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 48px !important;
+  min-width: 48px !important;
+  height: 48px !important;
+  min-height: 48px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  background: #111 !important;
+  color: #fff !important;
+  line-height: 0 !important;
+}
+
+#mobileSearchBtn svg {
+  width: 20px !important;
+  height: 20px !important;
 }
 
 @media (min-width: 1024px) {

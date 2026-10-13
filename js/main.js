@@ -294,11 +294,10 @@ const I18N = {
     ],
     eduList: [
       "Hongik University, Graduate School of Film, Digital Media & Communication",
-      "Dankook University, College of Art and Design — Visual Communication Design"
+      "Dankook University, College of Art and Design"
     ],
     credList: [
       { text: "OpenAI Build Week Hackathon", year: "2026" },
-      { text: "Web Design & Development Craftsman — Written Exam Passed", year: "2026" },
       { text: "Craftsman Computer Graphics Operator", year: "2021" },
       { text: "Design Teacher Certificate", year: "2013" }
     ]
@@ -394,11 +393,10 @@ const I18N = {
     ],
     eduList: [
       "홍익대학교 영상커뮤니케이션 대학원",
-      "단국대학교 예술조형대학 시각디자인"
+      "단국대학교 예술조형대학"
     ],
     credList: [
       { text: "OpenAI Build Week 해커톤", year: "2026" },
-      { text: "웹디자인개발기능사 필기 합격", year: "2026" },
       { text: "컴퓨터그래픽스운용기능사", year: "2021" },
       { text: "실기교사디자인교원자격증", year: "2013" }
     ]
@@ -2705,7 +2703,6 @@ function resetArchiveFilters() {
   storage.set('archive_focus', archiveFocusMode);
   storage.set('archive_year', archiveYearMode);
   storage.set('activeFilters', JSON.stringify(activeFilters));
-  if (searchInput) searchInput.value = '';
   if (mobileSearchInput) mobileSearchInput.value = '';
   renderHome();
 }
@@ -2870,12 +2867,15 @@ if (searchInput) {
 }
 
 const openMobileSearch = () => {
-  if (!mobileSearchModal || !mobileSearchInput) return;
+  if (!mobileSearchInput) return;
   if (mobileSearchFloat) {
     mobileSearchFloat.classList.add('is-open');
+    mobileSearchBtn?.setAttribute('aria-expanded', 'true');
+    mobileSearchBtn?.setAttribute('aria-label', 'Close project search');
     setTimeout(() => mobileSearchInput.focus(), 0);
     return;
   }
+  if (!mobileSearchModal) return;
   mobileSearchModal.classList.remove('hidden');
   mobileSearchModal.style.setProperty('display', 'block', 'important');
   mobileSearchModal.style.setProperty('visibility', 'visible', 'important');
@@ -2885,13 +2885,17 @@ const openMobileSearch = () => {
 };
 
 const closeMobileSearch = () => {
-  if (!mobileSearchModal || !mobileSearchInput) return;
+  if (!mobileSearchInput) return;
   if (mobileSearchFloat) mobileSearchFloat.classList.remove('is-open');
-  mobileSearchModal.classList.add('hidden');
-  mobileSearchModal.style.setProperty('display', 'none', 'important');
-  mobileSearchModal.style.setProperty('visibility', 'hidden', 'important');
-  mobileSearchModal.style.setProperty('opacity', '0', 'important');
-  mobileSearchModal.style.setProperty('pointer-events', 'none', 'important');
+  mobileSearchBtn?.setAttribute('aria-expanded', 'false');
+  mobileSearchBtn?.setAttribute('aria-label', 'Open project search');
+  if (mobileSearchModal) {
+    mobileSearchModal.classList.add('hidden');
+    mobileSearchModal.style.setProperty('display', 'none', 'important');
+    mobileSearchModal.style.setProperty('visibility', 'hidden', 'important');
+    mobileSearchModal.style.setProperty('opacity', '0', 'important');
+    mobileSearchModal.style.setProperty('pointer-events', 'none', 'important');
+  }
   mobileSearchInput.value = '';
   searchQuery = '';
   delete document.body.dataset.searchQuery;

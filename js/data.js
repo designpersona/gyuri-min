@@ -29,7 +29,7 @@ window.PROJECT_DATA = {
                 "en": "Record everyday meals, one plate at a time.",
                 "ko": "매일의 식사를 한 끼씩 남기며, 몸을 다시 설계하는 기록."
             },
-            "cover": "assets/projects/Rebuilders/cover.jpg",
+            "cover": "assets/projects/Rebuilders/cover.png",
             "thumbnail": "assets/projects/Rebuilders/thumbnail.jpg",
             "year": "2026",
             "client": "Personal Work",
