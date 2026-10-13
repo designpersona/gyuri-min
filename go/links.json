@@ -28,6 +28,20 @@
       "active": true,
       "created_at": "2026-08-10"
     },
+    "wod603": {
+      "company": "wanted-geeks",
+      "platform": "wanted",
+      "company_type": "other",
+      "role": "design",
+      "contact_route": "platform",
+      "job_title": "Freelance Design Portfolio",
+      "campaign": "2026_hiring",
+      "applied_at": "2026-10-13",
+      "annual_sequence": 3,
+      "daily_sequence": 1,
+      "active": true,
+      "created_at": "2026-10-13"
+    },
     "fair26": {
       "company": "external_fair",
       "platform": "external_fair",
