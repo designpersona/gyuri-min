@@ -154,6 +154,13 @@
   </style>
   <link rel="stylesheet" href="css/styles.css?v=20261013-desktop-search-hide-1" />
   <style id="mobileChromeGuardInline">
+    @media (min-width: 1024px) {
+      /* The floating search wrapper must not leave a desktop-width overlay. */
+      #mobileSearchFloat {
+        display: none !important;
+      }
+    }
+
     @media (max-width: 1023px) {
       body.mobile-mode #topBar {
         display: none !important;
